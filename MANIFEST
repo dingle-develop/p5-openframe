@@ -29,6 +29,12 @@ examples/hangman2/hangman.pl
 examples/hangman2/Hangman/Application.pm
 examples/hangman2/Hangman/Generator.pm
 examples/hangman2/templates/index.html
+examples/soap/Time.pm
+examples/soap/soap.pl
+examples/soap/soapserver.pl
+examples/soap_app/TimeApp.pm
+examples/soap_app/soap_app.pl
+examples/soap_app/soapserver.pl
 examples/upload/upload.pl
 examples/upload/Upload/Application.pm
 examples/upload/Upload/Generator.pm
@@ -54,6 +60,7 @@ lib/OpenFrame/Slot.pm
 lib/OpenFrame/Slot/Debugger.pm
 lib/OpenFrame/Slot/Dispatch.pm
 lib/OpenFrame/Slot/Dispatch/Local.pm
+lib/OpenFrame/Slot/Dispatch/SOAP.pm
 lib/OpenFrame/Slot/ErrorText.pm
 lib/OpenFrame/Slot/Generator.pm
 lib/OpenFrame/Slot/HTML.pm
@@ -69,6 +76,7 @@ t/config.t
 t/direct.t
 t/error.t
 t/hangman2.t
+t/http.t
 t/webserver.t
 t/slots.t
 t/lib/OpenFrame/MyApplication.pm

@@ -2,7 +2,7 @@
 #
 # The hangman images are by Andy Wardley
 #
-# This version of hangman uses templates
+# This version of hangman doesn't use templates
 
 use strict;
 use lib '../../lib';
@@ -49,7 +49,6 @@ $config->setKey(
                  {
                   dispatch => 'Local',
                   name     => 'Hangman::Generator',
-		  config   => { presentation => 'templates/' },
                  },
                 ]
                );

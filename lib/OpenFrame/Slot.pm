@@ -9,7 +9,7 @@ use OpenFrame::Constants;
 use OpenFrame::Exception;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.20 2001/11/19 15:41:36 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.23 2001/11/26 15:07:41 leon Exp $ }))[2];
 sub what ();
 
 sub action {
@@ -132,9 +132,9 @@ sub dispatchViaSOAP {
   my $varstore = shift;
 
   my $soapslot;
-  if ($slot->{proxy} && $slot->{uri}) {
-    my $uri   = $slot->{uri};
-    my $proxy = $slot->{proxy};
+  if ($slot->{soap_proxy} && $slot->{soap_uri}) {
+    my $uri   = $slot->{soap_uri} . $slot->{name};
+    my $proxy = $slot->{soap_proxy};
 
     $soapslot = new SOAP::Lite->uri( $uri )->proxy( $proxy );
 
@@ -145,15 +145,15 @@ sub dispatchViaSOAP {
 
   my $args = $soapslot->what()->result();
 
-  my @args = map { $varstore->lookup( $_ ) } @$args;
+  my @args = map { $varstore->lookup($_) } @$args;
 
-  my $result = $soapslot->action( $slot->{config}, @args )->result();
+  my $result = $soapslot->action(($slot->{config} || {}), @args);
 
-  if ($soapslot->fault()) {
-    my $excp = OpenFrame::Exception::Perl->new( $soapslot->faultstring());
+  if ($result->fault()) {
+    my $excp = OpenFrame::Exception::Perl->new($result->faultstring());
     $excp->throw();
   } else {
-    return $result;
+    return $result->result;
   }
 }
 

@@ -1,14 +1,19 @@
 package OpenFrame::AbstractRequest;
 
 use strict;
+use warnings::register;
+
+no warnings qw ( redefine );
 
 use URI;
+use Carp;
 use Class::MethodMaker
            new_with_init => 'new',
            new_hash_init => 'hash_init',
            get_set       => [ qw/uri originator descriptive arguments cookies/ ];
 
 use OpenFrame::AbstractCookie;
+use Scalar::Util qw ( blessed );
 
 our $VERSION = 1.00;
 
@@ -27,6 +32,22 @@ sub init {
   $params{cookies} ||= OpenFrame::AbstractCookie->new();
 
   hash_init($self, %params);
+}
+
+sub uri {
+  my $self = shift;
+  my $urio = shift;
+  if ($urio) {
+    if (blessed($urio) && ($urio->isa('URI') || $urio->isa('URI::URL'))) {
+      $self->{uri} = $urio->as_string;
+    } elsif( blessed( $urio )) {
+      croak(ref($urio) . " not a valid parameter");
+    } else {
+      $self->{uri} = $urio;
+    }
+  } else {
+    return URI->new( $self->{uri} );
+  }
 }
 
 

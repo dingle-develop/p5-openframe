@@ -5,7 +5,7 @@ use strict;
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.04';
+our $VERSION = '2.05';
 
 =head1 NAME
 
@@ -17,19 +17,10 @@ OpenFrame - An Application Framework for Perl and the Web
 
 =head1 DESCRIPTION
 
-OpenFrame is an Application Framework for Perl and the Web.  It is designed to
-do enough to make your life easier, and provide enough flexibility to make
-extending it to do what *you* want it to pretty easily.
+I<OpenFrame> is an application framework for Perl and the any client/server style
+content platform.  The web being a good example of the latter.  
 
-Anyway, this is a pretty raw release.  It's ready to use, but it is still lacking
-quite a lot of documentation.  Some of the SOAP stuff needs to be reexamined
-and that will happen over the next few weeks as we need it.  Patches welcome.
-
-Developers should read lib/OpenFrame/AppWrite.pod and lib/OpenFrame/Slot.pm,
-installing-things type people should read lib/OpenFrame/Install.pod.
-
-Regards,
-James
+Please see the OpenFrame website at http://openframe.fotango.com/
 
 =head1 AUTHOR
 

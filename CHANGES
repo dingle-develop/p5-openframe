@@ -1,5 +1,11 @@
 Revision history for Perl module OpenFrame: 
 
+2.05 Fri Nov 30 13:59:45 GMT 2001
+	- Slots can now run remotely via SOAP - see the soap example
+	- Applications can now run remotely via SOAP - see the soap_app example
+	- OpenFrame::Server::HTTP is now more stable (and has a test)
+	- minor bugfixes
+
 2.04 Thu Nov 22 12:26:06 GMT 2001
 	- completely changed session implementation: instead of rolling our
 	  own we now use the excellent Apache::SessionX (which is not 

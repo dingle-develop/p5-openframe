@@ -21,7 +21,7 @@ use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.14 2001/11/20 16:08:11 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.15 2001/11/27 14:59:17 james Exp $ }))[2];
 
 sub handler {
   my $request = shift;
@@ -51,6 +51,7 @@ sub handler {
   ##
   my $ar = Apache::Request->new( $request );
 
+  my %args;
   my $args = { map { ($_, $ar->param($_)) } $ar->param() };
   $args{$_->name} = $_->fh foreach $ar->upload;
 

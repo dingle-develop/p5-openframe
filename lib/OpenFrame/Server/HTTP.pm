@@ -31,6 +31,8 @@ sub new {
 
   bless $self, $class;
 
+  setup_signals();
+
   return $self;
 }
 
@@ -54,6 +56,16 @@ sub handle {
       $kids{&fork_a_slave($master)} = "slave";
     }
   } continue { redo };          # semicolon for cperl-mode
+}
+
+sub setup_signals {             # return void
+  setpgrp;                      # I *am* the leader
+  $SIG{HUP} = $SIG{INT} = $SIG{TERM} = sub {
+    my $sig = shift;
+    $SIG{$sig} = 'IGNORE';
+    kill $sig, 0;               # death to all-comers
+    exit;
+  };
 }
 
 sub fork_a_slave {              # return int (pid)

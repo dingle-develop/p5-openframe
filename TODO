@@ -1,9 +1,0 @@
-These things would be nice in the short term:
-
-* Make OpenFrame run under taint mode
-* Move OpenFrame::Config to use YAML instead of Data::Denter
-
-And of course:
-
-* More documentation
-* More tests

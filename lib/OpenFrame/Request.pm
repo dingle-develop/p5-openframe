@@ -1,171 +1,49 @@
 package OpenFrame::Request;
 
 use strict;
-no warnings qw(redefine);
+use warnings::register;
 
-use URI;
-use Carp;
-use Class::MethodMaker
-           new_with_init => 'new',
-           new_hash_init => 'hash_init',
-           get_set       => [ qw/uri originator descriptive arguments cookies/ ];
+use OpenFrame::Object;
+use base qw ( OpenFrame::Object );
 
-use OpenFrame::Cookietin;
-use Scalar::Util qw ( blessed );
-
-our $VERSION = 2.12;
-
-sub init {
-  my($self, %params) = @_;
-
-  if ($params{uri}) {
-    die "uri not URI object" if ref($params{uri}) !~ /^URI/;
-  } else {
-    die "no uri passed!";
-  }
-
-  $params{originator} ||= 'GenericServer';
-  $params{descriptive} ||= 'web';
-  $params{arguments} ||= {};
-  $params{cookies} ||= OpenFrame::Cookietin->new();
-
-  hash_init($self, %params);
-}
+our $VERSION = '3.00';
 
 sub uri {
   my $self = shift;
-  my $urio = shift;
-  if ($urio) {
-    if (blessed($urio) && ($urio->isa('URI') || $urio->isa('URI::URL'))) {
-      $self->{uri} = $urio->as_string;
-    } elsif( blessed( $urio )) {
-      croak(ref($urio) . " not a valid parameter");
-    } else {
-      $self->{uri} = $urio;
-    }
+
+  if (!ref($self)) {
+    $self->error("uri called as a class method");
+  }
+
+  my $uri  = shift;
+  if (defined( $uri )) {
+    $self->{ uri } = $uri;
+    return $self;
   } else {
-    return URI->new( $self->{uri} );
+    return $self->{ uri };
   }
 }
 
+sub arguments {
+  my $self = shift;
+  my $args = shift;
+  if (defined( $args )) {
+    $self->{ args } = $args;
+    return $self;
+  } else {
+    return $self->{ args };
+  }
+}
 
-__END__
-
-=head1 NAME
-
-OpenFrame::Request - An abstract request class
-
-=head1 SYNOPSIS
-
-  use OpenFrame;
-  my $uri = URI->new("http://localhost/");
-  my $r = OpenFrame::Request->new(uri => $uri,
-	originator => 'http://www.example.com/',
-	descriptive => 'web',
-	arguments => { colour => 'red' },
-	cookies => OpenFrame::Cookietin->new());
-  print "URI: " . $r->uri();
-  print "Originator: " . $r->originator();
-  print "Descriptive: " . $r->descriptive();
-  my $args = $r->arguments();
-  my $cookies = $r->cookies();
-
-=head1 DESCRIPTION
-
-C<OpenFrame::Request> represents requests inside
-OpenFrame. Requests represent some kind of request for information
-given a URI.
-
-This module abstracts the way clients can request data from
-OpenFrame. For example C<OpenFrame::Server::Apache> converts
-Apache::Request GET and POST requests into an
-C<OpenFrame::Request>, which is then used through OpenFrame.
-
-=head1 METHODS
-
-=head2 new()
-
-The new() method creates a new C<OpenFrame::Request> object. It
-takes a variety of parameters, of which only the "uri" parameter is
-mandatory.
-
-The parameters are:
-
-=over 4
-
-=item  uri
-
-The location this request is for. This must be a URI object.
-
-=item originator
-
-A string describing the originator of the request. Defaults to
-"GenericServer".
-
-=item descriptive
-
-A string describing the type of the request. Defaults to "web".
-
-=item arguments
-
-A hash reference which are the arguments passed along with the
-request.
-
-=item cookies
-
-An C<OpenFrame::Cookietin> object which contains any cookies
-passed with the request.
-
-=back
-
-  my $uri = URI->new("http://localhost/");
-  my $r = OpenFrame::Request->new(uri => $uri,
-	originator => 'secret agent',
-	descriptive => 'web',
-	arguments => { colour => 'red' },
-	cookies => OpenFrame::Cookietin->new());
-
-=head2 uri()
-
-This method gets and sets the URI.
-
-  print "URI: " . $r->uri();
-  $r->uri(URI->new("http://foo.com/"));
-
-=head2 originator()
-
-This method gets and sets the originator string.
-
-  print "Originator: " . $r->originator();
-  $r->setOriginator("me");
-
-=head2 descriptive()
-
-This method gets and sets the descriptive string.
-
-  print "Descriptive: " . $r->descriptive();
-  $r->descriptive("smtp");
-
-=head2 cookies()
-
-This method gets and sets the C<OpenFrame::Cookietin> object
-associated with this request.
-
-  my $cookietin = $r->cookies();
-  $r->cookies($cookietin);
-
-=head2 arguments()
-
-This method gets and sets the argument hash reference associated with
-this request.
-
-  my $args = $r->arguments();
-  $r->arguments({colour => "blue"});
-
-=head1 AUTHOR
-
-James Duncan <jduncan@fotango.com>
-
-=cut
+sub cookies {
+  my $self = shift;
+  my $ctin = shift;
+  if (defined( $ctin )) {
+    $self->{ ctin } = $ctin;
+    return $ctin;
+  } else {
+    return $self->{ ctin };
+  }
+}
 
 1;

@@ -1,100 +1,83 @@
 package OpenFrame::Response;
 
 use strict;
-use Class::MethodMaker
-           new_with_init => 'new',
-           new_hash_init => 'hash_init',
-           get_set       => [ qw/message mimetype code cookies last_modified/ ];
+use warnings::register;
 
 use Exporter;
-use OpenFrame::Cookietin;
-use URI;
+use OpenFrame::Object;
+use Pipeline::Production;
+use base qw ( OpenFrame::Object Pipeline::Production Exporter );
 
-our $VERSION = 2.12;
+our $VERSION = '3.00';
 
-sub init {
-  my($self, %params) = @_;
-  $params{cookies} ||= OpenFrame::Cookietin->new();
-  hash_init($self, %params);
+use constant ofOK       => 1;
+use constant ofREDIRECT => 2;
+use constant ofDECLINE  => 4;
+use constant ofERROR    => 8;
+
+##
+## we export this because its good
+##
+our @EXPORT = qw ( ofOK ofREDIRECT ofDECLINE ofERROR );
+
+sub last_modified { }
+
+sub cookies {
+  my $self = shift;
+  my $cookies = shift;
+  if (defined( $cookies )) {
+    $self->{cookies} = $cookies;
+    return $self;
+  } else {
+    return $self->{cookies};
+  }
 }
 
-__END__
+sub mimetype {
+  my $self = shift;
+  my $mime = shift;
+  if (defined( $mime )) {
+    $self->{mimetype} = $mime;
+    return $self;
+  } else {
+    return $self->{mimetype};
+  }
+}
 
-=head1 NAME
+sub contents {
+  my $self = shift;
+  return $self;
+}
 
-OpenFrame::Response - An abstract response class
+sub message {
+  my $self = shift;
+  my $mesg = shift;
+  if (defined( $mesg )) {
+    $self->{ mesg } = $mesg ;
+    return $self;
+  } else {
+    return $self->{ mesg };
+  }
+}
 
-=head1 SYNOPSIS
+sub code {
+  my $self = shift;
+  my $code = shift;
+  if (defined( $code )) {
+    $self->{ code } = $code;
+    return $self;
+  } else {
+    return $self->{ code }
+  }
+}
 
-  use OpenFrame;
-  use OpenFrame::Constants;
-  my $r = OpenFrame::Response->new();
-  $r->message("<html><body>Hello world!</body></html>");
-  $r->mimetype('text/html');
-  $r->code(ofOK);
-  $r->last_modified($machine_time);
-  $r->cookies(OpenFrame::Cookietin->new());
 
-=head1 DESCRIPTION
+##
+## for backwards compatibility we have a package called
+##  OpenFrame::Constants
+##
+package OpenFrame::Constants;
 
-C<OpenFrame::Response> represents responses inside
-OpenFrame. Responses represent some kind of response following a
-request for information.
-
-This module abstracts the way clients can respond with data from
-OpenFrame.
-
-=head1 METHODS
-
-=head2 new()
-
-This method creates a new C<OpenFrame::Response> object. It
-takes no parameters.
-
-=head2 cookies()
-
-This method gets and sets the C<OpenFrame::Cookietin> that is
-associated with this response.
-
-  my $cookietin = $r->cookies();
-  $r->cookies(OpenFrame::Cookietin->new());
-
-=head2 message()
-
-This method gets and sets the message string associated with this response.
-
-  my $message = $r->message();
-  $r->message("<html><body>Hello world!</body></html>");
-
-=head2 code()
-
-This method gets and sets the message code associated with this
-response. The following message codes are exported when you use
-C<OpenFrame::Constants>: ofOK, ofERROR, ofREDIRECT, ofDECLINED.
-
-  my $code = $r->code();
-  $r->code(ofOK);
-
-=head2 mimetype()
-
-This method gets and sets the MIME type associated with this response.
-
-  my $type = $r->mimetype();
-  $r->mimetype('text/html');
-
-=head2 last_modified()
-
-This method gets and sets the last modified time of the data
-associated with this response.
-
-  my $type = $r->last_modified();
-  my $time = (stat($file))[9];
-  $r->last_modified($time);
-
-=head1 AUTHOR
-
-James Duncan <jduncan@fotango.com>
-
-=cut
 
 1;
+

@@ -1,215 +1,165 @@
 package OpenFrame;
 
 use strict;
-use OpenFrame::Config;
-use OpenFrame::Cookietin;
-use OpenFrame::Request;
-use OpenFrame::Response;
-use OpenFrame::Slot;
-use OpenFrame::Constants qw( :debug );
+use warnings::register;
 
-##
-## we just want to track versions
-##
-our $VERSION = 2.12;
+our $VERSION = '3.00';
 
-sub warn {
-    my $msg = join('', @_);
-    my ($pkg, $file, $line) = caller();
-    $pkg =~ s/^OpenFrame:://;
-    $pkg = lc $pkg;
+%OpenFrame::DEBUG = (
+		     ALL => 0,
+		    );
 
-    unless ($msg =~ /\n$/) {
-	$msg .= ($OpenFrame::DEBUG & ofDEBUG_VERBOSE)
-		 ? " at $file line $line\n"
-		 : "\n";
-    }
-    
-    CORE::warn("[$pkg] $msg");
+use Pipeline;
+use base qw ( Pipeline );
+
+sub init {
+  my $self = shift;
+  $self->SUPER::init();
+}
+
+sub debug_level {
+  my $self = shift;
+
+  ## is this a set, a get, or what?
+  if (@_ == 0) {
+    ## this is a get of ALL
+    return $OpenFrame::DEBUG{ ALL };
+  } elsif (@_ == 1) {
+    ## this could either be a set of ALL, or a request for an individual package's
+    ## debug value.
+    if ($_[0] =~ /\D/) {
+      ## we have non-digit characters, we are getting the value for a specific
+      ## package
+      return $OpenFrame::DEBUG{ $_[0] };
+    } else {
+      ## these are digits, we are setting ALL
+      $OpenFrame::DEBUG{ ALL } = $_[0]
+    }	    
+  } elsif (@_ == 2) {
+    $OpenFrame::DEBUG{ shift @_ } = shift @_ ;
+  } else {
+    die "invalid number of parameters to &OpenFrame::debug_level";
+  }
 }
 
 
+1;
+
 =head1 NAME
 
-OpenFrame - An Application Framework for Perl and the Web
+OpenFrame - a framework for network enabled applications
 
 =head1 SYNOPSIS
 
-  # See the examples/ directory
+  use OpenFrame;
 
 =head1 DESCRIPTION
 
-=head2 The OpenFrame Application Framework
+OpenFrame is a framework for network services serving to multiple
+media channels - for instance, the web, WAP, and digital television.
+It is built around the Pipeline API, and provides extra abstraction to
+make delivery of a single application to multiple channels easier.
 
-=head2 Introduction
+=head1 GLOBAL VARIABLES
 
-The OpenFrame application framework takes a lot of complicated ideas,
-and tries to simplify them into a single point that allows for
-multiple applications to take care of multiple presentations, without
-the time consuming parts (mainly the application) having to be
-rewritten several times.
+The most important thing that this module does is provide a wrapper
+around OpenFrame specific debug information - for example, the
+information provided by OpenFrame segments.
 
-This document attempts to provide an overview of what OpenFrame does
-and how it could be made to work for you.
+This variable is a hash called %DEBUG in the OpenFrame package.  If
+you set the ALL key to a true value, then debugging information about
+all segments will be printed.  If you want to resolve your debugging
+output to a single module, then set a key that matches the segments
+name to a true value.  For example, setting
+$OpenFrame::DEBUG{'OpenFrame::Segment::HTTP::Request'} to 1 would mean
+that all the debug messages from the HTTP::Request segment would get
+printed.
 
-=head2 Framework Overview
+=head1 SETTING UP YOUR SERVER
 
-At the heart of the framework lies the server class.  An OpenFrame
-server is a simple device that takes a request from one mechanism and
-translates it into one that OpenFrame can understand.  Once a request
-is generated in the form of an Request object the server passes
-control to OpenFrame's slot system.  The slot system is a simple way
-of plugging in new functionality to the system, without it having an
-effect on old functionality.  To get a basic understanding of what
-slots do, imagine a pipe.  Each section of the pipe dyes the water a
-different colour, provided that the water is the right colour that
-flows into it is correct.  If it is not, the water keeps flowing, but
-it does not change colour.  Right, now replace slots for sections, and
-objects for water.
+This will briefly explain how to set up a stand-alone OpenFrame
+server. It uses the code listing below.
 
-Slots execute linearly - that is, one after the other.  Each slot
-tells the slot pipeline that it wants certain objects in order to
-function.  When a slot executes it may return an object which the
-pipeline will keep and remember. Later on in the pipeline if that
-object is needed by a different slot then the pipeline can provide it.
-The only difference between this and our magical colour changing water
-is that at the end of the slot pipeline there should be something that
-our server understands -- an Response object.
+The first few lines (01-08) simply load all the modules that are
+needed to setup the various constituent parts of an OpenFrame server.
+Lines 9 creates an HTTP daemon listening on port 8080 for requests, in
+the case that the server cannot be created line 10 provides error
+reporting to the screen.
 
-The Response object is used as a container for the data (for example,
-HTML) and is passed by the OpenFrame server to the person who asked
-for it originally in the Request object.  Once the request is
-complete, everything that we learnt -- any object that was generated
-along the slot pipeline -- is thrown away, so that the next request
-can begin afresh.
+The first real piece of OpenFrame code is found at line 14, where we
+create a Pipeline object, followed quickly by lines 16, 17 and 18
+which create a couple of pipeline segments that will be added to the
+pipeline at line 21. Lines 24 and 26 create a loop to listen for and
+accept connections, and fetch HTTP requests from those connections as
+and when it is needed.
 
-Slots can be plugged quickly in and out of the pipeline, as the server
-does not care what happens in the pipeline and the elements of the
-pipeline do not care what happens to the other elements, and none of
-the elements care what happens to anything they generate -- they just
-want to do their thing, and be done with.
+At line 28 we create a Pipeline::Store::Simple object, which will act
+as our data container for the information flowing down the
+pipeline. We add the request to the store and the store to the
+pipeline at line 31, and then call the dispatch() method on the
+pipeline at line 34. This sets the OpenFrame side of things going. At
+line 37 we ask the pipeline for the store and the store for an
+HTTP::Response object, and then send it back to the client at line 40.
 
-=head2 Slot Dispatch
+The real work of OpenFrame is in the segments that are created, and
+the order in which they are inserted into the Pipeline. With this in
+mind, you know everything there is to know about OpenFrame.
 
-Another useful part of OpenFrame is that the slots need not reside on
-the local system.  The slot system allows for multiple dispatch
-mechanisms.  The fastest, and most obvious way of course, is to
-dispatch them locally and write them in Perl.  However, another way of
-doing it is to write them in Java, and dispatch them using the SOAP.
-These dispatch mechanisms are easily extended to work for any calling
-mechanism, and any programming language.
+=head1 CODE LISTING
 
-This does not mean that you should only consider SOAP-based dispatch
-if you are planning on writing slots in other languages.  You can
-distribute the load of your OpenFrame server by moving various slots
-to various other places.
+  01: use strict;
+  02: use warnings;
+  03:
+  04: use Pipeline;
+  05: use HTTP::Daemon;
+  06: use OpenFrame::Segment::HTTP::Request;
+  07: use OpenFrame::Segment::ContentLoader;
+  08:
+  09: my $d = HTTP::Daemon->new( LocalPort => '8080', Reuse => 1);
+  10: die $! unless $d;
+  11:
+  12: print "server running at http://localhost:8080/\n";
+  13:
+  14: my $pipeline = Pipeline->new();
+  15:
+  16: my $hr = OpenFrame::Segment::HTTP::Request->new();
+  17: my $cl = OpenFrame::Segment::ContentLoader->new()
+  18:                                        ->directory("./webpages");
+  19:
+  20:
+  21: $pipeline->add_segment( $hr, $cl );
+  22:
+  23:
+  24: while(my $c = $d->accept()) {
+  25:
+  26:   while(my $r = $c->get_request) {
+  27:
+  28:     my $store = Pipeline::Store::Simple->new();
+  29:
+  30:
+  31:     $pipeline->store( $store->set( $r ) );
+  32:
+  33:
+  34:     $pipeline->dispatch();
+  35:
+  36:
+  37:     my $response = $pipeline->store->get('HTTP::Response');
+  38:
+  39:
+  40:     $c->send_response( $response );
+  41:   }
+  42: }
 
-=head2 Slots can be Clever
-
-Slots can also be a little bit cunning.
-
-Sometimes a slot knows that it must be executed, and although there
-are some things that it must have, sometimes it would be nice to have
-a few things, but not absolutely necessary.  Rather than confusing
-things, a slot can simply request that it has I<everything> that a
-pipeline knows, and then query the pipeline programatically to see if
-it knows anything that is useful.  In fact, it can blend requesting
-the entire pipeline, with requesting individual elements, so the
-functionality in the slot can be quite circuitous.
-
-Another place where slots can be clever is what they return.  Often
-executing a slot at the top of the slot pipeline means that another
-slot has to execute at the bottom of the pipeline. To allow for this,
-slots can return a single object, or a single class name, or any
-combination of either in a list.  When the slot pipeline sees that a
-slot has returned a class name, it pushes the class to the bottom of
-the pipeline and tells it to use all the properties of the slot that
-returned it.  For instance, if a slot that is dispatched via SOAP
-returns a class name, then the returned class would be placed in the
-pipeline and would be dispatched with SOAP to the same place that the
-original slot was dispatched to.
-
-=head2 Slots out of the Box
-
-Out of the box OpenFrame provides some pretty powerful functionality
-from its slots.  Fotango (the nice people that let us write OpenFrame)
-want to use OpenFrame as an Application Server, so the majority of the
-slots reflect that purpose.  However, they are all open source, and
-are all bundled in the OpenFrame distribution.  This means that out of
-the box OpenFrame can operate as as Application Server for the web.
-
-The slots that build this functionality are simple.  Listed in order
-of execution:
-
-  Slot Name			  Slot Purpose
-
-  OpenFrame::Slot::Images         serve images immediately
-  OpenFrame::Slot::Session        restore or generate a session
-  OpenFrame::Slot::Dispatch       dispatch an application
-  OpenFrame::Slot::Generator      generate content
-  OpenFrame::Slot::SessionSaver   save the session
-
-The application dispatcher slot is (we think) quite clever, so we
-would like to tell you more about it, but that exists outside the
-scope of this document.  For more information, see
-OpenFrame::AppWrite.
-
-Note that "use OpenFrame" will also load in OpenFrame::Config,
-OpenFrame::Cookietin, OpenFrame::Request, OpenFrame::Response, and
-OpenFrame::Slot to save you some typing.
-
-=head1 MAILING LIST
-
-There is a mailing list for general OpenFrame discussion. You can sign
-up at: http://www.astray.com/mailman/listinfo/openframe
-
-=head1 IRC
-
-There is also an OpenFrame IRC channel: #openframe on irc.rhizomatic.net.
-
-=head1 PORTABILITY
-
-OpenFrame is pretty much as portable as Perl. We have tested it on the
-following varied platforms:
-
-  Operating System        Architecture
-
-  Caldera OpenLinux 3.1   i386
-  Darwin 5.1              PowerPC
-  Debian Linux 2.1        StrongARM
-  Debian Linux 2.2        Alpha
-  Debian Linux 2.2        i386
-  Debian Linux 2.2        PowerPC
-  Debian Linux 2.2        Sparc
-  FreeBSD 4.4             i386
-  Mandrake Linux 8.1      i386
-  NetBSD 1.5.1            Alpha
-  RedHat Linux 7.1        Itanium
-  RedHat Linux 7.2        i386
-  SunOS 5.8               Sparc
-  SuSE Linux 7            i386
-  SuSE Linux 7            S/390
-  Tru64 5.1a              Alpha
-  TurboLinux 6.5          i386
-  Slackware 8.0           i386
 
 =head1 SEE ALSO
 
-OpenFrame::Install
-OpenFrame::AppWrite
-OpenFrame::Slot
+perl(1) Pipeline(3) OpenFrame::Config(3)
 
 =head1 AUTHOR
 
 James A. Duncan <jduncan@fotango.com>
 
-=head1 COPYRIGHT
-
-Copyright (C) 2001-2, Fotango Ltd.
-
-This module is free software; you can redistribute it or modify it
-under the same terms as Perl itself.
-
 =cut
+
 
 1;

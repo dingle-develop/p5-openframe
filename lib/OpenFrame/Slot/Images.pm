@@ -1,7 +1,6 @@
 package OpenFrame::Slot::Images;
 
 use strict;
-use warnings::register;
 
 use File::MMagic;
 use FileHandle;
@@ -21,9 +20,10 @@ sub action {
   my $absrq = shift;
   my $uri = $absrq->uri();
 
-  warnings::warn("[slot:images] checking to make sure we are processing images") if (warnings::enabled || $OpenFrame::DEBUG);
+  warn("[slot:images] checking to make sure we are processing images") if $Openframe::DEBUG;
 
   if ($uri->path() =~ /\/$/) {
+    warn("[slot:images] file not handled as an image") if $OpenFrame::DEBUG;
     return;
   }
 
@@ -38,10 +38,10 @@ sub action {
     my $mm = File::MMagic->new();
     my $type = $mm->checktype_filename($file);
 
-    warnings::warn("[slot:images] file $file has type $type") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot:images] file $file has type $type") if $OpenFrame::DEBUG;
 
     if ($type ne "text/html") {
-      warnings::warn("[slot:images] file $file is being handled as an image") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot:images] file $file is being handled as an image") if $OpenFrame::DEBUG;
 
       my $response = OpenFrame::AbstractResponse->new();
       $response->code(ofOK);
@@ -57,7 +57,7 @@ sub action {
       return $response;
     }
   }
-  warnings::warn("[slot:images] file $file was not  handled as an image") if (warnings::enabled || $OpenFrame::DEBUG);
+  warn("[slot:images] file $file was not handled as an image") if $OpenFrame::DEBUG;
 
 }
 
@@ -67,7 +67,7 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Slot::Images - serve static image files
+OpenFrame::Slot::Images - Serve static image files
 
 =head1 SYNOPSIS
 
@@ -85,8 +85,6 @@ images. It takes the path from the C<OpenFrame::AbstractRequest> and
 looks for image files starting from the value of the "directory"
 configuration option. It returns an C<OpenFrame::AbstraceResponse>
 containing the image file.
-
-It defaults to "index.html" if the path is a directory.
 
 It will only serve the file if C<File::MMagic> reckons the file does
 not have MIME type "text/html", and will set the proper MIME type for

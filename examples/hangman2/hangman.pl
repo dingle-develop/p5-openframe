@@ -23,7 +23,6 @@ $config->setKey(
                   dispatch => 'Local',
                   name     => 'OpenFrame::Slot::Session',
 		  config   => {
-			       sessiondir => "../../t/sessiondir",
 			       default_session => {
 						   language => 'en',
 						   country  => 'UK',

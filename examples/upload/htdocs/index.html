@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>Upload example</title>
+</head>
+<body>
+[% IF application.upload.message %]
+<h2>[% application.upload.message %]</h2>
+[% END %]
+Please upload some more JPEG images:<p>
+
+<FORM ENCTYPE="multipart/form-data" ACTION="index.html" METHOD=POST>
+Text: <INPUT NAME="text" TYPE="text"><br>
+File1: <INPUT NAME="file1" TYPE="file"><br>
+File2: <INPUT NAME="file2" TYPE="file"><br>
+<INPUT TYPE="submit" VALUE="Send File">
+
+</FORM>
+
+Your last text was: [% system.parameters.text %]<br>
+Uploaded images:<p>
+
+First: <img src="first.jpg"><br>
+Second: <img src="second.jpg">
+
+
+</body>
+</html>

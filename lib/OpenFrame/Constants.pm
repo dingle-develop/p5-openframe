@@ -1,7 +1,6 @@
 package OpenFrame::Constants;
 
 use strict;
-use warnings::register;
 
 use Exporter;
 use base qw ( Exporter );

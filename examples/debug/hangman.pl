@@ -5,6 +5,7 @@
 # This version of hangman uses templates
 
 use strict;
+use lib '../hangman2';
 use lib '../../lib';
 
 use OpenFrame::Config;
@@ -17,7 +18,7 @@ $config->setKey(
                  {
                   dispatch => 'Local',
                   name => 'OpenFrame::Slot::Images',
-		  config   => { directory => './' },
+		  config   => { directory => '../hangman/' },
                  },
                  {
                   dispatch => 'Local',
@@ -40,8 +41,7 @@ $config->setKey(
 							   uri       => '/',
 							   dispatch  => 'Local',
 							   namespace => 'Hangman::Application',
-							   config   => { words => "./words.txt" },
-
+							   config   => { words => "../hangman/words.txt" },
 							  },
 							 ],
 			      },
@@ -49,7 +49,11 @@ $config->setKey(
                  {
                   dispatch => 'Local',
                   name     => 'Hangman::Generator',
-		  config   => { presentation => 'templates/' },
+		  config   => { presentation => '../hangman2/templates/' },
+                 },
+                 {
+                  dispatch => 'Local',
+                  name => 'OpenFrame::Slot::Debugger',
                  },
                 ]
                );
@@ -63,7 +67,7 @@ __END__
 
 =head1 NAME
 
-hangman.pl - A simple web hangman example for OpenFrame
+hangman.pl - A simple debugging hangman templated example for OpenFrame
 
 =head1 DESCRIPTION
 
@@ -72,11 +76,15 @@ for OpenFrame that allows you to play Hangman with your web browser.
 
 This uses an C<OpenFrame::Server::HTTP> stand-alone HTTP server, and
 sets up an C<OpenFrame::Config> object with various slots: one for
-static images, one for session support, and a simple dispatch
-slot. Note that this generates output inline, which is rather messy.
+static images, one for session support, a simple dispatch slot, and
+another slot which generates output using the Template Toolkit.
 
 Run the script and point your favourite web browser at
 http://localhost:8000/
+
+This version of hangman is debug enabled (notice the last slot) - run
+a session of hangman as normal, and then run debug.pl to see the steps
+made.
 
 =head1 AUTHOR
 
@@ -88,3 +96,4 @@ Copyright (C) 2001, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.
+

@@ -1,7 +1,6 @@
 package OpenFrame::Slot::NoImages;
 
 use strict;
-use warnings::register;
 
 use OpenFrame::Slot;
 use OpenFrame::Constants;
@@ -21,21 +20,20 @@ sub action {
   my $uri = $absrq->uri();
 
 
-  warnings::warn("[slot:noimages] checking to make sure we are processing images") if (warnings::enabled || $OpenFrame::DEBUG);
-  
-  
+  warn("[slot:noimages] checking to make sure we are processing images") if $OpenFrame::DEBUG;
+
   if ($uri->path() =~ /\/$/) {
     return;
   }
 
   if ($uri->path() !~ /\.html$/) {
-    warnings::warn("[slot:noimages] DECLINING " . $uri->path()) if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot:noimages] DECLINING " . $uri->path()) if $OpenFrame::DEBUG;
     my $response = OpenFrame::AbstractResponse->new();
     $response->code( ofDECLINED );
     $response->message( "not a request for an HTML page" );
     return $response;
   } else {
-    warnings::warn("[slot:noimages] accepting request for " . $uri->path()) if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot:noimages] accepting request for " . $uri->path()) if $OpenFrame::DEBUG;
   }
 }
 
@@ -45,7 +43,7 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Slot::NoImages - decline serving image files
+OpenFrame::Slot::NoImages - Decline serving image files
 
 =head1 SYNOPSIS
 

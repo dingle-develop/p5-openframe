@@ -42,6 +42,7 @@ sub action {
   return unless -e $templatedir . $filename && -r _;
 
   $tt->process($filename, $session, \$output) || ($output = $tt->error);
+  delete $session->{template}; # delete spurious entry by TT
 
   my $response = OpenFrame::AbstractResponse->new();
   $response->message($output);

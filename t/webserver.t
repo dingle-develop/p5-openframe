@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 use strict;
-use warnings;
 use URI;
 use lib 'lib';
 use lib 't/lib';
@@ -28,9 +27,8 @@ $config->setKey(
                 ]
 	       );
 $config->setKey(DEBUG => 0);
-$config->setKey(server_http_port => 8000);
 
-my $direct = OpenFrame::Server::Direct->new($config);
+my $direct = OpenFrame::Server::Direct->new(port => 8000);
 ok($direct, "should get OpenFrame::Server::Direct object");
 
 my $cookietin = OpenFrame::AbstractCookie->new();

@@ -1,0 +1,40 @@
+[% USE url('/') -%]
+<html>
+<head><title>Debug</title></head>
+<body>
+<h1>Debug</h1>
+
+<h2>Requests:</h2>
+
+<table cellspacing=0 cellpadding=4 border=1>
+<tr><th>Time<th>URL<th>Name<th>Entrypoint<th>MIME type
+
+[% id = 0 %]
+
+[% FOREACH entry = debug %]
+
+[% request = entry.request %]
+[% response = entry.response %]
+[% session = entry.session %]
+[% slots = entry.slots %]
+
+[% IF id % 2 == 1 %]
+<tr>
+[% ELSE %]
+<tr bgcolor="#cccccc">
+[% END %]
+
+<td>[% entry.time %]
+<td><a href="[% url("/single.html", id=id) %]">[% request.uri %]</a>
+<td>[% session.application.current.name || "&nbsp;" %] 
+<td>[% session.application.current.entrypoint || "&nbsp;" %]
+<td>[% response.mimetype %]
+
+[% id = id + 1 %]
+
+[% END %]
+
+</table>
+
+</body>
+</html>

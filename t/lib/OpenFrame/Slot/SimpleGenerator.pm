@@ -3,7 +3,7 @@ package OpenFrame::Slot::SimpleGenerator;
 use strict;
 use warnings::register;
 
-use Template;
+use Data::Dumper;
 use OpenFrame::Config;
 use OpenFrame::AbstractResponse;
 use OpenFrame::Constants;
@@ -22,7 +22,11 @@ sub action {
   my $output;
 
   my $response = OpenFrame::AbstractResponse->new();
-  $response->message($session);
+
+  my $sessioncopy;
+  eval Data::Dumper->Dump([$session], ["sessioncopy"]);
+
+  $response->message($sessioncopy);
   $response->code(ofOK);
   $response->mimetype('openframe/session');
   $response->cookies($cookietin);

@@ -1,8 +1,11 @@
 #!/usr/bin/perl -w
 #
-# A simple version of Eliza
+# The hangman images are by Andy Wardley
+#
+# This version of hangman uses templates
 
 use strict;
+use lib '../hangman2';
 use lib '../../lib';
 
 use OpenFrame::Config;
@@ -25,21 +28,7 @@ $config->setKey(
                  },
                  {
                   dispatch => 'Local',
-                  name     => 'OpenFrame::Slot::Dispatch',
-		  config   => {
-			       installed_applications => [
-							  {
-							   name      => 'eliza',
-							   uri       => '/',
-							   dispatch  => 'Local',
-							   namespace => 'Eliza::Application',
-							  },
-							 ],
-			      },
-                 },
-                 {
-                  dispatch => 'Local',
-                  name     => 'Eliza::Generator',
+                  name => 'Hangman::Generator',
 		  config   => { presentation => 'templates/' },
                  },
                 ]
@@ -47,24 +36,20 @@ $config->setKey(
 $config->setKey(DEBUG => 0);
 
 my $h = OpenFrame::Server::HTTP->new(port => 8000);
-print "Point your browser to http://localhost:8000/ to talk to Eliza!\n";
+print "Point your browser to http://localhost:8000/ to debug!\n";
 $h->handle();
 
 __END__
 
 =head1 NAME
 
-hangman.pl - A simple web hangman templated example for OpenFrame
+debug.pl - A simple OpenFrame debugger
 
 =head1 DESCRIPTION
 
-This Perl script contains a small and understandable web application
-for OpenFrame that allows you to play Hangman with your web browser.
-
-This uses an C<OpenFrame::Server::HTTP> stand-alone HTTP server, and
-sets up an C<OpenFrame::Config> object with various slots: one for
-static images, one for session support, a simple dispatch slot, and
-another slot which generates output using the Template Toolkit.
+This Perl script contains a simple OpenFrame debugger. This can
+present all the requests, responses, and sessions recorded during
+use of C<OpenFrame::Slot::Debugger>.
 
 Run the script and point your favourite web browser at
 http://localhost:8000/

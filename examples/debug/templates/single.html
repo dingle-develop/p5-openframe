@@ -1,0 +1,74 @@
+<html>
+<head><title>Debug</title></head>
+<body>
+<h1>Debug</h1>
+
+[% id = system.parameters.id %]
+
+[% entry = debug.$id %]
+
+[% request = entry.request %]
+[% response = entry.response %]
+[% session = entry.session %]
+[% slots = entry.slots %]
+
+Time: [% entry.time %]<br>
+
+<p>
+
+<h2>Request</h2>
+
+<table cellspacing=0 cellpadding=2 border=1>
+<tr><th>Key<th>Value
+<tr bgcolor="#cccccc"><td>URI<td>[% request.uri %]
+<tr><td>Originator<td>[% request.originator %]
+<tr bgcolor="#cccccc"><td>Descriptive<td> [% request.descriptive %]
+<tr><td>Arguments<td>
+ <table cellspacing=0 cellpadding=2 border=1>
+ [% FOREACH arg = request.arguments.sort %]
+ <td>[% arg %]<td>[% request.arguments.$arg %]
+ [% END %]&nbsp;
+ </table>
+<tr bgcolor="#cccccc"><td>Cookies<td>
+ <table cellspacing=0 cellpadding=2 border=1>
+ [% FOREACH cookie = request.cookies.getCookies %]
+ <td>[% cookie.getName %]<td>[% cookie.getValue %]
+ [% END %]&nbsp;
+ </table>
+</table>
+
+<h2>Response</h2>
+
+<table cellspacing=0 cellpadding=2 border=1>
+<tr><th>Key<th>Value
+<tr bgcolor="#cccccc"><td>MIME type<td>[% response.mimetype %]
+<tr><td>Code<td>[% response.code %]
+<tr bgcolor="#cccccc"><td>Cookies<td>
+ <table cellspacing=0 cellpadding=2 border=1>
+ [% FOREACH cookie = response.cookies.getCookies %]
+ <td>[% cookie.getName %]<td>[% cookie.getValue %]
+ [% END %]&nbsp;
+ </table>
+</table>
+
+<p>
+<h2>Session</h2>
+
+
+<table cellspacing=0 cellpadding=2 border=1>
+<tr><th>Key<th>Value
+<tr bgcolor="#cccccc"><td>Application<td>[% session.application.current.name %]
+<tr><td>Namespace<td>[% session.application.current.namespace %]
+<tr bgcolor="#cccccc"><td>Entrypoint<td>[% session.application.current.entrypoint %]
+</table>
+
+<p>
+
+[% USE Dumper %]
+[% saved = session.debug %]
+[% session.debug = "[snipped]" %]
+<pre>[% Dumper.dump(session) %]</pre>
+[% session.debug = saved %]
+
+</body>
+</html>

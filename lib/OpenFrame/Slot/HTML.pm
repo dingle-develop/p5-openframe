@@ -1,7 +1,6 @@
 package OpenFrame::Slot::HTML;
 
 use strict;
-use warnings::register;
 
 use File::MMagic;
 use FileHandle;
@@ -21,7 +20,7 @@ sub action {
   my $absrq = shift;
   my $uri = $absrq->uri();
 
-  warnings::warn("[slot:html] checking to make sure we are processing html") if (warnings::enabled || $OpenFrame::DEBUG);
+  warn("[slot:html] checking to make sure we are processing html") if $OpenFrame::DEBUG;
 
 
   my $file = $uri->path();
@@ -39,10 +38,10 @@ sub action {
     my $mm = File::MMagic->new();
     my $type = $mm->checktype_filename($file);
 
-    warnings::warn("[slot:html] file $file has type $type") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot:html] file $file has type $type") if $OpenFrame::DEBUG;
 
     if ($type eq "text/html") {
-      warnings::warn("[slot:html] file $file is being handled as HTML") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot:html] file $file is being handled as HTML") if $OpenFrame::DEBUG;
 
       my $response = OpenFrame::AbstractResponse->new();
       $response->code(ofOK);
@@ -58,7 +57,7 @@ sub action {
       return $response;
     }
   }
-  warnings::warn("[slot:html] file $file was not  handled as HTML") if (warnings::enabled || $OpenFrame::DEBUG);
+  warn("[slot:html] file $file was not  handled as HTML") if $OpenFrame::DEBUG;
 
 }
 
@@ -68,7 +67,7 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Slot::HTML - serve static HTML files
+OpenFrame::Slot::HTML - Serve static HTML files
 
 =head1 SYNOPSIS
 

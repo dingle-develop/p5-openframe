@@ -1,16 +1,12 @@
 package OpenFrame::Slot::Session;
 
 use strict;
-use warnings::register;
-
-use FileHandle;
+use Apache::SessionX;
+use Data::Denter;
 use OpenFrame::Config;
 use OpenFrame::AbstractCookie;
-use Digest::MD5 qw(md5_hex);
 
-use Data::Dumper;
-
-our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.16 2001/11/13 14:30:44 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.22 2001/11/21 14:19:16 leon Exp $ }))[2];
 
 sub what {
   return ['OpenFrame::AbstractRequest'];
@@ -22,105 +18,57 @@ sub action {
   my $req   = shift;
 
   if (!ref($req)) {
-    warnings::warn("[slot::session] no abstract request received") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot::session] no abstract request received") if $OpenFrame::DEBUG;
     return undef;
   }
-
-  my $session = {};
-  my $key     = '';
 
   my $cookietin = $req->cookies();
 
   if (!$cookietin) {
-    warnings::warn("[slot::session] did not fetch any cookies");
+    warn("[slot::session] did not fetch any cookies") if $OpenFrame::DEBUG;
   }
 
-  if (!$cookietin->getCookie("session") || !$cookietin->getCookie("session")->getValue()) {
-    $session = $config->{default_session};
+  my $id;
+  my $new = 0;
 
-    $key  = generate_key();
-    warnings::warn("[slot::session] key is $key") if (warnings::enabled || $OpenFrame::DEBUG);
-
-    $session->{id} = $key;
-
-
-    my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
-							       Name  => 'session',
-							       Value => $key,
-							      );
-    $cookietin->addCookie( Cookie => $cookie );
-
-    bless $session, 'OpenFrame::Session';
+  if ($cookietin->getCookie("session")) {
+    $id = $cookietin->getCookie("session")->getValue();
   } else {
-
-    my $sessiondir = $config->{sessiondir};
-    my $id         = $cookietin->getCookie("session")->getValue();
-
-    my $fh = FileHandle->new("<$sessiondir/$id");
-    if ($fh) {
-      local $/ = undef;
-      {
-	no strict;
-	$session = eval <$fh>;
-	if ($@) {
-	  warnings::warn("[slot::session] cannot recreate cookie $@") if (warnings::enabled || $OpenFrame::DEBUG);
-	}
-      }
-      $fh->close();
-
-      bless $session, 'OpenFrame::Session';
-    } else {
-      warnings::warn("[slot::session] reviving expired session $id") if (warnings::enabled || $OpenFrame::DEBUG);
-
-      $session = $config->{default_session};
-      $session->{id} = $id;
-
-      bless $session, 'OpenFrame::Session';
-    }
-
-    my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
-							       Name  => 'session',
-							       Value => $id,
-							      );
-    $cookietin->addCookie( Cookie => $cookie );
-
-
-
+    $new = 1;
   }
+
+  my %session;
+  eval {
+    tie %session, 'Apache::SessionX', $id;
+  };
+  if ($@) {
+    tie %session, 'Apache::SessionX', $id, { create_unknown => 1};
+    warn("[slot::session] recreating session") if $OpenFrame::DEBUG;
+    $new = 1;
+  }
+
+  my $session = \%session;
+  bless $session, "OpenFrame::Session";
+
+  if ($new) {
+    $session->{$_} = $config->{default_session}->{$_}
+      foreach keys %{$config->{default_session}};
+  }
+
+  my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
+       Name  => 'session',
+       Value => tied(%session)->getid,
+   );
+  $cookietin->addCookie(Cookie => $cookie);
+
   $session->{transactions}++;
 
-  warnings::warn("Session is " . Dumper( $session )) if (warnings::enabled || $OpenFrame::DEBUG);
+  warn("Session is " . Denter($session)) if $OpenFrame::DEBUG;
 
   delete $session->{system}->{parameters};
   $session->{system}->{parameters} = $req->arguments();
 
-  return ($session,$cookietin,'OpenFrame::Slot::SessionSaver');
-}
-
-sub OpenFrame::Session::writeSession {
-  my $self   = shift;
-  my $config = shift;
-
-  if ((!defined($config) && !ref($config)) || $self->{nosave}) {
-    warnings::warn("[session] not saving session") if (warnings::enabled || $OpenFrame::DEBUG);
-    return;
-  }
-
-  my $caller = caller();
-  my $fh = FileHandle->new( ">$config->{sessiondir}/$self->{id}");
-  if ($fh) {
-    $fh->print(Dumper($self));
-    $fh->close();
-  } else {
-    warnings::warn("[slot::session] could not write session object") if (warnings::enabled || $OpenFrame::DEBUG);
-  }
-  return;
-}
-
-sub generate_key {
-  # See page 5 of ftp://ftp.rsasecurity.com/pub/cryptobytes/crypto1n1.pdf
-  # for why we are hashing twice
-  return substr(md5_hex(time() . md5_hex(time(). {}. rand(). $$)), 0, 16);
+  return ($session, $cookietin, 'OpenFrame::Slot::SessionSaver');
 }
 
 1;
@@ -129,7 +77,7 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Slot::Session - handle cookie-based sessions
+OpenFrame::Slot::Session - Handle cookie-based sessions
 
 =head1 SYNOPSIS
 
@@ -138,7 +86,6 @@ OpenFrame::Slot::Session - handle cookie-based sessions
   dispatch => 'Local',
   name     => 'OpenFrame::Slot::Session',
   config   => {
-    sessiondir => "../../t/sessiondir",
     default_session => {
       language => 'en',
       country  => 'UK',
@@ -155,9 +102,12 @@ cookie-based session handling.
 Apart from adding it as a SLOT early on in the slot process, the
 handling of session is done fairly transparently.
 
-Sessions are currently stored on disk and are not expired. The
-directory where they are stored is passed as the configuration option
-"sessiondir", and a default session can be passed as "default_session".
+Sessions are currently handled by the C<Apache::SessionX> modue and
+are not expired. This is somewhat of a pain, as you have to set up
+that module properly before being able to use sessions, but this
+brings the advantage of transparently using the right session
+environment, be that static files, a BerkeleyDB file or even a
+database. A default session can be passed as "default_session".
 
 After this slot is run, slots may request C<OpenFrame::Session>
 objects. Applications using C<OpenFrame::Slot::Dispatch> automatically
@@ -169,7 +119,8 @@ scenes by sending and receiving a cookie.
 
 =head1 AUTHOR
 
-James A. Duncan <jduncan@fotango.com>
+James A. Duncan <jduncan@fotango.com>,
+Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 

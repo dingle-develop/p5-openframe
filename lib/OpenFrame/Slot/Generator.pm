@@ -1,14 +1,13 @@
 package OpenFrame::Slot::Generator;
 
 use strict;
-use warnings::register;
 
 use Template;
 use OpenFrame::Config;
 use OpenFrame::Constants;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.7 2001/11/12 12:16:16 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.11 2001/11/21 14:16:36 leon Exp $ }))[2];
 
 sub what {
   return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
@@ -22,9 +21,10 @@ sub action {
   my $cookie  = shift;
 
   my $templatedir = $config->{presentation};
+  my $cachedir    = $config->{presentationcache} || $config->{presentation} . "/compcache/";
   my $locale      = $session->{country} . $session->{language};
 
-  warnings::warn("[slot::generator] template dir is $templatedir/$locale") if (warnings::enabled || $OpenFrame::DEBUG);
+  warn("[slot::generator] template dir is $templatedir/$locale") if $OpenFrame::DEBUG;
 
   my $tt = Template->new(
 			 {
@@ -32,27 +32,32 @@ sub action {
 			  POST_CHOMP   => 1,
 			  RELATIVE     => 1,
 			  COMPILE_EXT  => "tt2",
-			  COMPILE_DIR  => $config->{presentation} . "/compcache/",
+			  COMPILE_DIR  => $cachedir,
 			 }
 			);
 
   my $output;
 
   if (substr($request->uri()->path, -1) eq '/') {
-    warnings::warn("[slot::generator] no file, using index.html") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot::generator] no file, using index.html") if $OpenFrame::DEBUG;
     $request->uri( URI->new( $request->uri()->canonical() . 'index.html' ) );
   }
 
-  unless ($tt->process(substr($request->uri()->path(), 1), $session, \$output)) {
-    warnings::warn("[slot::generator] could not process template (" . $tt->error . ")") if (warnings::enabled || $OpenFrame::DEBUG);
+  if ($request->uri->path() =~ /\.html$/) {
+    unless ($tt->process(substr($request->uri()->path(), 1), $session, \$output)) {
+      warn("[slot::generator] could not process template (" . $tt->error . ")") if $OpenFrame::DEBUG;
+    }
+    delete $session->{template}; # delete spurious entry by TT
+
+    my $response = OpenFrame::AbstractResponse->new();
+    $response->message( $output );
+    $response->code( ofOK );
+    $response->cookies( $cookie );
+
+    return $response;
   }
+  warn("[slot:generator] file was not handled as template") if $OpenFrame::DEBUG;
 
-  my $response = OpenFrame::AbstractResponse->new();
-  $response->message( $output );
-  $response->code( ofOK );
-  $response->cookies( $cookie );
-
-  return $response;
 }
 
 1;

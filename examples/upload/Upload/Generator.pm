@@ -1,4 +1,4 @@
-package Hangman::Generator;
+package Upload::Generator;
 
 use strict;
 use warnings::register;
@@ -44,7 +44,6 @@ sub action {
   $tt->process($filename, $session, \$output) || ($output = $tt->error);
   delete $session->{template}; # delete spurious entry by TT
 
-
   my $response = OpenFrame::AbstractResponse->new();
   $response->message($output);
   $response->code(ofOK);
@@ -60,11 +59,11 @@ __END__
 
 =head1 NAME
 
-Hangman::Generator - A templated output generator for hangman
+Upload::Generator - A templated output generator for Upload
 
 =head1 DESCRIPTION
 
-C<Hangman::Generator> is a templated output generator for hangman. The
+C<Upload::Generator> is a templated output generator for Upload. The
 session is passed to a Template Toolkit template, which generates
 output, and the code then generates a response.
 
@@ -74,7 +73,7 @@ seeing if it can read the template file.
 
 The template used is "templates/index.html" so investigate that to
 understand the clear seperation between logic and presentation present
-in this example hangman game.
+in this example Upload application.
 
 =head1 AUTHOR
 

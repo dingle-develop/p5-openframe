@@ -1,3 +1,4 @@
+[% USE url('/') %]
 [% hangman = application.hangman %]
 [% game = hangman.game %]
 <html>
@@ -8,7 +9,7 @@
 [% IF hangman.message %]
 <h2>[% hangman.message %]</h2>
 Score: [% hangman.finalscore || game.get_score || 0 %]<p>
-<a href="/">Have another go!</a>
+<a href="[% url() %]">Have another go!</a>
 [% ELSE %]
 
 <img src="/images/h[% 6 - game.get_chances %].gif"><br>
@@ -23,7 +24,7 @@ Score: [% game.get_score %]
   [% IF hangman.guessed.$letter %]
     [% letter %] 
   [% ELSE %]
-    <a href="/?guess=[% letter %]">[% letter %]</a>
+    <a href="[% url(guess = letter) %]">[% letter %]</a>
   [% END %]
 [% END %]
 

@@ -6,8 +6,6 @@ package OpenFrame::Server::Apache;
 ##
 
 use strict;
-use warnings;
-use warnings::register;
 
 use URI;
 use Apache;
@@ -23,7 +21,7 @@ use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.11 2001/11/12 11:11:06 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.14 2001/11/20 16:08:11 leon Exp $ }))[2];
 
 sub handler {
   my $request = shift;
@@ -32,9 +30,7 @@ sub handler {
   ## make sure we have a valid request
   ##
   if (!$request || !blessed( $request) || !$request->isa('Apache')) {
-    if (warnings::enabled) {
-      warnings::warn("invalid call to handler") if (warnings::enabled || $OpenFrame::DEBUG);
-    }
+    warn("invalid call to handler") if $OpenFrame::DEBUG;
     return undef;
   }
 
@@ -46,7 +42,7 @@ sub handler {
     $uri->host( $request->hostname() );
     $uri->scheme( 'http' );
   } else {
-    warnings::warn("server could not create URI object") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("server could not create URI object") if $OpenFrame::DEBUG;
     return SERVER_ERROR;
   }
 
@@ -56,6 +52,7 @@ sub handler {
   my $ar = Apache::Request->new( $request );
 
   my $args = { map { ($_, $ar->param($_)) } $ar->param() };
+  $args{$_->name} = $_->fh foreach $ar->upload;
 
   my $cookietin  = OpenFrame::AbstractCookie->new();
   my %apcookies  = Apache::Cookie->fetch();
@@ -78,11 +75,7 @@ sub handler {
 						       );
 
   if (!$abstractRequest) {
-
-    if (warnings::enabled) {
-      warnings::warn("could not create abstract request object") if (warnings::enabled || $OpenFrame::DEBUG);
-    }
-
+    warn("could not create abstract request object") if $OpenFrame::DEBUG;
     return undef;
 
   } else {
@@ -109,27 +102,27 @@ sub handler {
 	}
 
 
-	warnings::warn("[apache] ok") if (warnings::enabled || $OpenFrame::DEBUG);
+	warn("[apache] ok") if $OpenFrame::DEBUG;
 	$request->no_cache(1);
 	$request->send_http_header( $response->mimetype() || 'text/html' );
 	$request->print( $response->message() );
 
 	return OK;
       } elsif ($response->code() eq ofDECLINED) {
-	warnings::warn("[apache] declined") if (warnings::enabled || $OpenFrame::DEBUG);
+	warn("[apache] declined") if $OpenFrame::DEBUG;
 	return DECLINED;
       } elsif ($response->code() eq ofREDIRECT) {
-	warnings::warn("[apache] redirect") if (warnings::enabled || $OpenFrame::DEBUG);
+	warn("[apache] redirect") if $OpenFrame::DEBUG;
 	Apache->request()->header_out(
 				      "Location" => $response->message()
 				     );
 	return REDIRECT;
       } elsif ($response->code() eq ofERROR) {
-	warnings::warn("[apache] server error") if (warnings::enabled || $OpenFrame::DEBUG);
-	warnings::warn($response->message());
+	warn("[apache] server error") if $OpenFrame::DEBUG;
+	warn($response->message()) if $OpenFrame::DEBUG;
 	return SERVER_ERROR;
       } else {
-	warnings::warn("[apache] unrecognized response");
+	warn("[apache] unrecognized response");
       }
     }
 
@@ -151,11 +144,16 @@ This is a mod_perl extension, see the INSTALL guide for information on how to in
 
 =head1 DESCRIPTION
 
-I<OpenFrame::Server::Apache> is an Apache extension.  It is responsible for creating an
-I<OpenFrame::AbstractRequest> object and passing it back to the main server class.  It also
-delivers the I<OpenFrame::AbstractResponse> object to the client.
+I<OpenFrame::Server::Apache> is an Apache extension.  It is
+responsible for creating an I<OpenFrame::AbstractRequest> object and
+passing it back to the main server class.  It also delivers the
+I<OpenFrame::AbstractResponse> object to the client.
 
-=head1 DEPENDANCIES
+Note that any file upload objects are in the arguments of the
+AbstractRequest and their value is a filehandle pointing to the
+object.
+
+=head1 DEPENDENCIES
 
 =over 4
 

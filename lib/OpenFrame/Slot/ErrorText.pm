@@ -28,7 +28,7 @@ sub action {
 			  </html>
 			 }
 		       );
-
+  $response->mimetype("text/html");
   $response->code(ofOK);
   return $response;
 }

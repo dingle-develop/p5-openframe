@@ -1,6 +1,19 @@
 Revision history for Perl module OpenFrame: 
 
-2.03 
+2.04 Thu Nov 22 12:26:06 GMT 2001
+	- completely changed session implementation: instead of rolling our
+	  own we now use the excellent Apache::SessionX (which is not 
+	  dependent on Apache, despite the name). The "sessiondir"	
+	  config parameter is now obsolete
+	- new OpenFrame::Slot::Debugger and example
+	- OpenFrame::Server::HTTP now preforks (and can do file uploads)
+	- no longer produce warnings when under -w or "use warnings".
+          To enable tracing through openframe, enable debugging by
+          using: $config->setKey(DEBUG => 1);
+	- made sure errors were being passed around (and new error test)
+	- new file upload example
+
+2.03 Mon Nov 13 17:12:56 GMT 2001
 	- added documentation (all examples, OpenFrame::Application, 
           OpenFrame::Constants, OpenFrame::Slot::*)
 	- fixed per-application configuration to actually work

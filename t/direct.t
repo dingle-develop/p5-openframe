@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 use strict;
-use warnings;
 use URI;
 use lib 'lib';
 use lib 't/lib';
@@ -24,7 +23,7 @@ $config->setKey(
                   dispatch => 'Local',
                   name     => 'OpenFrame::Slot::Session',
 		  config   => {
-			       sessiondir => "t/sessiondir",
+			       directory => "t/sessiondir",
 			       default_session => {
 						   language => 'en',
 						   country  => 'UK',
@@ -61,7 +60,7 @@ $config->setKey(
 $config->setKey(DEBUG => 0);
 
 
-my $direct = OpenFrame::Server::Direct->new($config);
+my $direct = OpenFrame::Server::Direct->new();
 ok($direct, "should get OpenFrame::Server::Direct object");
 
 

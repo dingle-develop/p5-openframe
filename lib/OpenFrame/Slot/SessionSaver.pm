@@ -1,7 +1,6 @@
 package OpenFrame::Slot::SessionSaver;
 
 use strict;
-use warnings::register;
 
 use Data::Dumper;
 use OpenFrame::Slot;
@@ -16,9 +15,8 @@ sub action {
   my $config = shift;
   my $session = shift;
 
-  warnings::warn("[slot::sessionsaver] saving $session $session->{id}") if (warnings::enabled || $OpenFrame::DEBUG);
-
-  $session->writeSession( $config );
+  warn("[slot::sessionsaver] saving $session") if $OpenFrame::DEBUG;
+  (tied %$session)->cleanup();
 }
 
 1;
@@ -27,7 +25,11 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Slot::SessionSaver - handle cookie-based sessions
+OpenFrame::Slot::SessionSaver - Handle cookie-based sessions
+
+=head1 SYNOPSIS
+
+  # None
 
 =head1 DESCRIPTION
 

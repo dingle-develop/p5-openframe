@@ -78,7 +78,7 @@ C<OpenFrame::Constants>: ofOK, ofERROR, ofREDIRECT, ofDECLINED.
 
 This method gets and sets the MIME type associated with this response.
 
-  my $type = $r->mimeype();
+  my $type = $r->mimetype();
   $r->mimetype('text/html');
 
 =head1 AUTHOR

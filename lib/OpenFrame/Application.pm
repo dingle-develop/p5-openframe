@@ -1,12 +1,11 @@
 package OpenFrame::Application;
 
 use strict;
-use warnings::register;
 
 use Data::Dumper;
 use OpenFrame::Config;
 
-our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.8 2001/11/13 12:33:03 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.10 2001/11/19 11:50:59 leon Exp $ }))[2];
 our $epoints = {};
 
 sub new {
@@ -36,10 +35,10 @@ sub enter {
 	  $num_m++;
 	}
       }
-      warnings::warn("[application] examining $num_m vs $num_to_match") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[application] examining $num_m vs $num_to_match") if $OpenFrame::DEBUG;
       if ($num_m == $num_to_match) {
 	$num_m = 0;
-	warnings::warn("[application] entering $entry") if (warnings::enabled || $OpenFrame::DEBUG);
+	warn("[application] entering $entry") if $OpenFrame::DEBUG;
       $session->{application}->{current}->{entrypoint} = $entry;
 	if ($self->can($entry)) {
 	  $self->$entry($session, $request, $config);
@@ -47,7 +46,7 @@ sub enter {
 	}
       }
     }
-    warnings::warn("[application] using default entry point") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[application] using default entry point") if $OpenFrame::DEBUG;
     $session->{application}->{current}->{entrypoint} = 'default';
     $self->default($session, $request, $config);
     return;
@@ -66,7 +65,7 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Application - base class for all OpenFrame applications
+OpenFrame::Application - Base class for all OpenFrame applications
 
 =head1 SYNOPSIS
 

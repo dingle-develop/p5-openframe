@@ -18,7 +18,7 @@ $config->setKey(
 						     country  => 'UK',
 						     application => {},
 						    },
-			       'sessiondir' => '/tmp/openframe2',
+			       'directory' => '/tmp/openframe2',
 			      }
 		 },
 		 {

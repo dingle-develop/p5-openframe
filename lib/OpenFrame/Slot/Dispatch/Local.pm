@@ -1,7 +1,6 @@
 package OpenFrame::Slot::Dispatch::Local;
 
 use strict;
-use warnings::register;
 
 sub dispatch {
   my $class    = shift;
@@ -12,8 +11,8 @@ sub dispatch {
 
   eval "use $app->{namespace};";
   if ($@) {
-    warnings::warn("[slot::dispatch] cannot use namespace $app->{namespace} as app");
-    warnings::warn($@) if (warnings::enabled() || $OpenFrame::DEBUG);	
+    warn("[slot::dispatch] cannot use namespace $app->{namespace} as app") if $OpenFrame::DEBUG;
+    warn($@) if $OpenFrame::DEBUG;	
     return undef;
   }
 
@@ -23,7 +22,7 @@ sub dispatch {
     if (ref($ref)) {
       $appcode = bless $ref, $app->{namespace};
     } else {
-      warnings::warn("[slot::dispatch] not a reference in session") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot::dispatch] not a reference in session") if $OpenFrame::DEBUG;
       delete $session->{application}->{ $app->{name} };
       return undef;
     }
@@ -39,10 +38,10 @@ sub dispatch {
       $session->{application}->{ $app->{name} } = \%apphash;
       return 1;
     } else {
-      warnings::warn("[slot::dispatch] can't find enter method in module $app->{name}") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot::dispatch] can't find enter method in module $app->{name}") if $OpenFrame::DEBUG;
     }
   } else {
-    warnings::warn("[slot::dispatch] could not (re)create application object") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot::dispatch] could not (re)create application object") if $OpenFrame::DEBUG;
   }
 
   return 1;

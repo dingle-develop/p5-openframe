@@ -10,7 +10,7 @@ The ability to set off a subrequest
 
 Clear up the distinction between data and objects
 
-Rename session configuration "sessiondir" to "directory"
+[done] Rename session configuration "sessiondir" to "directory"
 
 [done] Per-slot config options
 

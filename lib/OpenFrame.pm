@@ -1,16 +1,19 @@
 package OpenFrame;
 
 use strict;
-use warnings::register;
 
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 =head1 NAME
 
 OpenFrame - An Application Framework for Perl and the Web
+
+=head1 SYNOPSIS
+
+  # See the examples/ directory
 
 =head1 DESCRIPTION
 

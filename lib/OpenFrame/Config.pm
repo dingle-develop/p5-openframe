@@ -1,7 +1,6 @@
 package OpenFrame::Config;
 
 use strict;
-use warnings::register;
 
 use FileHandle;
 use Scalar::Util;
@@ -80,6 +79,7 @@ sub new {
 	$file = $possibility;
 	last;
       }
+      $file = $CONFIGFILES->[0];
     }
   }
 
@@ -90,8 +90,8 @@ sub new {
     $self = $CONFIG->{$file};
   } else {
     if (!$file) {
-      if (warnings::enabled()  || $OpenFrame::DEBUG) {
-	warnings::warn(sprintf("no configuration file found at %s", join(' ', @$CONFIGFILES)));
+      if ($OpenFrame::DEBUG) {
+	warn(sprintf("no configuration file found at %s", join(' ', @$CONFIGFILES)));
       }
       $self = {};
     } else {
@@ -104,7 +104,7 @@ sub new {
 	flock($cfh, LOCK_UN);
 	$cfh->close();
       } else {
-	warnings::warn("could not open config file $file ($!)") if (warnings::enabled || $OpenFrame::DEBUG);
+	warn("could not open config file $file ($!)") if $OpenFrame::DEBUG;
 	$self = {};
       }
     }
@@ -137,7 +137,7 @@ sub writeConfig {
   my $self = shift;
   return if (!$self->{_isMod});
   delete $self->{_isMod};
-  my $file = -w $self->{_source} ? $self->{_source} : $CONFIGFILES->[0];
+  my $file = $self->{source} && -w $self->{_source} ? $self->{_source} : $CONFIGFILES->[0];
   if (exists $self->{_source}) {
     delete $self->{_source};
   }
@@ -150,7 +150,7 @@ sub writeConfig {
     $self->{_source} = $file;
     return 1;
   } else {
-    warnings::warn("could not write config to $file ($!)") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("could not write config to $file ($!)") if $OpenFrame::DEBUG;
     return undef;
   }
 }
@@ -203,7 +203,10 @@ sub getKey {
 
   my $is = Scalar::Util::reftype($self->{$_[0]});
 
-  warnings::warn("[config] value $_[0] is a $is") if (warnings::enabled || $OpenFrame::DEBUG);
+  if ($OpenFrame::DEBUG) {
+    my $warnis = defined($is) ? $is : "[undef]";
+    warn("[config] value $_[0] is a $warnis");
+  }
 
   if (!$is) {
     return $self->{$_[0]}

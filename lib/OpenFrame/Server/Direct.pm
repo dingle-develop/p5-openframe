@@ -1,8 +1,6 @@
 package OpenFrame::Server::Direct;
 
 use strict;
-use warnings;
-use warnings::register;
 
 use CGI;
 use URI;
@@ -32,12 +30,7 @@ sub handle {
   my $url = shift;
   my $cookietin = shift || OpenFrame::AbstractCookie->new();
 
-  my $uri = URI->new( $url );
-  unless ($uri) {
-    warnings::warn("server could not create URI object") if (warnings::enabled || $OpenFrame::DEBUG);
-#    return SERVER_ERROR;
-    return;
-  }
+  my $uri = URI->new($url);
 
   ##
   ## abstract the request
@@ -54,22 +47,11 @@ sub handle {
 							cookies     => $cookietin,
 						       );
 
+  my $response = OpenFrame::Server->action($abstractRequest, $self->{_config});
+  return wantarray() ? ($response, $response->cookies()) : $response;
 
-  if (!$abstractRequest) {
-
-    if (warnings::enabled) {
-      warnings::warn("could not create abstract request object") if (warnings::enabled || $OpenFrame::DEBUG);
-    }
-
-    return undef;
-
-  } else {
-
-    my $response = OpenFrame::Server->action($abstractRequest, $self->{_config});
-    return wantarray() ? ($response, $response->cookies()) : $response;
-
-  }
 }
+
 
 1;
 
@@ -83,7 +65,7 @@ OpenFrame::Server::Direct - Provide direct access to OpenFrame
 
   my $url = "http://localhost/myapp/?param=5";
   my $cookietin = OpenFrame::AbstractCookie->new();
-  my $direct = OpenFrame::Server::Direct->new($config);
+  my $direct = OpenFrame::Server::Direct->new();
   my $response;
   ($response, $cookietin) = $direct->handle($url, $cookietin);
 
@@ -105,5 +87,12 @@ cookies to work.
 =head1 AUTHOR
 
 Leon Brocard <leon@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2001, Fotango Ltd.
+
+This module is free software; you can redistribute it or modify it
+under the same terms as Perl itself.
 
 =cut

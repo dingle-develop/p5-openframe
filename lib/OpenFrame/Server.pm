@@ -1,14 +1,13 @@
 package OpenFrame::Server;
 
 use strict;
-use warnings::register;
 
 use OpenFrame::Slot;
 use OpenFrame::Config;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.6 2001/11/13 14:06:35 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.7 2001/11/19 11:50:59 leon Exp $ }))[2];
 
 
 sub action {

@@ -1,7 +1,6 @@
 package OpenFrame::Slot;
 
 use strict;
-use warnings::register;
 
 use SOAP::Lite;
 use Data::Dumper;
@@ -10,7 +9,7 @@ use OpenFrame::Constants;
 use OpenFrame::Exception;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.16 2001/11/13 15:56:21 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.20 2001/11/19 15:41:36 leon Exp $ }))[2];
 sub what ();
 
 sub action {
@@ -33,7 +32,7 @@ sub action {
     ## dispatch mechanisms (local vs. SOAP)
     ##
     if ($slot->{dispatch} eq 'Local') {
-      warnings::warn("[slot] $slot->{name} being dispatched locally") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot] $slot->{name} being dispatched locally") if $OpenFrame::DEBUG;
 
       my $result = $varstore->store( $class->dispatchLocally( $slot, $varstore ) );
       if (scalar @$result) {
@@ -41,7 +40,7 @@ sub action {
       }
 
     } elsif ($slot->{dispatch} eq 'SOAP') {
-      warnings::warn("[slot] $slot->{name} being dispatched via soap") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot] $slot->{name} being dispatched via soap") if $OpenFrame::DEBUG;
 
       my $result = $varstore->store( $class->dispatchViaSOAP( $slot, $varstore ) );
       if (scalar @$result) {
@@ -49,7 +48,7 @@ sub action {
       }
 
    } else {
-      warnings::warn("[slot] unknown slot dispatch mechanism") if (warnings::enabled || $OpenFrame::DEBUG);
+      warn("[slot] unknown slot dispatch mechanism: $slot->{dispatch}") if $OpenFrame::DEBUG;
       next;
     }
 
@@ -71,7 +70,12 @@ sub action {
   if ($varstore->lookup( 'OpenFrame::AbstractResponse' )) {
     return $varstore->lookup('OpenFrame::AbstractResponse');
   } else {
-    return OpenFrame::AbstractResponse->new( code => ofERROR );
+    warn("[slot] none of the slots returned a response") if $OpenFrame::DEBUG;
+    my $r = OpenFrame::AbstractResponse->new();
+    $r->message("None of the OpenFrame slots returned a response object");
+    $r->mimetype("text/plain");
+    $r->code(ofERROR);
+    return $r;
   }
 }
 
@@ -82,11 +86,17 @@ sub dispatchLocally {
 
   my $slotclass = $slot->{name};
 
-  eval "use $slotclass";
-  if ($@) {
-    my $excp = OpenFrame::Exception::Perl->new( $@ );
-    $excp->throw();
-    return undef;
+  my $slotfile = $slotclass;
+  $slotfile =~ s|::|/|g;
+  $slotfile .= ".pm";
+
+  if (not exists $INC{$slotfile}) {
+    eval "use $slotclass";
+    if ($@) {
+      my $excp = OpenFrame::Exception::Perl->new( $@ );
+      $excp->throw();
+      return undef;
+    }
   }
 
   my $args = $class->getSlotArgs( $varstore, $slotclass );
@@ -151,7 +161,6 @@ sub dispatchViaSOAP {
 package OpenFrame::SlotStore;
 
 use strict;
-use warnings::register;
 
 use Scalar::Util qw ( blessed );
 
@@ -191,26 +200,11 @@ __END__
 
 OpenFrame::Slot - Information about OpenFrame Slots
 
-=head1 OVERVIEW
-
-OpenFrame Slot functionality is designed as a pipe where
-transmogrification takes place.  An I<OpenFrame::AbstractRequest>
-object is poured into the top, and when it comes out of the bottom it
-should be an I<OpenFrame::AbstractResponse>, that contains all the
-information that is needed by any server to deliver content to a
-browser.  In between the top and the bottom of the pipe functionality
-is executed in a serial fashion.  Futhermore, it is possible to alter
-the slot pipeline at runtime, by returning a class name (string) from
-a slot.  The class name given will be placed at the end of the slot
-pipeline, and will inherit the configuration from the slot that
-created placed it there.
-
-=head1 EXAMPLE
+=head1 SYNOPSIS
 
   package OpenFrame::Slot::MyRequestNoter;
 
   use strict;
-  use warnings::register;
 
   use OpenFrame::Slot;
   use base qw ( OpenFrame::Slot );
@@ -224,10 +218,24 @@ created placed it there.
     my $conf = shift;
     my $req  = shift;
 
-    warnings::warn("URL Requested is: " . $req->uri()->as_string());
+    warn("URL Requested is: " . $req->uri()->as_string());
   }
 
   1;
+
+=head1 DESCRIPTION
+
+OpenFrame Slot functionality is designed as a pipe where
+transmogrification takes place.  An I<OpenFrame::AbstractRequest>
+object is poured into the top, and when it comes out of the bottom it
+should be an I<OpenFrame::AbstractResponse>, that contains all the
+information that is needed by any server to deliver content to a
+browser.  In between the top and the bottom of the pipe functionality
+is executed in a serial fashion.  Futhermore, it is possible to alter
+the slot pipeline at runtime, by returning a class name (string) from
+a slot.  The class name given will be placed at the end of the slot
+pipeline, and will inherit the configuration from the slot that
+created placed it there.
 
 =head1 WHAT'S IN A SLOT
 

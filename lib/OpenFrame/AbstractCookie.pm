@@ -1,6 +1,5 @@
 package OpenFrame::AbstractCookie;
 use strict;
-use warnings::register;
 
 use Scalar::Util qw ( blessed );
 
@@ -29,7 +28,7 @@ sub addCookie {
       $self->{cookies}->{$args->{Cookie}->getName()} = $args->{Cookie};
       return 1;
      } else {
-       warnings::warn("usage: addCookie( Cookie => \$cookie )");
+       warn("usage: addCookie( Cookie => \$cookie )");
        return undef;
      }
   } else {
@@ -74,7 +73,6 @@ sub delCookie {
 package OpenFrame::AbstractCookie::CookieElement;
 
 use strict;
-use warnings::register;
 
 sub new {
   my $class = shift;
@@ -90,7 +88,7 @@ sub new {
     if ( $sub ) {
       $sub->($self, $args->{$arg});
     } else {
-      warnings::warn("usage __PACAKGE__->new( Name => 'CookieName', Value => 'CookieValue' )");
+      warn("usage __PACAKGE__->new( Name => 'CookieName', Value => 'CookieValue' )");
       return undef;
     }
   }

@@ -6,6 +6,10 @@ TODO
 FAQ.txt
 configatom
 configbuilder
+examples/debug/debug.pl
+examples/debug/hangman.pl
+examples/debug/templates/index.html
+examples/debug/templates/single.html
 examples/eliza/eliza.pl
 examples/eliza/Eliza/Application.pm
 examples/eliza/Eliza/Generator.pm
@@ -25,6 +29,10 @@ examples/hangman2/hangman.pl
 examples/hangman2/Hangman/Application.pm
 examples/hangman2/Hangman/Generator.pm
 examples/hangman2/templates/index.html
+examples/upload/upload.pl
+examples/upload/Upload/Application.pm
+examples/upload/Upload/Generator.pm
+examples/upload/htdocs/index.html
 examples/webserver/webserver.pl
 examples/webserver/htdocs/index.html
 examples/webserver/htdocs/perl.gif
@@ -43,6 +51,7 @@ lib/OpenFrame/Server/Apache.pm
 lib/OpenFrame/Server/Direct.pm
 lib/OpenFrame/Server/HTTP.pm
 lib/OpenFrame/Slot.pm
+lib/OpenFrame/Slot/Debugger.pm
 lib/OpenFrame/Slot/Dispatch.pm
 lib/OpenFrame/Slot/Dispatch/Local.pm
 lib/OpenFrame/Slot/ErrorText.pm
@@ -58,6 +67,7 @@ t/abstractrequest.t
 t/abstractresponse.t
 t/config.t
 t/direct.t
+t/error.t
 t/hangman2.t
 t/webserver.t
 t/slots.t
@@ -65,4 +75,4 @@ t/lib/OpenFrame/MyApplication.pm
 t/lib/OpenFrame/Slot/SimpleGenerator.pm
 t/lib/OpenFrame/Slot/TestSlot.pm
 t/lib/OpenFrame/Slot/TestSlot2.pm
-t/sessiondir/README
+

@@ -2,7 +2,7 @@
 
 AppWrite - OpenFrame Application Writers Guide
 
-=head1 OVERVIEW
+=head1 DESCRIPTION
 
 OpenFrame's application system is designed to be as simple to use as
 possible.  An application sits on top of a URI or multiple URI's, as
@@ -17,7 +17,7 @@ for OpenFrame.
   package OpenFrame::MyApplication;
 
   use strict;
-  use warnings::register;
+  use warnings;
 	
   use OpenFrame::Application;
   use base qw ( OpenFrame::Application );

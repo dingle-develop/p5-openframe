@@ -8,7 +8,7 @@ use lib 'examples/hangman2';
 use OpenFrame::Config;
 use OpenFrame::Server::Direct;
 use OpenFrame::Constants;
-use Test::Simple tests => 24;
+use Test::Simple tests => 23;
 
 my $config = OpenFrame::Config->new();
 ok($config, "should get config");
@@ -70,9 +70,9 @@ ok($response->message->{application}->{current}->{name} eq 'hangman',
    "hangman application should have been called");
 
 my $game = $response->message->{application}->{hangman}->{game};
-ok(ref($game) eq 'Games::WordGuess', "game object should be present");
-ok($game->get_chances == 6, "game should have 6 chances");
-ok($game->get_score == 0, "game should have 0 score");
+ok(ref($game) eq 'Games::GuessWord', "game object should be present");
+ok($game->chances == 6, "game should have 6 chances");
+ok($game->score == 0, "game should have 0 score");
 
 my %cookies = $cookietin->get_all;
 ok(scalar keys %cookies == 1, "should get 1 cookie");
@@ -91,10 +91,9 @@ ok($response->message->{application}->{current}->{name} eq 'hangman',
    "hangman application should have been called");
 
 $game = $response->message->{application}->{hangman}->{game};
-ok(ref($game) eq 'Games::WordGuess', "game object should be present");
-ok($game->get_chances == 5 || $game->get_chances == 6,
+ok(ref($game) eq 'Games::GuessWord', "game object should be present");
+ok($game->chances == 5 || $game->chances == 6,
    "game should have 5 or 6 chances");
-ok($game->get_score == 0, "game should have 0 score");
 
 %cookies = $cookietin->get_all;
 ok(scalar keys %cookies == 1, "should get 1 cookie");

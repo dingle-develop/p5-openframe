@@ -6,6 +6,8 @@ use OpenFrame::AbstractResponse;
 use OpenFrame::Constants;
 use Template;
 
+my $tt;
+
 sub what {
   return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
 }
@@ -21,12 +23,14 @@ sub action {
 
   my $name = $session->{application}->{current}->{name};
 
-  my $tt = Template->new({
-                          INCLUDE_PATH => $templatedir,
-                          POST_CHOMP   => 1,
-#                          RELATIVE     => 1,
-			  LOAD_PERL    => 1,
-                         });
+  if (not defined $tt) {
+    $tt = Template->new({
+			 INCLUDE_PATH => $templatedir,
+			 POST_CHOMP   => 1,
+			 LOAD_PERL    => 1,
+			});
+  }
+
   my $output;
 
 

@@ -26,8 +26,10 @@ OpenFrame::AbstractResponse - An abstract response class
 
 =head1 SYNOPSIS
 
+  use OpenFrame::Constants;
   use OpenFrame::AbstractResponse;
   use OpenFrame::AbstractCookie;
+
   my $r = OpenFrame::AbstractResponse->new();
   $r->message("<html><body>Hello world!</body></html>");
   $r->mimetype('text/html');

@@ -2,7 +2,7 @@ package Hangman::Application;
 
 use strict;
 use CGI qw(:standard :html3);
-use Games::WordGuess;
+use Games::GuessWord;
 use OpenFrame::Application;
 use base qw (OpenFrame::Application);
 
@@ -17,8 +17,7 @@ sub default {
   # Start a new game if there isn't one already
   if (not $self->{game}) {
     my $words = $config->{words} || die "No wordlist given!";
-    my $game = Games::WordGuess->new($words);
-    $game->{chances} = 6;  # only give them 6 chances
+    my $game = Games::GuessWord->new(file => $words);
     $self->{game} = $game; # save the game in our session
     $self->{guessed} = {};
   }
@@ -45,28 +44,27 @@ sub guess {
 
   $self->{message} = start_html(-title => "Hangman");
 
-  my $result = $game->process_guess($guess);
+  $game->guess(lc $guess);
   $self->{guessed}->{$guess} = 1;
 
-  if (defined($result) && $result) {
+  if ($game->answer eq $game->secret) {
     # They got the whole word
     $self->{message} .= h1("You guessed the correct word: " .
-      $game->get_answer) . hr .
+      uc($game->answer)) . hr .
       qq|<img src="/images/h| .
-      (6-$game->get_chances) . qq|.gif"><br>| .
-      h2("Total Score: ", $game->get_score()) . hr .
+      (6-$game->chances) . qq|.gif"><br>| .
+      h2("Total Score: ", $game->score()) . hr .
       qq|<a href="/">Keep on going</a>| .
       end_html;
-    $game->init_mystery();
-    $game->{chances} = 6;
+    $game->new_word();
     $self->{guessed} = {};
-  } elsif ($game->get_chances == 0) {
+  } elsif ($game->chances == 0) {
     # They ran out of chances
     $self->{message} .= h1("You didn't guess the word. It was: " .
-      $game->get_answer) .
+      $game->secret) .
       qq|<img src="/images/h| .
-      (6-$game->get_chances) . qq|.gif"><br>| .
-      h2("Total Score: ", $game->get_score()) . hr .
+      (6-$game->chances) . qq|.gif"><br>| .
+      h2("Total Score: ", $game->score()) . hr .
       qq|<a href="/">Try again</a>| .
       end_html;
     # Remove the game from our session
@@ -83,10 +81,10 @@ sub add_body {
   my $game = shift;
 
   $self->{message} .= qq|<img src="/images/h| .
-    (6-$game->get_chances) . qq|.gif"><br>|;
-  $self->{message} .= h1($game->in_progress) . hr .
-    h2("Chances: " . $game->get_chances) .
-      h2("Score: ". $game->get_score()) . hr;
+    (6-$game->chances) . qq|.gif"><br>|;
+  $self->{message} .= h1(uc $game->answer) . hr .
+    h2("Chances: " . $game->chances) .
+      h2("Score: ". $game->score()) . hr;
   $self->{message} .= h2("Your guess?"). p;
   foreach ('A'..'Z') {
     if (not exists $self->{guessed}->{$_}) {
@@ -119,7 +117,7 @@ the request. Otherwise, default() is called.
 
 Each entry point is given itself, the session, an abstract request,
 and per-application configuration. They then contain application logic
-- note that we store a Games::WordGuess object inside C<$self> and
+- note that we store a Games::GuessWord object inside C<$self> and
 that this is magically persistent between calls.
 
 This code is small and dirty as the output is generated inline using

@@ -8,7 +8,7 @@ A new form of application dispatch which using a state parameter
 
 The ability to set off a subrequest
 
-Clear up the distinction between data and objects
+[done] Clear up the distinction between data and objects
 
 [done] Rename session configuration "sessiondir" to "directory"
 
@@ -30,9 +30,9 @@ require an abstract cookie.  Rewrite AbstractResponse to contain an
 AbstractCookie.  Rewrite OpenFrame::Server::Apache to deal with the
 AbstractCookie class.  Pheww.
 
-SLOT -> SOAP is not working yet - the AbstractRequest class is getting
-garbled on transmission.  Chances are lots more will get garbled and
-we need to look at whats going on.
+[done] SLOT -> SOAP is not working yet - the AbstractRequest class is getting
+       garbled on transmission.  Chances are lots more will get garbled and
+       we need to look at whats going on.
 
-Write Java Application Class
+[hold] Write Java Application Class
 

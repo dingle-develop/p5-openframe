@@ -5,8 +5,19 @@ use strict;
 use Data::Dumper;
 use OpenFrame::Config;
 
-our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.11 2001/12/04 11:52:07 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.14 2001/12/18 11:39:16 james Exp $ }))[2];
 our $epoints = {};
+
+sub import {
+  my $class = shift;
+  my $args  = { @_ };
+  return if !keys %{$args};
+  my $pack = caller();
+  {
+    no strict 'refs';
+    ${$pack . '::epoints'} = $args;
+  }
+}
 
 sub new {
   my $class = shift;
@@ -39,17 +50,15 @@ sub _enter {
       if ($num_m == $num_to_match) {
 	$num_m = 0;
 	warn("[application] entering $entry") if $OpenFrame::DEBUG;
-      $session->{application}->{current}->{entrypoint} = $entry;
+	$session->{application}->{current}->{entrypoint} = $entry;
 	if ($self->can($entry)) {
-	  $self->$entry($session, $request, $config);
-	  return;
+	  return $self->$entry($session, $request, $config);
 	}
       }
     }
     warn("[application] using default entry point") if $OpenFrame::DEBUG;
     $session->{application}->{current}->{entrypoint} = 'default';
-    $self->default($session, $request, $config);
-    return;
+    return $self->default($session, $request, $config);
   }
 }
 
@@ -71,10 +80,13 @@ OpenFrame::Application - Base class for all OpenFrame applications
 
   package MyCompany::MyApplication;
 
-  use OpenFrame::Application;
-  use base qw (OpenFrame::Application);
+  use OpenFrame::Application (
+			      example => [
+					  'param'
+					 ]
+			     );
 
-  our $epoints = { example => ['param'] };
+  use base qw (OpenFrame::Application);
 
   sub default {
     my $self = shift;

@@ -14,7 +14,7 @@ use OpenFrame::Server;
 use Scalar::Util qw(blessed);
 use URI;
 
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 # Ideas from http://www.stonehenge.com/merlyn/WebTechniques/col34.listing.txt
 my $MAXCLIENTS = 8;
@@ -146,7 +146,7 @@ sub parse_request {
   my $method = $r->method;
 
   if ($method eq 'GET' || $method eq 'HEAD') {
-    my $cgi = CGI->new($r->uri->query);
+    my $cgi = CGI->new($r->uri->equery);
     $args = { map { ($_, $cgi->param($_)) } $cgi->param() };
     $r->uri->query(undef);
   } elsif ($method eq 'POST') {

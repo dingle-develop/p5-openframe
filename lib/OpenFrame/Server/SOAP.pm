@@ -25,7 +25,7 @@ sub handle {
 
   SOAP::Transport::HTTP::Daemon
   ->new(LocalPort => $port, Reuse => 1, ReuseAddr => 1)
-  ->dispatch_to('OpenFrame::Server::Direct', 'OpenFrame::AbstractResponse')
+  ->dispatch_to('OpenFrame::Server::Direct')
   ->handle;
 }
 

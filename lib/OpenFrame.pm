@@ -5,7 +5,7 @@ use strict;
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.06';
+our $VERSION = '2.08';
 
 =head1 NAME
 
@@ -107,6 +107,32 @@ The slots that build this functionality are simple.  Listed in order of executio
 
 The application dispatcher slot is (we think) quite clever, so we'd like to tell you more about it, but
 that exists outside the scope of this document.  For more information, see OpenFrame::AppWrite.
+
+=head1 PORTABILITY
+
+OpenFrame is pretty much as portable as Perl. We have tested it on the
+following varied platforms:
+
+  Operating System        Architecture
+
+  Caldera OpenLinux 3.1   i386
+  Darwin 5.1              PowerPC
+  Debian Linux 2.1        StrongARM
+  Debian Linux 2.2        Alpha
+  Debian Linux 2.2        i386
+  Debian Linux 2.2        PowerPC
+  Debian Linux 2.2        Sparc
+  FreeBSD 4.4             i386
+  Mandrake Linux 8.1      i386
+  NetBSD 1.5.1            Alpha
+  RedHat Linux 7.1        Itanium
+  RedHat Linux 7.2        i386
+  SunOS 5.8               Sparc
+  SuSE Linux 7            i386
+  SuSE Linux 7            S/390
+  Tru64 5.1a              Alpha
+  TurboLinux 6.5          i386
+  Slackware 8.0           i386
 
 =head1 SEE ALSO
 

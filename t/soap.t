@@ -7,11 +7,12 @@ use strict;
 use lib 'lib';
 use lib 't/lib';
 use Config;
+use OpenFrame::AbstractCookie;
+use OpenFrame::AbstractResponse;
 use OpenFrame::Constants;
-use SOAP::Lite +autodispatch =>
-  uri => 'http://localhost:8010/',
-  proxy => 'http://localhost:8010/';
-use Test::Simple tests => 6;
+use SOAP::Lite;
+#use SOAP::Lite +trace => 'all';
+use Test::Simple tests => 12;
 no warnings qw(once);
 
 # We start up the hangman2 SOAP connection on port 8010
@@ -23,19 +24,37 @@ die "Can't exec: $!" unless defined $pid;
 sleep 3; # wait for the server to come up
 ok(1, "should get server up ok");
 
+my $soap = new SOAP::Lite
+  ->uri("http://localhost:8010/OpenFrame/Server/Direct/")
+  ->proxy("http://localhost:8010/");
+ok($soap, "should get soap object");
+
+my $result = $soap->call('new');
+ok(not($result->fault), "should not get fault on new");
+
+my $direct = $result->result;
+
 my $url = "http://localhost/";
 my $cookietin = OpenFrame::AbstractCookie->new();
-my $direct = OpenFrame::Server::Direct->new();
-
 my $response;
-($response, $cookietin) = $direct->handle($url, $cookietin);
+
+my $result = $soap->call('handle', $direct, $url, $cookietin);
+ok(not($result->fault), "should not get fault on handle");
+
+($response, $cookietin) = $result->paramsall;
 
 ok($response, "should get response back for /");
 ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'text/html',
    "mimetype should be text/html");
-ok($response->message =~ m|<h1>Hangman</h1>|,
+ok($response->message =~ /Hangman/,
    "should get hangman message back");
+
+my %cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+my $id = $cookies{session};
+ok($id, "should get a session id");
 
 # Kill the OpenFrame::Server::SOAP server
 kill 9, $pid;

@@ -9,7 +9,7 @@ use OpenFrame::Constants;
 use OpenFrame::Exception;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.23 2001/11/26 15:07:41 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.24 2001/12/18 11:44:28 james Exp $ }))[2];
 sub what ();
 
 sub action {
@@ -58,7 +58,7 @@ sub action {
 
     if ($varstore->lookup( 'OpenFrame::AbstractResponse')) {
       my $response = $varstore->lookup( 'OpenFrame::AbstractResponse' );
-      unless ($response->code() eq ofOK || $response->code() eq ofERROR) {
+      unless (defined($response->code) && ($response->code() eq ofOK || $response->code() eq ofERROR)) {
 	return $response;
       } else {
 	next;
@@ -180,7 +180,7 @@ sub store {
   foreach my $this (@_) {
     if (defined($this) && blessed($this)) {
       $self->{STORE}->{ref($this)} = $this;
-    } elsif (defined($this) && $this !~ /^\d+$/) {
+    } elsif (defined($this) && $this !~ /^(\d+|\d+\.\d+)$/) {
       push @$moreslots, $this;
     }
   }

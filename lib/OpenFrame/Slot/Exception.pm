@@ -41,3 +41,20 @@ sub action {
 
 1;
 
+=head1 NAME
+
+OpenFrame::Slot::Exception - demonstration slot
+
+=head1 DESCRIPTION
+
+C<OpenFrame::Slot::Exception> is provided to demonstrate use of the OpenFrame::SlotStore request.  It looks
+various exceptions in the slot stack to see what has been thrown, and reports them via warn statements.
+Specifically it looks at Slot exceptions (thrown when a slot cannot be executed due to lack of required
+parameters) and reports that particular anomaly.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=cut
+

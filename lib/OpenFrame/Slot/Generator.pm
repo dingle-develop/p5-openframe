@@ -7,7 +7,9 @@ use OpenFrame::Config;
 use OpenFrame::Constants;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.11 2001/11/21 14:16:36 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.15 2001/12/13 14:58:47 leon Exp $ }))[2];
+
+my $tt;
 
 sub what {
   return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
@@ -19,6 +21,7 @@ sub action {
   my $session = shift;
   my $request = shift;
   my $cookie  = shift;
+  my $uri = $request->uri;
 
   my $templatedir = $config->{presentation};
   my $cachedir    = $config->{presentationcache} || $config->{presentation} . "/compcache/";
@@ -26,25 +29,28 @@ sub action {
 
   warn("[slot::generator] template dir is $templatedir/$locale") if $OpenFrame::DEBUG;
 
-  my $tt = Template->new(
-			 {
-			  INCLUDE_PATH => $templatedir . '/' . $locale,
-			  POST_CHOMP   => 1,
-			  RELATIVE     => 1,
-			  COMPILE_EXT  => "tt2",
-			  COMPILE_DIR  => $cachedir,
-			 }
-			);
+  if (not defined $tt) {
+    $tt = Template->new(
+			{
+			 INCLUDE_PATH => $templatedir . '/' . $locale,
+			 POST_CHOMP   => 1,
+			 RELATIVE     => 1,
+			 COMPILE_EXT  => "tt2",
+			 COMPILE_DIR  => $cachedir,
+			}
+		       );
+  }
 
   my $output;
 
-  if (substr($request->uri()->path, -1) eq '/') {
+  if (substr($uri->path, -1) eq '/') {
     warn("[slot::generator] no file, using index.html") if $OpenFrame::DEBUG;
-    $request->uri( URI->new( $request->uri()->canonical() . 'index.html' ) );
+    $request->uri( URI->new( $uri->canonical() . 'index.html' ) );
+    $uri = $request->uri;
   }
 
-  if ($request->uri->path() =~ /\.html$/) {
-    unless ($tt->process(substr($request->uri()->path(), 1), $session, \$output)) {
+  if ($uri->path() =~ /\.html$/) {
+    unless ($tt->process(substr($uri->path(), 1), $session, \$output)) {
       warn("[slot::generator] could not process template (" . $tt->error . ")") if $OpenFrame::DEBUG;
     }
     delete $session->{template}; # delete spurious entry by TT
@@ -62,5 +68,39 @@ sub action {
 
 1;
 
+__END__
 
+=head1 NAME
 
+OpenFrame::Slot::Generator - Generate HTML using TT
+
+=head1 SYNOPSIS
+
+  # as part of the SLOTS entry in OpenFrame::Config:
+  {
+  dispatch => 'Local',
+  name     => 'OpenFrame::Slot::Generator',
+  config   => { presentation => 'htdocs/' },
+  },
+
+=head1 DESCRIPTION
+
+C<OpenFrame::Slot::Generator> is an OpenFrame slot that can generate
+HTML using the Template Toolkit. It takes the path from the
+C<OpenFrame::AbstractRequest> and looks for templates starting from
+the value of the "presentation" configuration option. It returns an
+C<OpenFrame::AbstraceResponse> containing the generated output.
+
+It will only serve the file has extension "html" and will pass the
+entire session to the template as the "session" variable.
+
+=head1 AUTHOR
+
+James Duncan <jduncan@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2001, Fotango Ltd.
+
+This module is free software; you can redistribute it or modify it
+under the same terms as Perl itself.

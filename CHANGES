@@ -1,5 +1,25 @@
 Revision history for Perl module OpenFrame: 
 
+2.08 Fri Jan  4 15:07:52 GMT 2002
+        - updated docs in OpenFrame::AbstractResponse
+	- minor bugfix to OpenFrame::Server::HTTP where having a
+	  parameter value contain an ampersand was causing a failure
+	- apps now can return stuff that is put on the slot stack
+          this will [probably] remain an undocumented feature.
+          Don't want to give the impression that we are suggesting
+          a blend of functionality and presentation :-)
+	- changed from using Games::WordGuess to Games::GuessWord (as
+	  the former has disappeared from CPAN)
+
+2.07 Thu Dec 13 16:01:20 GMT 2001
+	- new OpenFrame::Server::HTTPSingle which does not fork and
+	  thus can be used for benchmarking / testing easier that
+	  OpenFrame::Server::HTTP
+	- performance improvement in OpenFrame::Slot::Generator - we
+	  no longer generate a new TT object each time
+	- tested on 18 varied platforms (see OpenFrame.pm)
+	- more tests, docs, minor bugfixes
+
 2.06 Thu Dec  6 11:01:05 GMT 2001
 	- removed warning in OpenFrame::Config
 	- more docs: OpenFrame, OpenFrame::Install

@@ -79,7 +79,9 @@ To add functionality to the application, we'll add an entry point.
 Edit the MyApplication file again, and add the following code just
 before the C<1;>.
 
-  our $epoints = { example => [ 'param' ] };
+  use OpenFrame::Application (
+				example => [ 'param' ]
+			     );
 
   sub default {
     my $self = shift;

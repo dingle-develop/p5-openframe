@@ -5,7 +5,7 @@ use SOAP::Transport::HTTP;
 #use SOAP::Lite +trace => 'all';
 use OpenFrame::Server::Direct;
 
-our $VERSION = '1.00';
+our $VERSION = 2.12;
 
 sub new {
   my $class = shift;

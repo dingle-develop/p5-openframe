@@ -1,5 +1,57 @@
 Revision history for Perl module OpenFrame: 
 
+
+Changes made by Andy Wardley, 17th July 2002:
+
+	- added ofDEBUG_* constants
+
+	- added OpenFrame::warn to OpenFrame.pm (should probably go
+	  somewhere else but I couldn't find an OpenFrame::Utility or
+	  similar so I dumped it here for now.
+
+	- changed most, but not all modules to call &warn(...) rather
+	  than warn() which allows a symbol table alias to map it to
+	  Openframe::warn().  This adds the '[component]' prefix
+	  (e.g. [config]) to the message based on the module name that
+	  called iti, with 'OpenFrame::' prefix stripped and converted
+	  to lower case (e.g. OpenFrame::Slotstore => slotstore).
+	  Also optionally adds file and line info (as per CORE::warn)
+	  if ofDEBUG_VERBOSE is set.
+  
+	- changed above modules to use their own $DEBUG flag rather
+	  than the global $OpenFrame::DEBUG variable.  Each $DEBUG var
+	  is the logical AND of $OpenFrame::DEBUG and an ofDEBUG_*
+	  flag, e.g. for OpenFrame::SlotStore, 
+
+            $DEBUG = $OpenFrame::DEBUG & ofDEBUG_STORE.  
+
+          This then allows the $OpenFrame::DEBUG variable to define 
+          which components should generate debug messages as a logical 
+          OR of these flags, e.g.
+	  
+            $OpenFrame::DEBUG = ofDEBUG_STORE | ofDEBUG_GENERATOR.
+
+2.12 ????
+	- changed Slot::Dispatch to warn if there is an error loading
+           a particular application. Got annoying having to turn debugging
+           on for such an obvious case.
+        - new single-process OpenFrame::Server::HTTPPoe server (and tests)
+        - cache the File::MMagic information in OpenFrame::Slot::Images
+           and OpenFrame::Slot::HTML for speed reasons
+        - move from FileHandle to IO::File as FileHandle no longer really
+           exists
+        - fixed memory leak in OpenFrame::SlotStore
+        - while waiting for the introduction of drivers, have added 
+          last modified time to OpenFrame::Response so that static
+          content can be cached by drivers
+        - updated OpenFrame::Slot::Session docs
+        - no longer save the request parameters as part of the session
+          in OpenFrame::Slot::SessionSaver
+	- fix problem with trying to call what() on modules that don't exist
+	- removed warnings during a few tests
+	- fix weird POE uploading bug
+	- changed docbuilder.pl to use File::Find::Rule
+
 2.11 Fri Mar 22 14:33:55 GMT 2002
 	- changed SimpleGenerator to use Storable's dclone()
 	  which is more robust than Data::Dumper

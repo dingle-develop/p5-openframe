@@ -2,14 +2,23 @@ package OpenFrame::Slot::Images;
 
 use strict;
 
+use Cache::MemoryCache;
 use File::MMagic;
 use File::Spec;
-use FileHandle;
+use IO::File;
 use OpenFrame::Slot;
 use OpenFrame::Response;
-use OpenFrame::Constants;
-
+use OpenFrame::Constants qw( :all );
 use base qw ( OpenFrame::Slot );
+
+our $DEBUG  = ($OpenFrame::DEBUG || 0) & ofDEBUG_IMAGES;
+*warn = \&OpenFrame::warn;
+
+my $mm = File::MMagic->new();
+my $cache = Cache::MemoryCache->new({
+  'namespace' => 'mmagic',
+  'default_expires_in' => 600,
+});
 
 sub what {
   return ['OpenFrame::Request'];
@@ -21,13 +30,15 @@ sub action {
   my $absrq = shift;
   my $uri = $absrq->uri();
 
-  warn("[slot:images] checking to make sure we are processing images") if $Openframe::DEBUG;
+  $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_IMAGES;
+
+  &warn("checking to make sure we are processing images") if $DEBUG;
 
   my $file = $uri->path();
 
   my($volume,$directories,$splitfile) = File::Spec->splitpath($file);
   if (not $splitfile) {
-    warn("[slot:images] file $file directory, was not handled as an image") if $OpenFrame::DEBUG;
+    &warn("file $file directory, was not handled as an image") if $DEBUG;
     return;
   }
 
@@ -36,18 +47,25 @@ sub action {
   }
 
   if (-e $file && -r _) {
-    my $mm = File::MMagic->new();
-    my $type = $mm->checktype_filename($file);
 
-    warn("[slot:images] file $file has type $type") if $OpenFrame::DEBUG;
+    my $type = $cache->get($file);
+
+    if (not defined $type) {
+      # cache miss
+      $type = $mm->checktype_filename($file);
+      $cache->set($file, $type);
+      &warn("image cache miss for $file = $type") if $DEBUG;
+    }
+
+    &warn("file $file has type $type") if $DEBUG;
 
     if ($type =~ /^image/) {
-      warn("[slot:images] file $file is being handled as an image") if $OpenFrame::DEBUG;
+      &warn("file $file is being handled as an image") if $DEBUG;
 
       my $response = OpenFrame::Response->new();
       $response->code(ofOK);
       $response->mimetype($type);
-      my $fh = FileHandle->new("<$file");
+      my $fh = IO::File->new("<$file");
       my $message;
       if ($fh) {
 	local $/ = undef;
@@ -55,10 +73,12 @@ sub action {
 	$fh->close;
       }
       $response->message($message);
+      my $time = (stat($file))[9];
+      $response->last_modified($time);
       return $response;
     }
   }
-  warn("[slot:images] file $file was not handled as an image") if $OpenFrame::DEBUG;
+  &warn("file $file was not handled as an image") if $DEBUG;
 
 }
 

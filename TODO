@@ -1,38 +1,9 @@
-More documentation
+These things would be nice in the short term:
 
-More tests
+* Make OpenFrame run under taint mode
+* Move OpenFrame::Config to use YAML instead of Data::Denter
 
-Moving from a slot list to a slot tree
+And of course:
 
-A new form of application dispatch which using a state parameter
-
-The ability to set off a subrequest
-
-[done] Clear up the distinction between data and objects
-
-[done] Rename session configuration "sessiondir" to "directory"
-
-[done] Per-slot config options
-
-[done] Slots being able to return slots which are pushed onto the bottom of
-the slot list
-
-[done] Remove attributes
-
-[done] A proper testing framework
-
-[done] OpenFrame::Server::CGI - changed to OpenFrame::Server::Direct	
-
-[done] OpenFrame::Server::HTTPD
-
-[done] Rewrite session to use an Cookie.  Rewrite generator to
-require an abstract cookie.  Rewrite Response to contain an
-Cookie.  Rewrite OpenFrame::Server::Apache to deal with the
-Cookie class.  Pheww.
-
-[done] SLOT -> SOAP is not working yet - the Request class is getting
-       garbled on transmission.  Chances are lots more will get garbled and
-       we need to look at whats going on.
-
-[hold] Write Java Application Class
-
+* More documentation
+* More tests

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-our $VERSION = '1.00';
+our $VERSION = 2.12;
 
 use lib './lib';
 use OpenFrame::Config;

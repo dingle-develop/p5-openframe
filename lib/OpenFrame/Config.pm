@@ -2,16 +2,21 @@ package OpenFrame::Config;
 
 use strict;
 
-use FileHandle;
+use IO::File;
 use Scalar::Util;
 use Data::Denter;
 use Fcntl qw ( :flock );
+use OpenFrame::Constants qw( :debug );
 
-our $VERSION = '1.00';
+our $VERSION = 2.12;
+our $DEBUG   = ($OpenFrame::DEBUG || 0) & ofDEBUG_CONFIG;
+*warn = \&OpenFrame::warn;
 
 ## where to look and order in which to look for config files
 my $CONFIGFILES = [qw( ./.openframe.conf /etc/openframe.conf )];
 my $CONFIG      = {};
+
+
 
 =head1 NAME
 
@@ -73,6 +78,8 @@ sub new {
 
   my $self;
 
+  $DEBUG   = ($OpenFrame::DEBUG || 0) & ofDEBUG_CONFIG;
+
   if (!$file) {
     foreach my $possibility (@$CONFIGFILES) {
       if ( -e $possibility ) {
@@ -90,11 +97,11 @@ sub new {
     $self = $CONFIG->{$file};
   } else {
     if (!$file) {
-      warn(sprintf("no configuration file found at %s", join(' ', @$CONFIGFILES)));
+      &warn(sprintf("no configuration file found at %s", join(' ', @$CONFIGFILES)));
       $self = {};
     } else {
-      warn("[config] attempting to open config file $file") if $OpenFrame::DEBUG;
-      my $cfh = FileHandle->new( "<$file" );
+      &warn("attempting to open config file $file") if $DEBUG;
+      my $cfh = IO::File->new( "<$file" );
       if ($cfh) {
 	flock($cfh, LOCK_EX);
 	local $/ = undef;
@@ -103,7 +110,7 @@ sub new {
 	flock($cfh, LOCK_UN);
 	$cfh->close();
       } else {
-	warn("[config] could not open config file $file ($!)") if $OpenFrame::DEBUG;
+	&warn("could not open config file $file ($!)") if $DEBUG;
 	$self = {};
       }
     }
@@ -140,8 +147,8 @@ sub writeConfig {
   if (exists $self->{_source}) {
     delete $self->{_source};
   }
-  warn("[config] attempting to write config file $file") if $OpenFrame::DEBUG;
-  my $fh = FileHandle->new( ">$file" );
+  &warn("attempting to write config file $file") if $DEBUG;
+  my $fh = IO::File->new( ">$file" );
   if ( $fh ) {
     flock($fh, LOCK_EX);
     $fh->print( Denter( $self ) );
@@ -150,7 +157,7 @@ sub writeConfig {
     $self->{_source} = $file;
     return 1;
   } else {
-    warn("[config] could not write config to $file ($!)") if $OpenFrame::DEBUG;
+    &warn("could not write config to $file ($!)") if $DEBUG;
     return undef;
   }
 }
@@ -203,9 +210,9 @@ sub getKey {
 
   my $is = Scalar::Util::reftype($self->{$_[0]});
 
-  if ($OpenFrame::DEBUG) {
+  if ($DEBUG) {
     my $warnis = defined($is) ? $is : "[undef]";
-    warn("[config] value $_[0] is a $warnis");
+    &warn("value $_[0] is a $warnis");
   }
 
   if (!$is) {
@@ -271,6 +278,7 @@ sub sourceFile {
     }
   }
 }
+
 
 sub DESTROY {
   my $self = shift;

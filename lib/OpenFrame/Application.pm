@@ -4,9 +4,12 @@ use strict;
 
 use Data::Dumper;
 use OpenFrame::Config;
+use OpenFrame::Constants qw( :debug );
 
-our $VERSION = 2.00;
+our $VERSION = 2.12;
 our $epoints = {};
+our $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_APPLICATION;
+*warn = \&OpenFrame::warn;
 
 sub import {
   my $class = shift;
@@ -22,6 +25,7 @@ sub import {
 sub new {
   my $class = shift;
   my $self  = {};
+  $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_APPLICATION;
   bless $self, $class;
 }
 
@@ -48,28 +52,29 @@ sub _enter {
 	    $num_m++;
 	  }
 	}
-	warn("[application] examining $num_m vs $num_to_match") if $OpenFrame::DEBUG;
+	&warn("examining $num_m vs $num_to_match") if $DEBUG;
 	if ($num_m == $num_to_match) {
 	  $num_m = 0;
-	  warn("[application] entering $entry") if $OpenFrame::DEBUG;
+	  &warn("entering $entry") if $DEBUG;
 	  $session->{application}->{current}->{entrypoint} = $entry;
 	  if ($self->can($entry)) {
 	    return $self->$entry($session, $request, $config);
 	  }
 	}
       }
-      warn("[application] using default entry point") if $OpenFrame::DEBUG;
+      &warn("using default entry point") if $DEBUG;
       $session->{application}->{current}->{entrypoint} = 'default';
       return $self->default($session, $request, $config);
     } elsif (ref($epoints) eq 'CODE') {
-      warn("[application] dispatching to subref epoint") if $OpenFrame::DEBUG;
+      &warn("dispatching to subref epoint") if $DEBUG;
       my $args = $request->arguments();
       my $entry = $epoints->($args) || 'default';
-      warn("[application] subref epoint returned $entry") if $OpenFrame::DEBUG;
+      &warn("subref epoint returned $entry") if $DEBUG;
       $session->{application}->{current}->{entrypoint} = $entry;
       return $self->$entry($session, $request, $config);
     } else {
-      warn("[application] using default entry point as epoints isn't hashref or subref but $epoints") if $OpenFrame::DEBUG;
+	$epoints = '<undef>' unless defined $epoints;
+      &warn("using default entry point as epoints isn't hashref or subref but $epoints") if $DEBUG;
       $session->{application}->{current}->{entrypoint} = 'default';
       return $self->default($session, $request, $config);
     }

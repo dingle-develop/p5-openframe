@@ -99,6 +99,7 @@ $config->setKey(
                 ]
 	       );
 
+
 ($response, $cookietin) = $direct->handle("http://localhost/", $cookietin);
 ok($response, "should get response back for / with non-existant app (without session)");
 ok($response->code == ofERROR, "message code should be error");
@@ -133,7 +134,10 @@ $config->setKey(
                 ]
 	       );
 
-($response, $cookietin) = $direct->handle("http://localhost/", $cookietin);
+{
+  local $SIG{__WARN__} = sub {};
+  ($response, $cookietin) = $direct->handle("http://localhost/", $cookietin);
+}
 ok($response, "should get response back for / with non-existant app");
 ok($response->code == ofERROR, "message code should be error");
 ok($response->mimetype() eq 'text/plain',

@@ -2,14 +2,20 @@ package OpenFrame::Slot::HTML;
 
 use strict;
 
+use Cache::MemoryCache;
 use File::MMagic;
-use FileHandle;
 use File::Spec;
+use IO::File;
 use OpenFrame::Slot;
 use OpenFrame::Response;
 use OpenFrame::Constants;
-
 use base qw ( OpenFrame::Slot );
+
+my $mm = File::MMagic->new();
+my $cache = Cache::MemoryCache->new({
+  'namespace' => 'mmagic',
+  'default_expires_in' => 600,
+});
 
 sub what {
   return ['OpenFrame::Request'];
@@ -23,7 +29,6 @@ sub action {
 
   warn("[slot:html] checking to make sure we are processing html") if $OpenFrame::DEBUG;
 
-
   my $file = $uri->path();
 
   my($volume,$directories,$splitfile) = File::Spec->splitpath($file);
@@ -36,8 +41,15 @@ sub action {
   }
 
   if (-e $file && -r _) {
-    my $mm = File::MMagic->new();
-    my $type = $mm->checktype_filename($file);
+
+    my $type = $cache->get($file);
+
+    if (not defined $type) {
+      # cache miss
+      $type = $mm->checktype_filename($file);
+      $cache->set($file, $type);
+      warn "** image cache miss for $file = $type\n" if $OpenFrame::DEBUG;
+    }
 
     warn("[slot:html] file $file has type $type") if $OpenFrame::DEBUG;
 
@@ -47,7 +59,7 @@ sub action {
       my $response = OpenFrame::Response->new();
       $response->code(ofOK);
       $response->mimetype($type);
-      my $fh = FileHandle->new("<$file");
+      my $fh = IO::File->new("<$file");
       my $message;
       if ($fh) {
 	local $/ = undef;

@@ -1,13 +1,16 @@
 package OpenFrame::Slot::Session;
 
 use strict;
-use Cache::SizeAwareFileCache;
+use Cache::FileCache;
 use Data::Denter;
+use OpenFrame::Constants qw( :debug );
 use OpenFrame::Config;
 use OpenFrame::Cookietin;
 use Digest::MD5 qw(md5_hex);
 
-our $VERSION = 2.00;
+our $VERSION = 2.12;
+our $DEBUG   = ($OpenFrame::DEBUG || 0) & ofDEBUG_SESSION;
+*warn = \&OpenFrame::warn;
 
 sub what {
   return ['OpenFrame::Request'];
@@ -18,6 +21,8 @@ sub action {
   my $config = shift;
   my $req   = shift;
   my $dir = $config->{directory};
+
+  $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_SESSION;
 
   my $cache = Cache::FileCache->new({
     'cache_root' => $config->{directory},
@@ -58,8 +63,9 @@ sub action {
 
   $cookietin->set("session", $id);
   $session->{transactions}++;
-
-  warn("Session is " . Denter($session)) if $OpenFrame::DEBUG;
+  $session->{_id} = $id;
+  warn("session is $session") if $DEBUG;
+  #warn("Session is " . Denter($session)) if $OpenFrame::DEBUG;
 
   delete $session->{system}->{parameters};
   $session->{system}->{parameters} = $req->arguments();
@@ -98,12 +104,11 @@ cookie-based session handling.
 Apart from adding it as a SLOT early on in the slot process, the
 handling of session is done fairly transparently.
 
-Sessions are currently handled by the C<Apache::SessionX> modue and
-are not expired. This is somewhat of a pain, as you have to set up
-that module properly before being able to use sessions, but this
-brings the advantage of transparently using the right session
-environment, be that static files, a BerkeleyDB file or even a
-database. A default session can be passed as "default_session".
+Sessions are currently handled by the C<Cache::Cache> module. A
+default session can be passed as "default_session".
+
+By default the module keeps session data in the OS temp directory - to
+override this, pass a 'directory' value.
 
 After this slot is run, slots may request C<OpenFrame::Session>
 objects. Applications using C<OpenFrame::Slot::Dispatch> automatically
@@ -124,3 +129,4 @@ Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.
+

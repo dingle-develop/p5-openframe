@@ -1,6 +1,6 @@
 package OpenFrame::Slot::Dispatch;
 
-our $VERSION = 1.00;
+our $VERSION = 2.12;
 
 use strict;
 
@@ -8,13 +8,16 @@ use OpenFrame::Slot;
 use OpenFrame::Config;
 use OpenFrame::Request;
 use OpenFrame::Response;
-
+use OpenFrame::Constants qw( :debug );
 use Data::Denter;
 
 use base qw ( OpenFrame::Slot );
 
+our $DEBUG  = ($OpenFrame::DEBUG || 0) & ofDEBUG_DISPATCH;
+*warn = \&OpenFrame::warn;
+
 sub what {
-  return ['OpenFrame::Session', 'OpenFrame::Request'];
+    return ['OpenFrame::Session', 'OpenFrame::Request'];
 }
 
 sub action {
@@ -25,19 +28,21 @@ sub action {
 
   my $applist = $config->{installed_applications};
 
+  $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_DISPATCH;
+
   if (!ref($applist)) {
-    warn("[slot::dispatch] installed_applications not a list") if $OpenFrame::DEBUG;
+    &warn("installed_applications not a list") if $DEBUG;
     return undef;
   }
 
   my $path = $request->uri()->path();
 
-  warn("[slot::dispatch] path to match is $path") if $OpenFrame::DEBUG;
+  &warn("path to match is $path") if $DEBUG;
 
   foreach my $app (@$applist) {
-    warn("[slot::dispatch]\ttesting against $app->{namespace} ($app->{uri})") if $OpenFrame::DEBUG;
+    &warn("testing path [$path] against [$app->{uri}]") if $DEBUG;
     if ($path =~ /$app->{uri}/) {
-      warn("[slot::dispatch]\tmatched. app is $app->{namespace}") if $OpenFrame::DEBUG;
+      &warn("matched. app is $app->{namespace}") if $DEBUG;
       $session->{application}->{current}->{namespace} = $app->{namespace};
       $session->{application}->{current}->{name} = $app->{name};
       $session->{application}->{current}->{dispatch} = $app->{dispatch};
@@ -48,28 +53,29 @@ sub action {
 
       eval "use $fqpn";
       if ($@) {
-	warn("[slot::dispatch] error loading $fqpn: $@") if $OpenFrame::DEBUG;
+	&warn("error loading $fqpn: $@");
       } else {
 	$loaded = 1;
       }
 
       if ($loaded) {
 	my $response = $fqpn->dispatch( $app, $session, $request, $app->{config} );
-
 	unless ( $response ) {
-	  warn("[slot::dispatch] dispatch type $dispatch returned error") if $OpenFrame::DEBUG;
+	  &warn("dispatch type $dispatch returned error") if $DEBUG;
 	  return undef;
 	} else {
 	  return $response;
 	}
       } else {
-	warn("[slot::dispatch] cannot dispatch via $app->{dispatch}") if $OpenFrame::DEBUG;
+	&warn("cannot dispatch via $app->{dispatch}") if $DEBUG;
 	return undef;
       }
     } else {
-      warn("[slot::dispatch] $app->{uri} did not match $path") if $OpenFrame::DEBUG;
+      &warn("$app->{uri} did not match $path") if $DEBUG;
     }
   }
+
+  return 1;
 }
 
 1;

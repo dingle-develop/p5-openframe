@@ -5,12 +5,15 @@ use strict;
 use SOAP::Lite;
 use Data::Dumper;
 use Scalar::Util qw ( blessed );
-use OpenFrame::Constants;
+use OpenFrame::Constants qw( :all );
 use OpenFrame::Exception;
 use OpenFrame::Response;
 use OpenFrame::SlotStore;
 
-our $VERSION = 2.00;
+our $VERSION = 2.12;
+our $DEBUG   = ($OpenFrame::DEBUG || 0) & ofDEBUG_SLOT;
+*warn = \&OpenFrame::warn;
+
 sub what ();
 
 my $RESPONSE = 'OpenFrame::Response';
@@ -25,6 +28,8 @@ sub action {
     my $absrq = shift;
     my $slots = shift;
     my @cleanups;
+
+    $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_SLOT;
     
     if (!ref($slots)) {
 	$slots = [ $slots ];
@@ -46,12 +51,12 @@ sub action {
 	# determine dispatch type
 	$dispatch = $slot->{ dispatch } || 'Local';
 
-	warn("[slot] $slot->{name} dispatch: $dispatch") if $OpenFrame::DEBUG;
+	&warn("$slot->{name} dispatch: $dispatch") if $DEBUG;
 	
 	# fetch associated dispatcher method
 	unless ($dispatcher = $DISPATCH->{ $dispatch }) {
-	    warn("[slot] unknown slot dispatch mechanism: $dispatch") 
-		if $OpenFrame::DEBUG;
+	    &warn("unknown slot dispatch mechanism: $dispatch") 
+		if $DEBUG;
 	    next;
 	}
 
@@ -61,6 +66,7 @@ sub action {
 	# any results not gobbled off by the varstore are cleanup operations
 	if (scalar @$result) {
 	    push @cleanups, map { 
+		&warn("pushing cleanup: name => '$_'  dispatch => '$dispatch'") if $DEBUG;
 		{ 
 		    name     => $_, 
 		    dispatch => $dispatch, 
@@ -89,12 +95,11 @@ sub action {
 	# determine dispatch type
 	$dispatch = $slot->{ dispatch } || 'Local';
 
-	warn("[slot] $slot->{name} cleanup dispatch: $dispatch") if $OpenFrame::DEBUG;
+	&warn("$slot->{name} cleanup dispatch: $dispatch") if $DEBUG;
 	
 	# fetch associated dispatcher method
 	unless ($dispatcher = $DISPATCH->{ $dispatch }) {
-	    warn("[slot] unknown cleanup slot dispatch mechanism: $dispatch") 
-		if $OpenFrame::DEBUG;
+	    &warn("unknown cleanup slot dispatch mechanism: $dispatch") if $DEBUG;
 	    next;
 	}
 
@@ -119,7 +124,7 @@ sub action {
     }
 
     unless ($response ||= $varstore->get($RESPONSE)) {
-	warn("[slot] none of the slots returned a response") if $OpenFrame::DEBUG;
+	&warn("none of the slots returned a response") if $DEBUG;
 	$response = $RESPONSE->new(
 	    message  => 'None of the OpenFrame slots returned a response object',
 	    mimetype => 'text/plain',
@@ -167,7 +172,12 @@ sub getSlotArgs {
   my $slotclass = shift;
 
   my @args;
-  foreach my $arg (@{$slotclass->what()}) {
+
+  my @what;
+  eval { @what = @{$slotclass->what()} };
+  return undef if $@;
+
+  foreach my $arg (@what) {
     my $argo = $varstore->get( $arg );
     if (defined( $argo )) {
       push @args, $argo;
@@ -212,6 +222,9 @@ sub dispatchViaSOAP {
 }
 
 
+    
+
+
 1;
 
 __END__
@@ -238,7 +251,7 @@ OpenFrame::Slot - Information about OpenFrame Slots
     my $conf = shift;
     my $req  = shift;
 
-    warn("URL Requested is: " . $req->uri()->as_string());
+    &warn("URL Requested is: " . $req->uri()->as_string());
   }
 
   1;

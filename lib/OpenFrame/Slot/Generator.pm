@@ -7,7 +7,7 @@ use OpenFrame::Config;
 use OpenFrame::Constants;
 use OpenFrame::Response;
 
-our $VERSION = 2.00;
+our $VERSION = 2.12;
 
 my $tt;
 

@@ -6,9 +6,7 @@ SYNOPSIS
 
 DESCRIPTION
   The OpenFrame Application Framework
-
   Introduction
-
     The OpenFrame application framework takes a lot of complicated ideas,
     and tries to simplify them into a single point that allows for multiple
     applications to take care of multiple presentations, without the time
@@ -19,7 +17,6 @@ DESCRIPTION
     how it could be made to work for you.
 
   Framework Overview
-
     At the heart of the framework lies the server class. An OpenFrame server
     is a simple device that takes a request from one mechanism and
     translates it into one that OpenFrame can understand. Once a request is
@@ -55,7 +52,6 @@ DESCRIPTION
     to do their thing, and be done with.
 
   Slot Dispatch
-
     Another useful part of OpenFrame is that the slots need not reside on
     the local system. The slot system allows for multiple dispatch
     mechanisms. The fastest, and most obvious way of course, is to dispatch
@@ -70,7 +66,6 @@ DESCRIPTION
     other places.
 
   Slots can be Clever
-
     Slots can also be a little bit cunning.
 
     Sometimes a slot knows that it must be executed, and although there are
@@ -95,7 +90,6 @@ DESCRIPTION
     dispatched to.
 
   Slots out of the Box
-
     Out of the box OpenFrame provides some pretty powerful functionality
     from its slots. Fotango (the nice people that let us write OpenFrame)
     want to use OpenFrame as an Application Server, so the majority of the

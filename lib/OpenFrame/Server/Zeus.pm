@@ -6,7 +6,7 @@ use OpenFrame::Constants;
 use OpenFrame::Server;
 use OpenFrame::Server::Direct;
 
-our $VERSION = 2.00;
+our $VERSION = 2.12;
 
 sub new {
   my $class = shift;

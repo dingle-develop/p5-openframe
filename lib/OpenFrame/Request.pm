@@ -13,7 +13,7 @@ use Class::MethodMaker
 use OpenFrame::Cookietin;
 use Scalar::Util qw ( blessed );
 
-our $VERSION = 1.00;
+our $VERSION = 2.12;
 
 sub init {
   my($self, %params) = @_;

@@ -22,7 +22,7 @@ use OpenFrame::Cookietin;
 use OpenFrame::Request;
 use OpenFrame::Response;
 
-our $VERSION = 2.01;
+our $VERSION = 2.12;
 
 Apache::add_version_component("OpenFrame/" . $OpenFrame::VERSION);
 
@@ -56,8 +56,24 @@ sub handler {
   my $ar = Apache::Request->new( $request );
 
   my %args;
-  my $args = { map { ($_, $ar->param($_)) } $ar->param() };
-  $args{$_->name} = $_->fh foreach $ar->upload;
+  my $args = {
+              map {
+                   my $return;
+                   my @results = $ar->param($_);
+                   if (scalar(@results) > 1) {
+                     $return = [@results];
+                   } else {
+                     $return = $results[0];
+                   }
+                   ($_, $return)
+                  } $ar->param()
+            };
+
+
+
+  foreach my $upload ( $ar->upload ) {
+    $args->{ $upload->name } = $upload->fh;
+  }
 
   my $cookietin  = OpenFrame::Cookietin->new();
   my %apcookies  = Apache::Cookie->fetch();
@@ -89,6 +105,7 @@ sub handler {
 
 	my $abcookies = $response->cookies();
 	my %cookies = $abcookies->get_all;
+
 	foreach my $name (keys %cookies) {
 	  my $cookie = Apache::Cookie->new(
 					   Apache->request,

@@ -10,9 +10,10 @@ sub dispatch {
   my $config   = shift;
 
   eval "use $app->{name};";
+
   if ($@) {
-    warn("[slot::dispatch] cannot use name $app->{name} as app") if $OpenFrame::DEBUG;
-    warn($@) if $OpenFrame::DEBUG;	
+    warn("[slot::dispatch] cannot use name $app->{name} as app");
+    warn($@);
     return undef;
   }
 
@@ -36,6 +37,7 @@ sub dispatch {
       my $code = $appcode->_enter($request, $session, $config);
       my %apphash = %{ $appcode };
       $session->{application}->{ $app->{namespace} } = \%apphash;
+      $session->{app} = \%apphash;
       return $code;
     } else {
       warn("[slot::dispatch] can't find enter method in module $app->{name}") if $OpenFrame::DEBUG;

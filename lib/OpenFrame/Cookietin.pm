@@ -1,7 +1,7 @@
 package OpenFrame::Cookietin;
 use strict;
 
-our $VERSION = '1.02';
+our $VERSION = 2.12;
 
 =head1 NAME
 

@@ -1,31 +1,37 @@
 package OpenFrame::SlotStore;
 
 use strict;
-
+use OpenFrame::Constants qw( :debug );
 use Scalar::Util qw ( blessed );
 
-my $RESPONSE = 'OpenFrame::Response';
+my  $RESPONSE = 'OpenFrame::Response';
+our $DEBUG   = ($OpenFrame::DEBUG || 0) & ofDEBUG_STORE;
+*warn = \&OpenFrame::warn;
 
 
 sub new {
   my $class = shift;
+
+ $DEBUG = ($OpenFrame::DEBUG || 0) & ofDEBUG_STORE;
+
   my $self  = {
       STORE    => { },
   };
   bless $self, $class;
-  $self->set( $self );
   return $self;
 }
 
 
 sub get {
-  return $_[0]->{STORE}->{$_[1]};
+  my($self, $key) = @_;
+  return $self if ref($self) eq $key;
+  return $self->{STORE}->{$key};
 }
 
 
 sub set {
   my $self = shift;
-  warn("[slotstore] storing @_") if $OpenFrame::DEBUG;
+  &warn("storing @_") if $DEBUG;
 
   my $moreslots = [];
   foreach my $this (@_) {
@@ -39,6 +45,7 @@ sub set {
 
   return $moreslots;
 }
+
 
 1;
 

@@ -14,7 +14,7 @@ use OpenFrame::Server;
 use Scalar::Util qw(blessed);
 use URI;
 
-our $VERSION = '1.11';
+our $VERSION = 2.12;
 
 # Ideas from http://www.stonehenge.com/merlyn/WebTechniques/col34.listing.txt
 my $MAXCLIENTS = 4;
@@ -131,6 +131,7 @@ sub handle_one_connection {
       $h->header('Set-Cookie' => "$cookie");
     }
     $h->content_type($response->mimetype() || 'text/html');
+    $h->last_modified($response->last_modified) if $response->last_modified;
     $http_response = HTTP::Response->new(RC_OK, undef, $h, $response->message);
   } elsif ($response->code() eq ofREDIRECT) {
     my $url = $response->message;

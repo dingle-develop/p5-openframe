@@ -4,13 +4,13 @@ use strict;
 use Class::MethodMaker
            new_with_init => 'new',
            new_hash_init => 'hash_init',
-           get_set       => [ qw/message mimetype code cookies/ ];
+           get_set       => [ qw/message mimetype code cookies last_modified/ ];
 
 use Exporter;
 use OpenFrame::Cookietin;
 use URI;
 
-our $VERSION = 1.00;
+our $VERSION = 2.12;
 
 sub init {
   my($self, %params) = @_;
@@ -32,6 +32,7 @@ OpenFrame::Response - An abstract response class
   $r->message("<html><body>Hello world!</body></html>");
   $r->mimetype('text/html');
   $r->code(ofOK);
+  $r->last_modified($machine_time);
   $r->cookies(OpenFrame::Cookietin->new());
 
 =head1 DESCRIPTION
@@ -80,6 +81,15 @@ This method gets and sets the MIME type associated with this response.
 
   my $type = $r->mimetype();
   $r->mimetype('text/html');
+
+=head2 last_modified()
+
+This method gets and sets the last modified time of the data
+associated with this response.
+
+  my $type = $r->last_modified();
+  my $time = (stat($file))[9];
+  $r->last_modified($time);
 
 =head1 AUTHOR
 

@@ -16,7 +16,7 @@ use OpenFrame::Constants;
 use HTTP::Daemon;
 use HTTP::Status;
 
-our $VERSION = '1.01';
+our $VERSION = 2.12;
 
 sub new {
   my $class = shift;

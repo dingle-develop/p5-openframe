@@ -6,7 +6,7 @@ use OpenFrame::Request;
 use OpenFrame::Response;
 use OpenFrame::Slot;
 
-our $VERSION = 2.00;
+our $VERSION = 2.12;
 our $SLOTCLASS = 'OpenFrame::Slot';
 
 sub action {

@@ -6,11 +6,28 @@ use OpenFrame::Cookietin;
 use OpenFrame::Request;
 use OpenFrame::Response;
 use OpenFrame::Slot;
+use OpenFrame::Constants qw( :debug );
 
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.11';
+our $VERSION = 2.12;
+
+sub warn {
+    my $msg = join('', @_);
+    my ($pkg, $file, $line) = caller();
+    $pkg =~ s/^OpenFrame:://;
+    $pkg = lc $pkg;
+
+    unless ($msg =~ /\n$/) {
+	$msg .= ($OpenFrame::DEBUG & ofDEBUG_VERBOSE)
+		 ? " at $file line $line\n"
+		 : "\n";
+    }
+    
+    CORE::warn("[$pkg] $msg");
+}
+
 
 =head1 NAME
 

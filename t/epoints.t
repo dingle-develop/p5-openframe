@@ -6,10 +6,10 @@ use strict;
 use URI;
 use lib 'lib';
 use lib 't/lib';
-use OpenFrame::MyApplication;
-use OpenFrame::Config;
-use OpenFrame::Server::Direct;
+use OpenFrame;
 use OpenFrame::Constants;
+use OpenFrame::MyApplication;
+use OpenFrame::Server::Direct;
 use Test::Simple tests => 47;
 
 my $config = OpenFrame::Config->new();
@@ -34,10 +34,10 @@ $config->setKey(
 		  config   => {
 			       installed_applications => [
 							  {
-							   name      => 'default',
+							   namespace => 'default',
 							   uri       => '/',
 							   dispatch  => 'Local',
-							   namespace => 'OpenFrame::EpointsApplication',
+							   name      => 'OpenFrame::EpointsApplication',
 							  },
 							 ],
 			      },
@@ -55,7 +55,7 @@ my $direct = OpenFrame::Server::Direct->new();
 ok($direct, "should get OpenFrame::Server::Direct object");
 
 
-my $cookietin = OpenFrame::AbstractCookie->new();
+my $cookietin = OpenFrame::Cookietin->new();
 my $response;
 ($response, $cookietin) = $direct->handle("http://localhost/myapp/", $cookietin);
 ok($response, "should get response back for /myapp/");
@@ -63,7 +63,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'default',
+ok($response->message->{application}->{current}->{namespace} eq 'default',
    "myapp application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'default',
    "default entrypoint should have been called");
@@ -79,7 +79,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'default',
+ok($response->message->{application}->{current}->{namespace} eq 'default',
    "default application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'bar',
    "bar entrypoint should have been called");
@@ -94,7 +94,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'default',
+ok($response->message->{application}->{current}->{namespace} eq 'default',
    "default application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'quux',
    "quux entrypoint should have been called");
@@ -109,7 +109,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'default',
+ok($response->message->{application}->{current}->{namespace} eq 'default',
    "default application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'foo',
    "foo entrypoint should have been called");
@@ -124,7 +124,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'default',
+ok($response->message->{application}->{current}->{namespace} eq 'default',
    "default application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'default',
    "default entrypoint should have been called");

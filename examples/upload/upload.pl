@@ -32,10 +32,10 @@ $config->setKey(
                   config   => {
                                installed_applications => [
                                                           {
-                                                           name      => 'upload',
+                                                           namespace => 'upload',
                                                            uri       => '/',
                                                            dispatch  => 'Local',
-                                                           namespace => 'Upload::Application',
+                                                           name      => 'Upload::Application',
                                                           },
                                                          ],
                               },
@@ -79,7 +79,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

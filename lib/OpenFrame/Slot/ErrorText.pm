@@ -1,20 +1,20 @@
 package OpenFrame::Slot::ErrorText;
 
 use OpenFrame::Slot;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Request;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Request'];
 }
 
 sub action {
   my $class  = shift;
   my $config = shift;
-  my $response = OpenFrame::AbstractResponse->new();
+  my $response = OpenFrame::Response->new();
   $response->message(
 			q{
 			  <html>
@@ -60,7 +60,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

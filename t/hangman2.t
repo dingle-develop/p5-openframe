@@ -5,9 +5,9 @@ use URI;
 use lib 'lib';
 use lib 't/lib';
 use lib 'examples/hangman2';
-use OpenFrame::Config;
-use OpenFrame::Server::Direct;
+use OpenFrame;
 use OpenFrame::Constants;
+use OpenFrame::Server::Direct;
 use Test::Simple tests => 23;
 
 my $config = OpenFrame::Config->new();
@@ -37,10 +37,10 @@ $config->setKey(
 		  config   => {
 			       installed_applications => [
 							  {
-							   name      => 'hangman',
+							   namespace => 'hangman',
 							   uri       => '/',
 							   dispatch  => 'Local',
-							   namespace => 'Hangman::Application',
+							   name      => 'Hangman::Application',
 							   config    => { words => "examples/hangman/words.txt" },
 							  },
 							 ],
@@ -57,7 +57,7 @@ $config->setKey(DEBUG => 0);
 my $direct = OpenFrame::Server::Direct->new();
 ok($direct, "should get OpenFrame::Server::Direct object");
 
-my $cookietin = OpenFrame::AbstractCookie->new();
+my $cookietin = OpenFrame::Cookietin->new();
 my $response;
 ($response, $cookietin) = $direct->handle("http://localhost/", $cookietin);
 ok($response, "should get response back for /");
@@ -65,7 +65,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'hangman',
+ok($response->message->{application}->{current}->{namespace} eq 'hangman',
    "hangman application should have been called");
 
 my $game = $response->message->{application}->{hangman}->{game};
@@ -86,7 +86,7 @@ ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'openframe/session',
    "mimetype should be openframe/session");
 ok(ref($response->message()) eq "OpenFrame::Session", "should get session as message");
-ok($response->message->{application}->{current}->{name} eq 'hangman',
+ok($response->message->{application}->{current}->{namespace} eq 'hangman',
    "hangman application should have been called");
 
 $game = $response->message->{application}->{hangman}->{game};

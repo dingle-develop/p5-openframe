@@ -1,4 +1,4 @@
-package OpenFrame::AbstractResponse;
+package OpenFrame::Response;
 
 use strict;
 use Class::MethodMaker
@@ -7,14 +7,14 @@ use Class::MethodMaker
            get_set       => [ qw/message mimetype code cookies/ ];
 
 use Exporter;
-use OpenFrame::AbstractCookie;
+use OpenFrame::Cookietin;
 use URI;
 
 our $VERSION = 1.00;
 
 sub init {
   my($self, %params) = @_;
-  $params{cookies} ||= OpenFrame::AbstractCookie->new();
+  $params{cookies} ||= OpenFrame::Cookietin->new();
   hash_init($self, %params);
 }
 
@@ -22,23 +22,21 @@ __END__
 
 =head1 NAME
 
-OpenFrame::AbstractResponse - An abstract response class
+OpenFrame::Response - An abstract response class
 
 =head1 SYNOPSIS
 
+  use OpenFrame;
   use OpenFrame::Constants;
-  use OpenFrame::AbstractResponse;
-  use OpenFrame::AbstractCookie;
-
-  my $r = OpenFrame::AbstractResponse->new();
+  my $r = OpenFrame::Response->new();
   $r->message("<html><body>Hello world!</body></html>");
   $r->mimetype('text/html');
   $r->code(ofOK);
-  $r->cookies(OpenFrame::AbstractCookie->new());
+  $r->cookies(OpenFrame::Cookietin->new());
 
 =head1 DESCRIPTION
 
-C<OpenFrame::AbstractResponse> represents responses inside
+C<OpenFrame::Response> represents responses inside
 OpenFrame. Responses represent some kind of response following a
 request for information.
 
@@ -49,16 +47,16 @@ OpenFrame.
 
 =head2 new()
 
-This method creates a new C<OpenFrame::AbstractResponse> object. It
+This method creates a new C<OpenFrame::Response> object. It
 takes no parameters.
 
 =head2 cookies()
 
-This method gets and sets the C<OpenFrame::AbstractCookie> that is
+This method gets and sets the C<OpenFrame::Cookietin> that is
 associated with this response.
 
   my $cookietin = $r->cookies();
-  $r->cookies(OpenFrame::AbstractCookie->new());
+  $r->cookies(OpenFrame::Cookietin->new());
 
 =head2 message()
 

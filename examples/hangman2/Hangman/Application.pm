@@ -22,6 +22,7 @@ sub default {
     $self->{game} = $game; # save the game in our session
     $self->{guessed} = {};
   }
+  return 1;
 }
 
 sub guess {
@@ -39,19 +40,19 @@ sub guess {
   if (not defined $game) {
     # We don't have a game, so set one up
     $self->default($session, $request, $config);
-    return;
+    return 1;
   }
 
   $game->guess(lc $guess);
   $self->{guessed}->{$guess} = 1;
 
-  if ($game->answer eq $game->secret) {
+  if ($game->won) {
     # They got the whole word
     $self->{message} = "You guessed the correct word: ".
       $game->answer;
     $game->new_word();
     $self->{guessed} = {};
-  } elsif ($game->chances == 0) {
+  } elsif ($game->lost) {
     # They ran out of chances
     $self->{message} = "You didn't guess the word. It was: " .
       $game->secret;
@@ -61,6 +62,7 @@ sub guess {
   } else {
     # Show the results of the guess
   }
+  return 1;
 }
 
 1;
@@ -97,7 +99,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

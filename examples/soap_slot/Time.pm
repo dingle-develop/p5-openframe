@@ -3,14 +3,14 @@ package Time;
 use strict;
 use lib '../../lib';
 use OpenFrame::Slot;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Request;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Request'];
 }
 
 sub action {
@@ -23,7 +23,7 @@ sub action {
     scalar(localtime) . "\n";
   $message .= "URI was: " . $uri->path . "\n";
 
-  my $response = OpenFrame::AbstractResponse->new();
+  my $response = OpenFrame::Response->new();
   $response->code(ofOK);
   $response->mimetype("text/plain");
   $response->message($message);
@@ -51,7 +51,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

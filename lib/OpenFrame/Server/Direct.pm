@@ -3,9 +3,9 @@ package OpenFrame::Server::Direct;
 use strict;
 use CGI;
 use OpenFrame::Server;
-use OpenFrame::AbstractCookie;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Cookietin;
+use OpenFrame::Request;
+use OpenFrame::Response;
 use Scalar::Util qw(blessed);
 use URI;
 
@@ -26,7 +26,7 @@ sub new {
 sub handle {
   my $self = shift;
   my $url = shift;
-  my $cookietin = shift || OpenFrame::AbstractCookie->new();
+  my $cookietin = shift || OpenFrame::Cookietin->new();
 
   # abstract the request
   my $uri = URI->new($url);
@@ -34,7 +34,7 @@ sub handle {
   my $args = { map { ($_, $cgi->param($_)) } $cgi->param() };
   $uri->query(undef);
 
-  my $abstractRequest = OpenFrame::AbstractRequest->new(
+  my $abstractRequest = OpenFrame::Request->new(
 							uri         => $uri,
 							descriptive => 'web',
 							arguments   => $args,
@@ -57,7 +57,7 @@ OpenFrame::Server::Direct - Provide direct access to OpenFrame
 =head1 SYNOPSIS
 
   my $url = "http://localhost/myapp/?param=5";
-  my $cookietin = OpenFrame::AbstractCookie->new();
+  my $cookietin = OpenFrame::Cookietin->new();
   my $direct = OpenFrame::Server::Direct->new();
   my $response;
   ($response, $cookietin) = $direct->handle($url, $cookietin);
@@ -72,7 +72,7 @@ OpenFrame::Server::Direct - Provide direct access to OpenFrame
 
 C<OpenFrame::Server::Direct> provides direct access to an OpenFrame
 application (without having to set up Apache). It takes a URL as input
-and returns the C<OpenFrame::AbstractResponse> object resulting from
+and returns the C<OpenFrame::Response> object resulting from
 processing that URL. Note that you have to create a cookietin at the
 beginning, and keep on getting it back and passing it in in order for
 cookies to work.
@@ -83,7 +83,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

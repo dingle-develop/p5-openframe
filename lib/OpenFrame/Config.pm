@@ -19,7 +19,7 @@ OpenFrame::Config - Simple OpenFrame configuration
 
 =head1 SYNOPSIS
 
-  use OpenFrame::Config;
+  use OpenFrame;
   my $config = OpenFrame::Config->new();
   my $value = $config->getKey('fred');
   $config->setKey('rainy', 'yes');
@@ -286,7 +286,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

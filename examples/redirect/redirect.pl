@@ -5,7 +5,7 @@
 use strict;
 use lib '../../lib';
 
-use OpenFrame::Config;
+use OpenFrame;
 use OpenFrame::Server::HTTP;
 
 my $config = OpenFrame::Config->new();

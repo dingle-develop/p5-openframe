@@ -1,4 +1,4 @@
-package OpenFrame::AbstractRequest;
+package OpenFrame::Request;
 
 use strict;
 no warnings qw(redefine);
@@ -10,7 +10,7 @@ use Class::MethodMaker
            new_hash_init => 'hash_init',
            get_set       => [ qw/uri originator descriptive arguments cookies/ ];
 
-use OpenFrame::AbstractCookie;
+use OpenFrame::Cookietin;
 use Scalar::Util qw ( blessed );
 
 our $VERSION = 1.00;
@@ -27,7 +27,7 @@ sub init {
   $params{originator} ||= 'GenericServer';
   $params{descriptive} ||= 'web';
   $params{arguments} ||= {};
-  $params{cookies} ||= OpenFrame::AbstractCookie->new();
+  $params{cookies} ||= OpenFrame::Cookietin->new();
 
   hash_init($self, %params);
 }
@@ -53,18 +53,17 @@ __END__
 
 =head1 NAME
 
-OpenFrame::AbstractRequest - An abstract request class
+OpenFrame::Request - An abstract request class
 
 =head1 SYNOPSIS
 
-  use OpenFrame::AbstractRequest;
-  use OpenFrame::AbstractCookie;
+  use OpenFrame;
   my $uri = URI->new("http://localhost/");
-  my $r = OpenFrame::AbstractRequest->new(uri => $uri,
+  my $r = OpenFrame::Request->new(uri => $uri,
 	originator => 'http://www.example.com/',
 	descriptive => 'web',
 	arguments => { colour => 'red' },
-	cookies => OpenFrame::AbstractCookie->new());
+	cookies => OpenFrame::Cookietin->new());
   print "URI: " . $r->uri();
   print "Originator: " . $r->originator();
   print "Descriptive: " . $r->descriptive();
@@ -73,20 +72,20 @@ OpenFrame::AbstractRequest - An abstract request class
 
 =head1 DESCRIPTION
 
-C<OpenFrame::AbstractRequest> represents requests inside
+C<OpenFrame::Request> represents requests inside
 OpenFrame. Requests represent some kind of request for information
 given a URI.
 
 This module abstracts the way clients can request data from
 OpenFrame. For example C<OpenFrame::Server::Apache> converts
 Apache::Request GET and POST requests into an
-C<OpenFrame::AbstractRequest>, which is then used through OpenFrame.
+C<OpenFrame::Request>, which is then used through OpenFrame.
 
 =head1 METHODS
 
 =head2 new()
 
-The new() method creates a new C<OpenFrame::AbstractRequest> object. It
+The new() method creates a new C<OpenFrame::Request> object. It
 takes a variety of parameters, of which only the "uri" parameter is
 mandatory.
 
@@ -114,17 +113,17 @@ request.
 
 =item cookies
 
-An C<OpenFrame::AbstractCookie> object which contains any cookies
+An C<OpenFrame::Cookietin> object which contains any cookies
 passed with the request.
 
 =back
 
   my $uri = URI->new("http://localhost/");
-  my $r = OpenFrame::AbstractRequest->new(uri => $uri,
+  my $r = OpenFrame::Request->new(uri => $uri,
 	originator => 'secret agent',
 	descriptive => 'web',
 	arguments => { colour => 'red' },
-	cookies => OpenFrame::AbstractCookie->new());
+	cookies => OpenFrame::Cookietin->new());
 
 =head2 uri()
 
@@ -149,7 +148,7 @@ This method gets and sets the descriptive string.
 
 =head2 cookies()
 
-This method gets and sets the C<OpenFrame::AbstractCookie> object
+This method gets and sets the C<OpenFrame::Cookietin> object
 associated with this request.
 
   my $cookietin = $r->cookies();

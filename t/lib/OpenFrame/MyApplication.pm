@@ -4,7 +4,7 @@ use strict;
 use lib '..';
 
 use OpenFrame::Application;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 
 use base qw (OpenFrame::Application);
 

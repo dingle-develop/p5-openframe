@@ -3,11 +3,11 @@ package Redirect;
 use strict;
 use Template;
 use OpenFrame::Config;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 
 sub what {
-  return ['OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Request'];
 }
 
 my $html = '
@@ -29,7 +29,7 @@ sub action {
   my $request = shift;
 
   my $uri = $request->uri;
-  my $response = OpenFrame::AbstractResponse->new();
+  my $response = OpenFrame::Response->new();
 
   if ($uri->path eq '/') {
     # Serve up the front page
@@ -65,7 +65,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

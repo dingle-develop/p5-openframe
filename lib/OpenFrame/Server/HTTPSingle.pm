@@ -9,9 +9,9 @@ use URI;
 use Scalar::Util qw (blessed);
 
 use OpenFrame::Server;
-use OpenFrame::AbstractCookie;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Cookietin;
+use OpenFrame::Request;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 use HTTP::Daemon;
 use HTTP::Status;
@@ -54,7 +54,7 @@ sub handle {
         warn "unsupported method: " . $r->method . "\n";
       }
 
-      my $cookietin  = OpenFrame::AbstractCookie->new();
+      my $cookietin  = OpenFrame::Cookietin->new();
 
       if ($r->header('Cookie')) {
 	foreach my $ctext (split /; ?/, $r->header('Cookie')) {
@@ -63,7 +63,7 @@ sub handle {
 	}
       }
 
-      my $abstractRequest = OpenFrame::AbstractRequest->new(
+      my $abstractRequest = OpenFrame::Request->new(
 							    uri         => $uri,
 							    descriptive => 'web',
 							    arguments   => $args,
@@ -83,7 +83,7 @@ sub handle {
           my $h = HTTP::Headers->new();
 	  my %cookies = $newcookietin->get_all;
 	  foreach my $name (keys %cookies) {
-	    my $cookie = CGI::Cookie->new(-name    =>  $name,
+	    my $cookie = CGI::Cookie->new(-name =>  $name,
 				     -value   =>  $cookies{$name},
 				     -expires =>  '+1M');
 	    $h->header('Set-Cookie' => "$cookie");

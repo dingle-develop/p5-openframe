@@ -8,7 +8,7 @@ use strict;
 use lib '../hangman2';
 use lib '../../lib';
 use Cwd;
-use OpenFrame::Config;
+use OpenFrame;
 
 $SIG{INT} = \&quit;
 
@@ -29,7 +29,7 @@ $config->setKey(
                 [
                  {
                   dispatch => 'Local',
-                  name => 'OpenFrame::Slot::Images',
+                  name     => 'OpenFrame::Slot::Images',
 		  config   => { directory => "$OPENFRAME/examples/hangman/" },
                  },
                  {
@@ -49,11 +49,11 @@ $config->setKey(
 		  config   => {
 			       installed_applications => [
 							  {
-							   name      => 'hangman',
+							   namespace => 'hangman',
 							   uri       => '/',
 							   dispatch  => 'Local',
-							   namespace => 'Hangman::Application',
-							   config   => { words => "$OPENFRAME/examples/hangman/words.txt" },
+							   name      => 'Hangman::Application',
+							   config    => { words => "$OPENFRAME/examples/hangman/words.txt" },
 							  },
 							 ],
 			      },
@@ -121,7 +121,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

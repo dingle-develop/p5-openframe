@@ -10,10 +10,10 @@ use warnings::register;
 use XML::LibXML;
 use XML::LibXSLT;
 use OpenFrame::Constants;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 
 sub what {
-  return [ qw ( XML::LibXML::Document OpenFrame::AbstractRequest ) ];
+  return [ qw ( XML::LibXML::Document OpenFrame::Request ) ];
 }
 
 sub action {
@@ -48,7 +48,7 @@ sub action {
       warnings::warn("[slot:xslt] cannot transform document with stylesheet $ssheet") if $OpenFrame::DEBUG;
       return undef;
     } else {
-      my $response = OpenFrame::AbstractResponse->new();
+      my $response = OpenFrame::Response->new();
       $response->message( $stylesheet->output_string( $results ));
       $response->mimetype( "text/html" );
       $response->code( ofOK );
@@ -75,7 +75,7 @@ sub action {
 
 The C<OpenFrame::Slot::XSLT> slot takes a XML::LibXML::Document object and performs
 a stylesheet transform on it.  It selects the stylesheet by matching a pattern set
-in the slot configuration against the URL.  If successful it places an OpenFrame::AbstractResponse
+in the slot configuration against the URL.  If successful it places an OpenFrame::Response
 object on the slot stack.
 
 
@@ -85,8 +85,8 @@ The slot configuration should look similar to the following:
 
     %
       dispatch => Local
-      name => OpenFrame::Slot::XSLT
-      config => %
+      name     => OpenFrame::Slot::XSLT
+      config   => %
          stylesheets => @
             %
                 pattern => '/xmldocuments/',
@@ -105,7 +105,7 @@ C<OpenFrame::Slot>, C<XML::LibXML>, C<XML::LibXSLT>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

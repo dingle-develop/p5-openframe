@@ -17,8 +17,8 @@ $config->setKey(
                 [
                  {
                   dispatch => 'Local',
-                  name => 'OpenFrame::Slot::Images',
-		  config => { directory => "../../hangman/" },
+                  name     => 'OpenFrame::Slot::Images',
+		  config   => { directory => "../../hangman/" },
                  },
                  {
                   dispatch => 'Local',
@@ -37,11 +37,11 @@ $config->setKey(
 		  config   => {
 			       installed_applications => [
 							  {
-							   name      => 'hangman',
+							   namespace => 'hangman',
 							   uri       => '/',
 							   dispatch  => 'Local',
-							   namespace => 'Hangman::Application',
-							   config   => { words => "../../hangman/words.txt" },
+							   name      => 'Hangman::Application',
+							   config    => { words => "../../hangman/words.txt" },
 							  },
 							 ],
 			      },
@@ -55,11 +55,7 @@ $config->setKey(
                );
 $config->setKey(DEBUG => 0);
 
-use CGI;
-my $q = CGI->new();
-my $url = "http://localhost" . $q->path_info . "?" . $q->query_string;
-
-my $cookietin = OpenFrame::AbstractCookie->new();
+my $cookietin = OpenFrame::Cookietin->new();
 $cookietin->set("session", $q->cookie("session"));
 
 my $zeus = OpenFrame::Server::Zeus->new();

@@ -51,7 +51,7 @@ OpenFrame::Server::SOAP - Provide SOAP access to OpenFrame
     proxy => 'http://localhost:8010/';
 
   my $url = "http://localhost/myapp/?param=5";
-  my $cookietin = OpenFrame::AbstractCookie->new();
+  my $cookietin = OpenFrame::Cookietin->new();
   my $direct = OpenFrame::Server::Direct->new();
 
   my $response;

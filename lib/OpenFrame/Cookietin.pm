@@ -1,15 +1,16 @@
-package OpenFrame::AbstractCookie;
+package OpenFrame::Cookietin;
 use strict;
 
 our $VERSION = '1.02';
 
 =head1 NAME
 
-OpenFrame::AbstractCookie - An abstract cookie class
+OpenFrame::Cookietin - An abstract cookie class
 
 =head1 SYNOPSIS
 
-  my $cookietin = OpenFrame::AbstractCookie->new();
+  use OpenFrame;
+  my $cookietin = OpenFrame::Cookietin->new();
   $cookietin->set("animal" => "parrot");
   my $colour = $cookietin->get("colour");
   $cookietin->delete("colour");
@@ -17,7 +18,7 @@ OpenFrame::AbstractCookie - An abstract cookie class
 
 =head1 DESCRIPTION
 
-C<OpenFrame::AbstractCookie> represents cookies inside
+C<OpenFrame::Cookietin> represents cookies inside
 OpenFrame. Cookies in OpenFrame represent some kind of storage option
 on the requesting side.
 
@@ -25,7 +26,7 @@ Cookies are a general mechanism which server side connections can use
 to both store and retrieve information on the client side of the
 connection. The addition of a simple, persistent, client-side state
 significantly extends the capabilities of Web-based client/server
-applications. C<OpenFrame::AbstractCookie> is an abstract cookie class
+applications. C<OpenFrame::Cookietin> is an abstract cookie class
 for OpenFrame which can represent cookies no matter how they really
 come to exist outside OpenFrame (such as CGI or Apache cookie
 objects).
@@ -34,11 +35,11 @@ objects).
 
 =head2 new()
 
-The new() method creates a new C<OpenFrame::AbstractCookie>
+The new() method creates a new C<OpenFrame::Cookietin>
 object. These can hold multiple cookies (although they must have
 unique names) inside the cookie tin.
 
-  my $cookietin = OpenFrame::AbstractCookie->new();
+  my $cookietin = OpenFrame::Cookietin->new();
 
 =cut
 

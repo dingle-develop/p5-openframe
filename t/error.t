@@ -4,10 +4,10 @@ use strict;
 use URI;
 use lib 'lib';
 use lib 't/lib';
-use OpenFrame::MyApplication;
-use OpenFrame::Config;
-use OpenFrame::Server::Direct;
+use OpenFrame;
 use OpenFrame::Constants;
+use OpenFrame::MyApplication;
+use OpenFrame::Server::Direct;
 use Test::Simple tests => 27;
 
 my $config = OpenFrame::Config->new();
@@ -18,7 +18,7 @@ $config->setKey(DEBUG => 0);
 my $direct = OpenFrame::Server::Direct->new();
 ok($direct, "should get OpenFrame::Server::Direct object");
 
-my $cookietin = OpenFrame::AbstractCookie->new();
+my $cookietin = OpenFrame::Cookietin->new();
 my $response;
 ($response, $cookietin) = $direct->handle("http://localhost/", $cookietin);
 ok($response, "should get response back for / with no slots");

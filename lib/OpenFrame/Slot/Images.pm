@@ -3,15 +3,16 @@ package OpenFrame::Slot::Images;
 use strict;
 
 use File::MMagic;
+use File::Spec;
 use FileHandle;
 use OpenFrame::Slot;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Request'];
 }
 
 sub action {
@@ -22,16 +23,16 @@ sub action {
 
   warn("[slot:images] checking to make sure we are processing images") if $Openframe::DEBUG;
 
-  if ($uri->path() =~ /\/$/) {
-    warn("[slot:images] file not handled as an image") if $OpenFrame::DEBUG;
+  my $file = $uri->path();
+
+  my($volume,$directories,$splitfile) = File::Spec->splitpath($file);
+  if (not $splitfile) {
+    warn("[slot:images] file $file directory, was not handled as an image") if $OpenFrame::DEBUG;
     return;
   }
 
-  my $file = $uri->path();
-  $file =~ s|^/||;
-
   if ($config->{directory}) {
-    $file = $config->{directory} . $file;
+    $file = File::Spec->catfile($config->{directory}, $file);
   }
 
   if (-e $file && -r _) {
@@ -40,10 +41,10 @@ sub action {
 
     warn("[slot:images] file $file has type $type") if $OpenFrame::DEBUG;
 
-    if ($type ne "text/html") {
+    if ($type =~ /^image/) {
       warn("[slot:images] file $file is being handled as an image") if $OpenFrame::DEBUG;
 
-      my $response = OpenFrame::AbstractResponse->new();
+      my $response = OpenFrame::Response->new();
       $response->code(ofOK);
       $response->mimetype($type);
       my $fh = FileHandle->new("<$file");
@@ -81,7 +82,7 @@ OpenFrame::Slot::Images - Serve static image files
 =head1 DESCRIPTION
 
 C<OpenFrame::Slot::Images> is an OpenFrame slot that can handle static
-images. It takes the path from the C<OpenFrame::AbstractRequest> and
+images. It takes the path from the C<OpenFrame::Request> and
 looks for image files starting from the value of the "directory"
 configuration option. It returns an C<OpenFrame::AbstraceResponse>
 containing the image file.
@@ -96,7 +97,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

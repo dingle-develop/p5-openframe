@@ -7,13 +7,14 @@ use strict;
 use lib 'lib';
 use lib 't/lib';
 use Config;
-use OpenFrame::AbstractCookie;
-use OpenFrame::AbstractResponse;
+use OpenFrame;
 use OpenFrame::Constants;
 use SOAP::Lite;
 #use SOAP::Lite +trace => 'all';
-use Test::Simple tests => 12;
+use Test::Simple tests => 13;
 no warnings qw(once);
+
+ok(1, "loaded");
 
 # We start up the hangman2 SOAP connection on port 8010
 my $perl = $Config{'perlpath'};
@@ -35,7 +36,7 @@ ok(not($result->fault), "should not get fault on new");
 my $direct = $result->result;
 
 my $url = "http://localhost/";
-my $cookietin = OpenFrame::AbstractCookie->new();
+my $cookietin = OpenFrame::Cookietin->new();
 my $response;
 
 my $result = $soap->call('handle', $direct, $url, $cookietin);

@@ -5,7 +5,7 @@ use strict;
 use Data::Dumper;
 use OpenFrame::Config;
 
-our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.15 2002/01/28 16:16:16 leon Exp $ }))[2];
+our $VERSION = 2.00;
 our $epoints = {};
 
 sub import {
@@ -64,7 +64,7 @@ sub _enter {
     } elsif (ref($epoints) eq 'CODE') {
       warn("[application] dispatching to subref epoint") if $OpenFrame::DEBUG;
       my $args = $request->arguments();
-      my $entry = $epoints->($args);
+      my $entry = $epoints->($args) || 'default';
       warn("[application] subref epoint returned $entry") if $OpenFrame::DEBUG;
       $session->{application}->{current}->{entrypoint} = $entry;
       return $self->$entry($session, $request, $config);
@@ -185,7 +185,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

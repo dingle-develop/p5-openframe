@@ -4,13 +4,13 @@ use strict;
 use Cache::SizeAwareFileCache;
 use Data::Denter;
 use OpenFrame::Config;
-use OpenFrame::AbstractCookie;
+use OpenFrame::Cookietin;
 use Digest::MD5 qw(md5_hex);
 
-our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.25 2002/01/30 12:31:13 leon Exp $ }))[2];
+our $VERSION = 2.00;
 
 sub what {
-  return ['OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Request'];
 }
 
 sub action {
@@ -120,7 +120,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

@@ -23,13 +23,13 @@ DESCRIPTION
     At the heart of the framework lies the server class. An OpenFrame server
     is a simple device that takes a request from one mechanism and
     translates it into one that OpenFrame can understand. Once a request is
-    generated in the form of an AbstractRequest object the server passes
-    control to OpenFrame's slot system. The slot system is a simple way of
-    plugging in new functionality to the system, without it having an effect
-    on old functionality. To get a basic understanding of what slots do,
-    imagine a pipe. Each section of the pipe dyes the water a different
-    colour, provided that the water is the right colour that flows into it
-    is correct. If it isn't, the water keeps flowing, but it doesn't change
+    generated in the form of an Request object the server passes control to
+    OpenFrame's slot system. The slot system is a simple way of plugging in
+    new functionality to the system, without it having an effect on old
+    functionality. To get a basic understanding of what slots do, imagine a
+    pipe. Each section of the pipe dyes the water a different colour,
+    provided that the water is the right colour that flows into it is
+    correct. If it is not, the water keeps flowing, but it does not change
     colour. Right, now replace slots for sections, and objects for water.
 
     Slots execute linearly - that is, one after the other. Each slot tells
@@ -39,18 +39,18 @@ DESCRIPTION
     a different slot then the pipeline can provide it. The only difference
     between this and our magical colour changing water is that at the end of
     the slot pipeline there should be something that our server understands
-    -- an AbstractResponse object.
+    -- an Response object.
 
-    The AbstractResponse object is used as a container for the data (for
-    example, HTML) and is passed by the OpenFrame server to the person who
-    asked for it originally in the AbstractRequest object. Once the request
-    is complete, everything that we learnt -- any object that was generated
-    along the slot pipeline -- is thrown away, so that the next request can
-    begin afresh.
+    The Response object is used as a container for the data (for example,
+    HTML) and is passed by the OpenFrame server to the person who asked for
+    it originally in the Request object. Once the request is complete,
+    everything that we learnt -- any object that was generated along the
+    slot pipeline -- is thrown away, so that the next request can begin
+    afresh.
 
     Slots can be plugged quickly in and out of the pipeline, as the server
-    doesn't care what happens in the pipeline and the elements of the
-    pipeline don't care what happens to the other elements, and none of the
+    does not care what happens in the pipeline and the elements of the
+    pipeline do not care what happens to the other elements, and none of the
     elements care what happens to anything they generate -- they just want
     to do their thing, and be done with.
 
@@ -64,7 +64,7 @@ DESCRIPTION
     mechanisms are easily extended to work for any calling mechanism, and
     any programming language.
 
-    This doesn't mean that you should only consider SOAP-based dispatch if
+    This does not mean that you should only consider SOAP-based dispatch if
     you are planning on writing slots in other languages. You can distribute
     the load of your OpenFrame server by moving various slots to various
     other places.
@@ -114,9 +114,21 @@ DESCRIPTION
       OpenFrame::Slot::Generator      generate content
       OpenFrame::Slot::SessionSaver   save the session
 
-    The application dispatcher slot is (we think) quite clever, so we'd like
-    to tell you more about it, but that exists outside the scope of this
-    document. For more information, see OpenFrame::AppWrite.
+    The application dispatcher slot is (we think) quite clever, so we would
+    like to tell you more about it, but that exists outside the scope of
+    this document. For more information, see OpenFrame::AppWrite.
+
+    Note that "use OpenFrame" will also load in OpenFrame::Config,
+    OpenFrame::Cookietin, OpenFrame::Request, OpenFrame::Response, and
+    OpenFrame::Slot to save you some typing.
+
+MAILING LIST
+    There is a mailing list for general OpenFrame discussion. You can sign
+    up at: http://www.astray.com/mailman/listinfo/openframe
+
+IRC
+    There is also an OpenFrame IRC channel: #openframe on
+    irc.rhizomatic.net.
 
 PORTABILITY
     OpenFrame is pretty much as portable as Perl. We have tested it on the
@@ -150,7 +162,7 @@ AUTHOR
     James A. Duncan <jduncan@fotango.com>
 
 COPYRIGHT
-    Copyright (C) 2001, Fotango Ltd.
+    Copyright (C) 2001-2, Fotango Ltd.
 
     This module is free software; you can redistribute it or modify it under
     the same terms as Perl itself.

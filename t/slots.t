@@ -1,12 +1,10 @@
 use Test::Simple tests => 4;
 
-use URI;
+use lib qw( lib ../lib );
 use strict;
-
-use OpenFrame::Slot;
-use OpenFrame::Config;
+use OpenFrame;
 use OpenFrame::Constants;
-use OpenFrame::AbstractRequest;
+use URI;
 
 use lib './t/lib';
 
@@ -14,7 +12,7 @@ my $config   = OpenFrame::Config->new();
 ok($config, "should have a configuration");
 
 my $response = OpenFrame::Slot->action(
-				       OpenFrame::AbstractRequest->new(
+				       OpenFrame::Request->new(
 								       uri => URI->new( "http://localhost:8000/" )
 								      ),
 				       [
@@ -32,8 +30,10 @@ ok($response->code() eq ofOK, "should not receive an error code - OpenFrame::Slo
 
 $response = OpenFrame::Slot->action();
 ok($response->code() eq ofERROR, "should receive an error code - not doing anything to set an ofOK");
+print "response: ", $response->code, "\n";
+print "message: ", $response->message, "\n";
 
-$response = OpenFrame::Slot->action(OpenFrame::AbstractResponse->new( code => ofOK ), []);
+$response = OpenFrame::Slot->action(OpenFrame::Response->new( code => ofOK ), []);
 ok($response->code() eq ofOK, "should not receive an error code - putting an ofOK response into the whole thing");
 
 

@@ -18,7 +18,7 @@ BEGIN {
 
 use Test::Simple tests => 3;
 
-use OpenFrame::Config;
+use OpenFrame;
 use OpenFrame::Constants;
 use OpenFrame::Server::Direct;
 

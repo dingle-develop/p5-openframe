@@ -6,15 +6,15 @@ use strict;
 
 use OpenFrame::Slot;
 use OpenFrame::Config;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Request;
+use OpenFrame::Response;
 
 use Data::Denter;
 
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::Session', 'OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Session', 'OpenFrame::Request'];
 }
 
 sub action {
@@ -35,11 +35,11 @@ sub action {
   warn("[slot::dispatch] path to match is $path") if $OpenFrame::DEBUG;
 
   foreach my $app (@$applist) {
-    warn("[slot::dispatch]\ttesting against $app->{name} ($app->{uri})") if $OpenFrame::DEBUG;
+    warn("[slot::dispatch]\ttesting against $app->{namespace} ($app->{uri})") if $OpenFrame::DEBUG;
     if ($path =~ /$app->{uri}/) {
-      warn("[slot::dispatch]\tmatched. app is $app->{name}") if $OpenFrame::DEBUG;
-      $session->{application}->{current}->{name} = $app->{name};
+      warn("[slot::dispatch]\tmatched. app is $app->{namespace}") if $OpenFrame::DEBUG;
       $session->{application}->{current}->{namespace} = $app->{namespace};
+      $session->{application}->{current}->{name} = $app->{name};
       $session->{application}->{current}->{dispatch} = $app->{dispatch};
 
       my $dispatch = $app->{dispatch};
@@ -76,7 +76,7 @@ sub action {
 
 __END__
 
-=head1 NAME
+=head1 NAMESPACE
 
 OpenFrame::Slot::Dispatch - Dispatch applications
 
@@ -86,21 +86,21 @@ OpenFrame::Slot::Dispatch - Dispatch applications
   $config->setKey(
      'SLOTS', [ {
        dispatch => 'Local',
-       name     => 'OpenFrame::Slot::Dispatch',
+       namespace     => 'OpenFrame::Slot::Dispatch',
        config   => {
          installed_applications => [
            {
-             name      => 'hangman',
+             namespace      => 'hangman',
              uri       => '/hangman/',
              dispatch  => 'Local',
-             namespace => 'Hangman::Application',
+             name => 'Hangman::Application',
              config   => { words => "../hangman/words.txt" },
            },
            {
-             name      => 'eliza',
+             namespace      => 'eliza',
              uri       => '/eliza/',
              dispatch  => 'Local',
-             namespace => 'Eliza::Application',
+             name => 'Eliza::Application',
            },
          ],
        },
@@ -120,14 +120,14 @@ C<OpenFrame::Slot::Session> previously in the slot pipeline before
 this is run.
 
 Each application is tested in turn with the current
-C<OpenFrame::AbstractRequest>, and if the request URI matches the
+C<OpenFrame::Request>, and if the request URI matches the
 application URI the application is dispatched.
 
-Each application has its own name, determined via the "name"
+Each application has its own namespace, determined via the "namespace"
 option. This allows each application to save data inside the session.
 
 The Perl module to be loaded and run when the application is
-dispatched is set via the "namespace" option. See
+dispatched is set via the "name" option. See
 C<OpenFrame::Application> for what this module should contain.
 
 Each application can also optionally have a "config" option, which is
@@ -147,7 +147,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

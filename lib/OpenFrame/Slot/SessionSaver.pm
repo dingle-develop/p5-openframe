@@ -7,7 +7,7 @@ use OpenFrame::Slot;
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'Cache::FileCache'];
+  return ['OpenFrame::Session', 'OpenFrame::Request', 'Cache::FileCache'];
 }
 
 sub action {
@@ -17,6 +17,14 @@ sub action {
   my $request = shift;
   my $cache = shift;
   my $dir = $config->{directory};
+
+
+  my $params = $session->{system}->{parameters};
+  foreach my $key (keys %{$params}) {
+      if (ref($params->{$key}) eq 'GLOB') {
+	  delete $params->{$key};
+      }
+  }
 
   warn("[slot::sessionsaver] saving $session") if $OpenFrame::DEBUG;
   my $cookietin = $request->cookies();
@@ -48,7 +56,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

@@ -1,9 +1,9 @@
 use strict;
 use Test::Simple tests => 17;
-use OpenFrame::AbstractCookie;
+use OpenFrame;
 
 ok(1, "should load ok");
-my $cookiejar = OpenFrame::AbstractCookie->new();
+my $cookiejar = OpenFrame::Cookietin->new();
 ok($cookiejar, "should get object back");
 my %cookies = $cookiejar->get_all;
 ok(scalar keys %cookies == 0, "should have no cookies");

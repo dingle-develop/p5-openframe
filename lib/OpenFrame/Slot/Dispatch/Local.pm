@@ -9,33 +9,33 @@ sub dispatch {
   my $request  = shift;
   my $config   = shift;
 
-  eval "use $app->{namespace};";
+  eval "use $app->{name};";
   if ($@) {
-    warn("[slot::dispatch] cannot use namespace $app->{namespace} as app") if $OpenFrame::DEBUG;
+    warn("[slot::dispatch] cannot use name $app->{name} as app") if $OpenFrame::DEBUG;
     warn($@) if $OpenFrame::DEBUG;	
     return undef;
   }
 
   my $appcode;
-  if (exists $session->{application}->{ $app->{name} }) {
-    my $ref  = $session->{application}->{ $app->{name} };
+  if (exists $session->{application}->{ $app->{namespace} }) {
+    my $ref  = $session->{application}->{ $app->{namespace} };
     if (ref($ref)) {
-      $appcode = bless $ref, $app->{namespace};
+      $appcode = bless $ref, $app->{name};
     } else {
       warn("[slot::dispatch] not a reference in session") if $OpenFrame::DEBUG;
-      delete $session->{application}->{ $app->{name} };
+      delete $session->{application}->{ $app->{namespace} };
       return undef;
     }
   } else {
-    my $namespace = $app->{namespace};
-    $appcode = $namespace->new();
+    my $name = $app->{name};
+    $appcode = $name->new();
   }
 
   if (Scalar::Util::blessed( $appcode )) {
     if ($appcode->can('_enter')) {
       my $code = $appcode->_enter($request, $session, $config);
       my %apphash = %{ $appcode };
-      $session->{application}->{ $app->{name} } = \%apphash;
+      $session->{application}->{ $app->{namespace} } = \%apphash;
       return $code;
     } else {
       warn("[slot::dispatch] can't find enter method in module $app->{name}") if $OpenFrame::DEBUG;
@@ -61,10 +61,10 @@ OpenFrame::Slot::Dispatch::Local - Dispatch applications locally
   $config->setKey(
      'SLOTS', [ {
        dispatch => 'Local',
-       name     => 'OpenFrame::Slot::Dispatch',
+       namespace => 'OpenFrame::Slot::Dispatch',
        config   => {
          installed_applications => [ {
-           name      => 'hangman',
+           namespace => 'hangman',
            uri       => '/',
            dispatch  => 'Local',
            namespace => 'Hangman::Application',
@@ -90,7 +90,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

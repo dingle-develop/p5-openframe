@@ -13,7 +13,7 @@ WriteMakefile(
 	      Test::Simple         => 0.01,
 	      Class::MethodMaker   => 0.01,
 	      File::MMagic         => 0.01,
-	      Games::GuessWord     => 0.01,
+	      Games::GuessWord     => 0.15,
 	      Chatbot::Eliza       => 0.01,
 	      File::Temp           => 0.01,
 	      Cache::Cache         => 0.01,

@@ -34,10 +34,10 @@ configbuilder app) you should see something like this somewhere in it:
 
     installed_applications => @
         %
-            dispatch => Local
-            name => default
-            namespace => OpenFrame::Application
-            uri => /
+            dispatch  => Local
+            namespace => default
+            name      => OpenFrame::Application
+            uri       => /
 
 To those of you familiar with Data::Denter, you'll immedietly
 recognize it as YAML.  The above list has one application installed:
@@ -47,15 +47,15 @@ make it look like the following:
 
     installed_applications => @
         %
-            dispatch => Local
-            name => myapp
-            namespace => OpenFrame::MyApplication
-            uri => /myapp
+            dispatch  => Local
+            namespace => myapp
+            name      => OpenFrame::MyApplication
+            uri       => /myapp
         %
-            dispatch => Local
-            name => default
-            namespace => OpenFrame::Application
-            uri => /
+            dispatch  => Local
+            namespace => default
+            name      => OpenFrame::Application
+            uri       => /
 
 Provided you've installed the OpenFrame::MyApplication module (as
 written above) you're application will execute when a URI with /myapp
@@ -63,9 +63,9 @@ is called.
 
 Line by line an application entry looks complicated, but it really
 isn't.  The first line, C<dispatch> tells the system where this
-application runs.  The C<name> entry explains to OpenFrame where you
+application runs.  The C<namespace> entry explains to OpenFrame where you
 want to store the application run-time in the session (more on this
-later).  The namespace is the module name of the application, and the
+later).  The name is the module name of the application, and the
 uri is where you want this application to execute.
 
 The application dispatch mechanism also creates an entry inside the session
@@ -116,8 +116,8 @@ You'll notice that the templating system wants points to something
 called 'application.myapp.message'.  The reason for this is pretty
 simple.  The templating system is always provided with the users
 session as parameters.  The application is stored persistantly in the
-location given by the name field of the config file.  So if you point
-your templating system at application.<name>.<field> it will get the
-correct field of the correct application.
+location given by the namespace field of the config file.  So if you
+point your templating system at application.<namespace>.<field> it
+will get the correct field of the correct application.
 
 =cut

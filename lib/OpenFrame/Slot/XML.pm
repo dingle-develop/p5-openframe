@@ -14,7 +14,7 @@ use XML::LibXML;
 use Data::Dumper;
 
 sub what {
-  return [ qw( OpenFrame::AbstractRequest ) ];
+  return [ qw( OpenFrame::Request ) ];
 }
 
 ##
@@ -62,7 +62,7 @@ sub action {
 
 =head1 DESCRIPTION
 
-The C<OpenFrame::Slot::XML> slot takes an OpenFrame::AbstractRequest object and
+The C<OpenFrame::Slot::XML> slot takes an OpenFrame::Request object and
 parses the file as an XML document if the file has a filetype listed in its
 configuration options.  It places an XML::LibXML::Document object on the slot
 stack.
@@ -73,8 +73,8 @@ The slot configuration should look similar to the following:
 
     %
       dispatch => Local
-      name => OpenFrame::Slot::XML
-      config => %
+      name     => OpenFrame::Slot::XML
+      config   => %
          filetypes => '(xml|myfiletype)'
          directory => '/my/xml/directory'
 
@@ -88,7 +88,7 @@ C<OpenFrame::Slot>, C<XML::LibXML>, C<XML::LibXSLT>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

@@ -9,7 +9,9 @@ use lib 't/lib';
 use Config;
 use HTTP::Cookies;
 use LWP::UserAgent;
-use Test::Simple tests => 10;
+use Test::Simple tests => 11;
+
+ok(1, "loaded");
 
 # We start up the hangman2 connection on port 8000
 my $perl = $Config{'perlpath'};
@@ -42,6 +44,7 @@ ok($html =~ m|<h1>Hangman</h1>|, "Should get Hangman HTML back");
 my $cookiejar = HTTP::Cookies->new();
 $cookiejar->extract_cookies($response);
 ok($cookiejar->as_string =~ /session=/, "should get session cookie");
+print $cookiejar->as_string;
 
 # Kill the OpenFrame::Server::HTTP servers
 kill -9, $pid;

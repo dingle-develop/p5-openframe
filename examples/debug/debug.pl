@@ -8,7 +8,7 @@ use strict;
 use lib '../hangman2';
 use lib '../../lib';
 
-use OpenFrame::Config;
+use OpenFrame;
 use OpenFrame::Server::HTTP;
 use Template;
 use Template::Stash;
@@ -39,7 +39,7 @@ $config->setKey(
                  },
                  {
                   dispatch => 'Local',
-                  name => 'Hangman::Generator',
+                  name     => 'Hangman::Generator',
 		  config   => { presentation => 'templates/' },
                  },
                 ]
@@ -71,7 +71,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

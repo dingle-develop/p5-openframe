@@ -1,12 +1,12 @@
 package Hangman::Generator;
 
 use strict;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 use OpenFrame::Config;
 use OpenFrame::Constants;
 
 sub what {
-  return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
+  return ['OpenFrame::Session', 'OpenFrame::Request', 'OpenFrame::Cookietin'];
 }
 
 sub action {
@@ -21,7 +21,7 @@ sub action {
 
   return unless $request->uri()->path eq "/";
 
-  my $response = OpenFrame::AbstractResponse->new();
+  my $response = OpenFrame::Response->new();
   $response->message($output);
   $response->code(ofOK);
   $response->mimetype('text/html');
@@ -53,7 +53,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

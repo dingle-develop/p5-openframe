@@ -7,7 +7,7 @@
 <h2>Requests:</h2>
 
 <table cellspacing=0 cellpadding=4 border=1>
-<tr><th>Time<th>URL<th>Name<th>Entrypoint<th>MIME type
+<tr><th>Time<th>URL<th>Namespace<th>Entrypoint<th>MIME type
 
 [% id = 0 %]
 
@@ -26,7 +26,7 @@
 
 <td>[% entry.time %]
 <td><a href="[% url("/single.html", id=id) %]">[% request.uri %]</a>
-<td>[% session.application.current.name || "&nbsp;" %] 
+<td>[% session.application.current.namespace || "&nbsp;" %] 
 <td>[% session.application.current.entrypoint || "&nbsp;" %]
 <td>[% response.mimetype %]
 

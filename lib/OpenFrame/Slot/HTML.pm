@@ -4,14 +4,15 @@ use strict;
 
 use File::MMagic;
 use FileHandle;
+use File::Spec;
 use OpenFrame::Slot;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::AbstractRequest'];
+  return ['OpenFrame::Request'];
 }
 
 sub action {
@@ -24,14 +25,14 @@ sub action {
 
 
   my $file = $uri->path();
-  $file =~ s|^/||;
 
-  if ($uri->path() =~ /\/$/) {
-    $file .= "index.html";
+  my($volume,$directories,$splitfile) = File::Spec->splitpath($file);
+  if (not $splitfile) {
+    $file .= File::Spec->catfile($file, "index.html");
   }
 
   if ($config->{directory}) {
-    $file = $config->{directory} . $file;
+    $file = File::Spec->catfile($config->{directory}, $file);
   }
 
   if (-e $file && -r _) {
@@ -43,7 +44,7 @@ sub action {
     if ($type eq "text/html") {
       warn("[slot:html] file $file is being handled as HTML") if $OpenFrame::DEBUG;
 
-      my $response = OpenFrame::AbstractResponse->new();
+      my $response = OpenFrame::Response->new();
       $response->code(ofOK);
       $response->mimetype($type);
       my $fh = FileHandle->new("<$file");
@@ -81,7 +82,7 @@ OpenFrame::Slot::HTML - Serve static HTML files
 =head1 DESCRIPTION
 
 C<OpenFrame::Slot::HTML> is an OpenFrame slot that can handle static
-HTML files. It takes the path from the C<OpenFrame::AbstractRequest>
+HTML files. It takes the path from the C<OpenFrame::Request>
 and looks for HTML files starting from the value of the "directory"
 configuration option. It returns an C<OpenFrame::AbstraceResponse>
 containing the HTML file.
@@ -97,7 +98,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

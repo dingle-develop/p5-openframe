@@ -47,7 +47,7 @@ sub guess {
   $game->guess(lc $guess);
   $self->{guessed}->{$guess} = 1;
 
-  if ($game->answer eq $game->secret) {
+  if ($game->won) {
     # They got the whole word
     $self->{message} .= h1("You guessed the correct word: " .
       uc($game->answer)) . hr .
@@ -58,7 +58,7 @@ sub guess {
       end_html;
     $game->new_word();
     $self->{guessed} = {};
-  } elsif ($game->chances == 0) {
+  } elsif ($game->lost) {
     # They ran out of chances
     $self->{message} .= h1("You didn't guess the word. It was: " .
       $game->secret) .
@@ -130,7 +130,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

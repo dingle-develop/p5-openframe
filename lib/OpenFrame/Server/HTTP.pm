@@ -6,9 +6,9 @@ use CGI::Cookie;
 use File::Temp qw(tempfile);
 use HTTP::Daemon;
 use HTTP::Status;
-use OpenFrame::AbstractCookie;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Cookietin;
+use OpenFrame::Request;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 use OpenFrame::Server;
 use Scalar::Util qw(blessed);
@@ -17,7 +17,7 @@ use URI;
 our $VERSION = '1.11';
 
 # Ideas from http://www.stonehenge.com/merlyn/WebTechniques/col34.listing.txt
-my $MAXCLIENTS = 8;
+my $MAXCLIENTS = 4;
 my $MAXREQUESTSPERCLIENT = 200;
 
 sub new {
@@ -100,7 +100,7 @@ sub handle_one_connection {
 
   my ($args) = parse_request($r);
 
-  my $cookietin  = OpenFrame::AbstractCookie->new();
+  my $cookietin  = OpenFrame::Cookietin->new();
 
   if ($r->header('Cookie')) {
     foreach my $ctext (split /; ?/, $r->header('Cookie')) {
@@ -109,7 +109,7 @@ sub handle_one_connection {
     }
   }
 
-  my $abstractRequest = OpenFrame::AbstractRequest->new(
+  my $abstractRequest = OpenFrame::Request->new(
 							uri         => $r->uri,
 							descriptive => 'web',
 							arguments   => $args,
@@ -201,14 +201,13 @@ sub parse_multipart_data {
       $headers{disposition} = $1 if $line =~ /^content-disposition: (.+)$/i;
     }
     my $name = $1 if $headers{disposition} =~ /name="(.+?)"/;
-    my $value = join("\n", @lines);
     if ($headers{disposition} =~ /filename=".+?"/) {
       my $fh = tempfile(DIR => "/tmp/", UNLINK => 1);
-      print $fh $value;
+      print $fh join("\r\n", @lines);
       $fh->seek(0, 0);
       $args->{$name} = $fh;
     } else {
-      $args->{$name} = $value;
+      $args->{$name} = join("\n", @lines);
     }
   }
 
@@ -243,7 +242,7 @@ This module requires HTTP::Daemon to be installed, and supports HTTP
 requests at the same time.
 
 Note that any file upload objects are in the arguments of the
-AbstractRequest and their value is a filehandle pointing to the
+Request and their value is a filehandle pointing to the
 object.
 
 =head1 AUTHOR

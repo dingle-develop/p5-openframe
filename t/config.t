@@ -1,6 +1,6 @@
 use strict;
 use Test::Simple tests => 25;
-use OpenFrame::Config;
+use OpenFrame;
 
 my $c = OpenFrame::Config->new();
 ok($c, "simple instantiation");

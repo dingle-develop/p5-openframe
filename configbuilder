@@ -35,7 +35,7 @@ $config->setKey(
 		  config   => {
 			       'installed_applications' => [
 							    {
-							     name      => 'default',
+							     namespace => 'default',
 							     uri       => '/',
 							     dispatch  => 'Local',
 							     namespace => 'OpenFrame::Application',

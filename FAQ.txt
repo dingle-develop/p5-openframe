@@ -30,13 +30,13 @@ A. It is now, yes.  Inside a &lt;Perl&gt; section use OpenFrame::Config,
 
 Q. Can we perform clickstream recording using OpenFrame?
 
-A. Yes.  Write a slot that records the contents of an OpenFrame::AbstractRequest to
+A. Yes.  Write a slot that records the contents of an OpenFrame::Request to
    a data storage mechanism (database, filesystem, etc, etc)
 
 Q. Can I get OpenFrame to redirect to another server based
    on a particular URL?
 
-A. Yes. Write a slot that returns an AbstractResponse with an ofREDIRECT
+A. Yes. Write a slot that returns an Response with an ofREDIRECT
    message code and the URL as the message.
 
 Q. Can I link to other things like personalization servers?

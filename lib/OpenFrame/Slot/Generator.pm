@@ -5,14 +5,14 @@ use strict;
 use Template;
 use OpenFrame::Config;
 use OpenFrame::Constants;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 
-our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.17 2002/01/21 15:00:02 leon Exp $ }))[2];
+our $VERSION = 2.00;
 
 my $tt;
 
 sub what {
-  return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
+  return ['OpenFrame::Session', 'OpenFrame::Request', 'OpenFrame::Cookietin'];
 }
 
 sub action {
@@ -55,7 +55,7 @@ sub action {
     }
     delete $session->{template}; # delete spurious entry by TT
 
-    my $response = OpenFrame::AbstractResponse->new();
+    my $response = OpenFrame::Response->new();
     $response->message( $output );
     $response->code( ofOK );
     $response->cookies( $cookie );
@@ -87,7 +87,7 @@ OpenFrame::Slot::Generator - Generate HTML using TT
 
 C<OpenFrame::Slot::Generator> is an OpenFrame slot that can generate
 HTML using the Template Toolkit. It takes the path from the
-C<OpenFrame::AbstractRequest> and looks for templates starting from
+C<OpenFrame::Request> and looks for templates starting from
 the value of the "presentation" configuration option. It returns an
 C<OpenFrame::AbstraceResponse> containing the generated output.
 
@@ -100,7 +100,7 @@ James Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

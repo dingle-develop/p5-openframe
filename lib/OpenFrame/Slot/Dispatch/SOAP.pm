@@ -11,7 +11,7 @@ sub dispatch {
 
   my $soapslot;
   if ($app->{soap_proxy} && $app->{soap_uri}) {
-    my $uri   = $app->{soap_uri} . $app->{namespace} . '/';
+    my $uri   = $app->{soap_uri} . $app->{name} . '/';
     my $proxy = $app->{soap_proxy};
 
     $soapslot = new SOAP::Lite->uri( $uri )->proxy( $proxy );
@@ -22,17 +22,17 @@ sub dispatch {
   }
 
   my $appcode;
-  if (exists $session->{application}->{ $app->{name} }) {
-    my $ref  = $session->{application}->{ $app->{name} };
+  if (exists $session->{application}->{ $app->{namespace} }) {
+    my $ref  = $session->{application}->{ $app->{namespace} };
     if (ref($ref)) {
-      $appcode = bless $ref, $app->{namespace};
+      $appcode = bless $ref, $app->{name};
     } else {
       warn("[slot::dispatch] not a reference in session") if $OpenFrame::DEBUG;
-      delete $session->{application}->{ $app->{name} };
+      delete $session->{application}->{ $app->{namespace} };
       return undef;
     }
   } else {
-    my $namespace = $app->{namespace};
+    my $name = $app->{name};
     my $result = $soapslot->call('new');
     if ($result->fault()) {
       my $excp = OpenFrame::Exception::Perl->new($result->faultstring());
@@ -50,7 +50,7 @@ sub dispatch {
     return;
   } else {
     my %apphash = %$appcode;
-    $session->{application}->{$app->{name}} = \%apphash;
+    $session->{application}->{$app->{namespace}} = \%apphash;
     return $result;
   }
 
@@ -71,10 +71,10 @@ OpenFrame::Slot::Dispatch::SOAP - Dispatch applications remotely via SOAP
   $config->setKey(
      'SLOTS', [ {
        dispatch => 'Local',
-       name     => 'OpenFrame::Slot::Dispatch',
+       namespace => 'OpenFrame::Slot::Dispatch',
        config   => {
          installed_applications => [ {
-           name       => 'hangman',
+           namespace => 'hangman',
            uri        => '/',
            dispatch   => 'SOAP',
            namespace  => 'Hangman::Application',
@@ -106,7 +106,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

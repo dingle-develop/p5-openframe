@@ -1,5 +1,43 @@
 Revision history for Perl module OpenFrame: 
 
+2.11 Fri Mar 22 14:33:55 GMT 2002
+	- changed SimpleGenerator to use Storable's dclone()
+	  which is more robust than Data::Dumper
+	- fixed embarrassing bug with file upload containing \r\n
+	- added OpenFrame version to Apache Server header
+	- bumped up version numbers in in OF::* to stop CPAN complaining.
+	- fixed redirects under Apache and cope with non-port-80
+          httpd servers
+	- OF::Slot::NoImages now positively checks for image MIME type
+	- added the slots2 test to the distribution
+
+2.10 Wed Feb 27 14:29:17 GMT 2002 [NEVER RELEASED]
+	- make more use of File::Spec to be more portable and clever
+        - clean up filehandles left behind from file uploads before
+          saving the session
+	- major rename: renamed OpenFrame::AbstractCookie,
+	  OpenFrame::AbstractRequest, OpenFrame::AbstractResponse to
+	  OpenFrame::Cookietin, OpenFrame::Request, OpenFrame::Response -
+	  (and tests) your custom slots and applications will have to
+	  be changed!
+	- switched the meaning of "name" and "namespace" around for
+	  applications dispatched via OpenFrame::Slot::Dispatch to be
+	  more consistent. Now "name" is always the module name and
+	  "namespace" here is the session namespace. Your configs with
+	  custom applications will have to be changed!
+	- renamed OpenFrame::SlotStore's lookup / store methods to
+          get / set to be more consistent
+        - "use OpenFrame" will now load in OpenFrame::Config,
+          OpenFrame::Cookietin, OpenFrame::Request, OpenFrame::Response,
+          and OpenFrame::Slot to save you some typing
+	- OF::Slot::Image now positively checks for image MIME type
+	- simplify Games::GuessWord logic by using new version
+	- $epoints subref now default to "default"
+        - changed OpenFrame::Slot to short-circuit slots when an
+          OpenFrame::Response is returned, and to correctly run cleanup
+          slots in the case of short-circuiting.
+        - moved OpenFrame::SlotStore into a module of its own
+
 2.09 Wed Jan 30 15:02:54 GMT 2002
 	- fix to make sure we send cookies with a / path
 	- promoted OpenFrame::Slot::SimpleGenerator to a real slot
@@ -20,7 +58,7 @@ Revision history for Perl module OpenFrame:
 	  is easier to install, simpler and faster
 
 2.08 Fri Jan  4 15:07:52 GMT 2002
-        - updated docs in OpenFrame::AbstractResponse
+        - updated docs in OpenFrame::Response
 	- minor bugfix to OpenFrame::Server::HTTP where having a
 	  parameter value contain an ampersand was causing a failure
 	- apps now can return stuff that is put on the slot stack
@@ -42,7 +80,7 @@ Revision history for Perl module OpenFrame:
 2.06 Thu Dec  6 11:01:05 GMT 2001
 	- removed warning in OpenFrame::Config
 	- more docs: OpenFrame, OpenFrame::Install
-	- complete redesign of OpenFrame::AbstractCookie
+	- complete redesign of OpenFrame::Cookie
 	- new Apache example, which shows OpenFrame being served
 	  by Apache and mod_perl
 	- new OpenFrame::Server::SOAP (and example), which allows OpenFrame

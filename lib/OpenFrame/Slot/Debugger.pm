@@ -3,13 +3,13 @@ package OpenFrame::Slot::Debugger;
 use strict;
 use Data::Dumper;
 use OpenFrame::Slot;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 use OpenFrame::Constants;
 
 use base qw (OpenFrame::Slot);
 
 sub what {
-  return ['OpenFrame::AbstractRequest', 'OpenFrame::AbstractResponse',
+  return ['OpenFrame::Request', 'OpenFrame::Response',
           'OpenFrame::Session'];
 }
 
@@ -65,7 +65,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

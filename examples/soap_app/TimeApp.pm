@@ -3,7 +3,7 @@ package TimeApp;
 use strict;
 use lib '../../lib';
 use OpenFrame::Application;
-use OpenFrame::AbstractRequest;
+use OpenFrame::Request;
 use base qw(OpenFrame::Application);
 
 sub default {
@@ -43,7 +43,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

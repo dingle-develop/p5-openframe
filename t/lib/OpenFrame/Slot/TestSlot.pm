@@ -4,7 +4,7 @@ use OpenFrame::Slot;
 use base qw ( OpenFrame::Slot );
 
 use OpenFrame::Constants;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Response;
 
 sub what {
   return [];
@@ -16,9 +16,9 @@ sub action {
 
   
   if(defined( $config->{This} )&& $config->{This} eq 'Is') {
-    return (OpenFrame::AbstractResponse->new( code => ofERROR ),'OpenFrame::Slot::TestSlot2');
+    return (OpenFrame::Response->new( code => ofERROR ),'OpenFrame::Slot::TestSlot2');
   } else {
-    return OpenFrame::AbstractResponse->new( code => ofERROR );
+    return OpenFrame::Response->new( code => ofERROR );
   }
 }
 

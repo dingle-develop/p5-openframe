@@ -11,10 +11,10 @@ sub what {
 sub action {
   my $self = shift;
   my $conf = shift;
-  my $vars = shift;
+  my $slotstore = shift;
 
-  my $req  = $vars->lookup( 'OpenFrame::AbstractRequest' );
-  my $excp = $vars->lookup( 'OpenFrame::Exception::Perl' );
+  my $req  = $slotstore->get( 'OpenFrame::Request' );
+  my $excp = $slotstore->get( 'OpenFrame::Exception::Perl' );
 
   my $type = ref($excp) || $excp;
   my $uri  = $req->uri()->as_string();
@@ -34,7 +34,7 @@ sub action {
     warn("$bgn caught $type exception while handling request for $uri\n$excp->{message}");
   }
 
-  $excp = $vars->lookup( 'OpenFrame::Exception::Slot' );
+  $excp = $slotstore->get( 'OpenFrame::Exception::Slot' );
   warn("$bgn $excp->{message}");
 
 }

@@ -3,14 +3,14 @@
 use strict;
 use lib '../../lib';
 use OpenFrame::Constants;
-use OpenFrame::AbstractCookie;
+use OpenFrame::Cookietin;
 
 use SOAP::Lite +autodispatch =>
   uri => 'http://localhost:8010/',
   proxy => 'http://localhost:8010/';
 
 my $url = "http://localhost/";
-my $cookietin = OpenFrame::AbstractCookie->new();
+my $cookietin = OpenFrame::Cookietin->new();
 my $direct = OpenFrame::Server::Direct->new();
 
 my $response;

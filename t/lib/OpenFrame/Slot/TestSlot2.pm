@@ -6,7 +6,7 @@ use base qw ( OpenFrame::Slot );
 use OpenFrame::Constants;
 
 sub what {
-  return ['OpenFrame::AbstractResponse'];
+  return ['OpenFrame::Response'];
 }
 
 sub action {

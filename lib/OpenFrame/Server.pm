@@ -2,12 +2,12 @@ package OpenFrame::Server;
 
 use strict;
 use OpenFrame::Config;
-use OpenFrame::AbstractRequest;
-use OpenFrame::AbstractResponse;
+use OpenFrame::Request;
+use OpenFrame::Response;
 use OpenFrame::Slot;
 
-our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.8 2001/12/03 14:20:00 leon Exp $ }))[2];
-
+our $VERSION = 2.00;
+our $SLOTCLASS = 'OpenFrame::Slot';
 
 sub action {
   my $class = shift;
@@ -22,13 +22,13 @@ sub action {
   # Go through the slots
   my $SLOTS    = $config->getKey('SLOTS');
   if ($SLOTS && ref($SLOTS) eq 'ARRAY') {
-    $response = OpenFrame::Slot->action($req, $SLOTS);
+    $response = $SLOTCLASS->action($req, $SLOTS);
   }
 
   # Go through the postslots
   my $POST = $config->getKey('POSTSLOTS');
   if ($POST && ref($POST) eq 'ARRAY') {
-    OpenFrame::Slot->action($req,  $POST);
+    $SLOTCLASS->action($req,  $POST);
   }
 
   return $response;
@@ -50,12 +50,12 @@ OpenFrame::Server - Class representing an OpenFrame installation
 =head1 DESCRIPTION
 
 The I<OpenFrame::Server> class represents an installation of OpenFrame.  It takes
-an I<OpenFrame::AbstractRequest> object and starts the slot execution process (see
-C<OpenFrame::Slot>.  Its method, I<action()> returns an AbstractRequest object.
+an I<OpenFrame::Request> object and starts the slot execution process (see
+C<OpenFrame::Slot>.  Its method, I<action()> returns an Request object.
 
 =head1 BUGS
 
-Need to return a blank AbstractRequest if nothing happens of any consequence.  That
+Need to return a blank Request if nothing happens of any consequence.  That
 in itself being consequential.
 
 =head1 AUTHOR
@@ -64,7 +64,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright 2001 Fotango Ltd
+Copyright 2001-2 Fotango Ltd
 This module is released under the same terms as Perl.
 
 =cut

@@ -16,8 +16,8 @@ $config->setKey(
                   name     => 'OpenFrame::Slot::Session',
                   config   => {
                                default_session => {
-                                                   language => 'en',
-                                                   country  => 'UK',
+                                                   language    => 'en',
+                                                   country     => 'UK',
                                                    application => {},
                                                   },
                                },
@@ -28,19 +28,19 @@ $config->setKey(
                   config   => {
                                installed_applications => [
                                                           {
-							   uri     => '/',
-							   dispatch => 'SOAP',
-							   name          => 'timeapp',
-							   namespace     => 'TimeApp',
-							   soap_uri      => 'http://localhost:8010/',
-							   soap_proxy    => 'http://localhost:8010/',
+							   uri        => '/',
+							   dispatch   => 'SOAP',
+							   namespace  => 'timeapp',
+							   name       => 'TimeApp',
+							   soap_uri   => 'http://localhost:8010/',
+							   soap_proxy => 'http://localhost:8010/',
 							  },
 							 ],
 			      },
 		},
                  {
                   dispatch => 'Local',
-                  name     => 'Hangman::Generator',
+                  name => 'Hangman::Generator',
                  },
 		],
 	       );
@@ -71,7 +71,7 @@ Leon Brocard <leon@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001, Fotango Ltd.
+Copyright (C) 2001-2, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.

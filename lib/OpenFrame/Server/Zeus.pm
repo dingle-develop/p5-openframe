@@ -6,7 +6,7 @@ use OpenFrame::Constants;
 use OpenFrame::Server;
 use OpenFrame::Server::Direct;
 
-our $VERSION = (split(/ /, q{$Id: Zeus.pm,v 1.2 2001/12/05 18:01:08 leon Exp $ }))[2];
+our $VERSION = 2.00;
 
 sub new {
   my $class = shift;
@@ -21,7 +21,7 @@ sub handle {
   while (my $q = CGI::Fast->new()) {
     my $url = "http://localhost" . $q->path_info . "?" . $q->query_string;
 
-    my $cookietin = OpenFrame::AbstractCookie->new();
+    my $cookietin = OpenFrame::Cookietin->new();
     $cookietin->set("session", $q->cookie("session"));
 
     my $direct = OpenFrame::Server::Direct->new();

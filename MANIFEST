@@ -58,9 +58,9 @@ examples/zeus/htdocs/zeus.fcgi
 lib/OpenFrame.pm
 lib/OpenFrame/Exception.pm
 lib/OpenFrame/Constants.pm
-lib/OpenFrame/AbstractCookie.pm
-lib/OpenFrame/AbstractRequest.pm
-lib/OpenFrame/AbstractResponse.pm
+lib/OpenFrame/Cookietin.pm
+lib/OpenFrame/Request.pm
+lib/OpenFrame/Response.pm
 lib/OpenFrame/AppWrite.pod
 lib/OpenFrame/Application.pm
 lib/OpenFrame/Config.pm
@@ -73,6 +73,7 @@ lib/OpenFrame/Server/HTTPSingle.pm
 lib/OpenFrame/Server/SOAP.pm
 lib/OpenFrame/Server/Zeus.pm
 lib/OpenFrame/Slot.pm
+lib/OpenFrame/SlotStore.pm
 lib/OpenFrame/Slot/Debugger.pm
 lib/OpenFrame/Slot/Dispatch.pm
 lib/OpenFrame/Slot/Dispatch/Local.pm
@@ -88,9 +89,9 @@ lib/OpenFrame/Slot/SessionSaver.pm
 lib/OpenFrame/Slot/SimpleGenerator.pm
 lib/OpenFrame/Slot/XML.pm
 lib/OpenFrame/Slot/XSLT.pm
-t/abstractcookie.t
-t/abstractrequest.t
-t/abstractresponse.t
+t/cookietin.t
+t/request.t
+t/response.t
 t/config.t
 t/direct.t
 t/error.t
@@ -99,12 +100,18 @@ t/hangman2.t
 t/http.t
 t/soap.t
 t/slots.t
+t/slots2.t
 t/webserver.t
 t/xml.t
 t/xmldir/myfile.xml
 t/xmldir/mystylesheet.xsl
 t/lib/OpenFrame/EpointsApplication.pm
 t/lib/OpenFrame/MyApplication.pm
+t/lib/OpenFrame/Slot/Cleaner.pm
+t/lib/OpenFrame/Slot/Cleanup.pm
+t/lib/OpenFrame/Slot/Misc.pm
+t/lib/OpenFrame/Slot/Short.pm
 t/lib/OpenFrame/Slot/TestSlot.pm
 t/lib/OpenFrame/Slot/TestSlot2.pm
+
 

@@ -21,6 +21,7 @@ WriteMakefile(
 	      NAME         => "OpenFrame",
 	      VERSION_FROM => "lib/OpenFrame.pm",
 	      PREREQ_PM    => {
+			       'File::Temp'    => '0.01',
 			       'Test::Simple'  => '0.01',
 			       'Test::More'    => '0.01',
 			       'IO::Null'      => '0.01',

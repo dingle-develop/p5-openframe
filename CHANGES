@@ -1,4 +1,8 @@
 
+?
+	- pass parameters in init()
+	- removed $self->emit of blobs (slow)
+
 3.02	
 	- added OpenFrame::Argument::Blob to handle browser uploads
 	- more docs

@@ -16,7 +16,7 @@ use OpenFrame::Response;
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
-our $VERSION = '3.01';
+our $VERSION="3.03";
 
 sub dispatch {
   my $self  = shift;
@@ -30,7 +30,7 @@ sub dispatch {
   if (!$response) {
     ## time to make an error response
     $response = OpenFrame::Response->new();
-    $response->code( ofERROR );
+    $response->code( ofERROR() );
     $response->message(
 		       q{
 			 <h1>There was an error processing your request</h1>
@@ -81,9 +81,9 @@ sub ofr2httpr {
 sub ofcode2status {
   my $self = shift;
   my $ofr  = shift;
-  if ($ofr->code() eq ofOK) {
+  if ($ofr->code() eq ofOK()) {
     return RC_OK;
-  } elsif ($ofr->code() eq ofREDIRECT) {
+  } elsif ($ofr->code() eq ofREDIRECT()) {
     return RC_FOUND;
   } else {
     return RC_INTERNAL_SERVER_ERROR;

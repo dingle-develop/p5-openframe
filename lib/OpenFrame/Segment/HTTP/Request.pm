@@ -161,7 +161,6 @@ sub parse_multipart_data {
 	$blob->filename( $filename );
       }
 
-      use Data::Dumper; $self->emit( Dumper( $blob ) );
       $args->{$name} = $blob;
     } else {
       $args->{$name} = join("\n", @lines);

@@ -8,7 +8,7 @@ use OpenFrame::Object;
 use Pipeline::Production;
 use base qw ( OpenFrame::Object Pipeline::Production Exporter );
 
-our $VERSION = '3.01';
+our $VERSION="3.03";
 
 use constant ofOK       => 1;
 use constant ofREDIRECT => 2;

@@ -5,13 +5,13 @@ use warnings::register;
 
 use OpenFrame;
 
-our $VERSION = '3.01';
+our $VERSION="3.03";
 
 sub new {
   my $class = shift;
   my $self  = {};
   bless $self, $class;
-  $self->init();
+  $self->init(@_);
   return $self;
 }
 

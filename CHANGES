@@ -1,6 +1,15 @@
 Revision history for Perl module OpenFrame: 
 
-2.02
+2.03 
+	- added documentation (all examples, OpenFrame::Application, 
+          OpenFrame::Constants, OpenFrame::Slot::*)
+	- fixed per-application configuration to actually work
+	- OpenFrame::Server::HTTP now takes a port parameter
+	  instead of using the general configurations. It also can
+          now handle POSTs
+        - new Eliza example
+
+2.02 Mon Nov 12 16:56:09 GMT 2001
         - added OpenFrame::Server::HTTP for use without Apache
 	- added OpenFrame::Slot::Images and OpenFrame::Slot::HTML
 	  to serve static images and HTML files

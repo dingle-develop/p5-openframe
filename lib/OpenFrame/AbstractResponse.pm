@@ -29,10 +29,10 @@ OpenFrame::AbstractResponse - An abstract response class
   use OpenFrame::AbstractResponse;
   use OpenFrame::AbstractCookie;
   my $r = OpenFrame::AbstractResponse->new();
-  $r->setMessage("<html><body>Hello world!</body></html>");
-  $r->setMimeType('text/html');
-  $r->setMessageCode(ofOK);
-  $r->setCookie(OpenFrame::AbstractCookie->new());
+  $r->message("<html><body>Hello world!</body></html>");
+  $r->mimetype('text/html');
+  $r->code(ofOK);
+  $r->cookies(OpenFrame::AbstractCookie->new());
 
 =head1 DESCRIPTION
 
@@ -50,20 +50,20 @@ OpenFrame.
 This method creates a new C<OpenFrame::AbstractResponse> object. It
 takes no parameters.
 
-=head2 cookie()
+=head2 cookies()
 
 This method gets and sets the C<OpenFrame::AbstractCookie> that is
 associated with this response.
 
-  my $cookietin = $r->getCookie();
-  $r->setCookie(OpenFrame::AbstractCookie->new());
+  my $cookietin = $r->cookies();
+  $r->cookies(OpenFrame::AbstractCookie->new());
 
 =head2 message()
 
 This method gets and sets the message string associated with this response.
 
-  my $message = $r->getMessage();
-  $r->setMessage("<html><body>Hello world!</body></html>");
+  my $message = $r->message();
+  $r->message("<html><body>Hello world!</body></html>");
 
 =head2 code()
 
@@ -71,15 +71,15 @@ This method gets and sets the message code associated with this
 response. The following message codes are exported when you use
 C<OpenFrame::Constants>: ofOK, ofERROR, ofREDIRECT, ofDECLINED.
 
-  my $code = $r->getMessageCode();
-  $r->setMessageCode(ofOK);
+  my $code = $r->code();
+  $r->code(ofOK);
 
 =head2 mimetype()
 
 This method gets and sets the MIME type associated with this response.
 
-  my $type = $r->getMimeType();
-  $r->setMimeType('text/html');
+  my $type = $r->mimeype();
+  $r->mimetype('text/html');
 
 =head1 AUTHOR
 

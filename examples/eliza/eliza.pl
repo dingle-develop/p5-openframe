@@ -1,8 +1,6 @@
 #!/usr/bin/perl -w
 #
-# The hangman images are by Andy Wardley
-#
-# This version of hangman uses templates
+# A simple version of Eliza
 
 use strict;
 use lib '../../lib';
@@ -14,11 +12,6 @@ my $config = OpenFrame::Config->new();
 $config->setKey(
                 'SLOTS',
                 [
-                 {
-                  dispatch => 'Local',
-                  name => 'OpenFrame::Slot::Images',
-		  config   => { directory => '../hangman/' },
-                 },
                  {
                   dispatch => 'Local',
                   name     => 'OpenFrame::Slot::Session',
@@ -37,18 +30,17 @@ $config->setKey(
 		  config   => {
 			       installed_applications => [
 							  {
-							   name      => 'hangman',
+							   name      => 'eliza',
 							   uri       => '/',
 							   dispatch  => 'Local',
-							   namespace => 'Hangman::Application',
-							   config   => { words => "../hangman/words.txt" },
+							   namespace => 'Eliza::Application',
 							  },
 							 ],
 			      },
                  },
                  {
                   dispatch => 'Local',
-                  name     => 'Hangman::Generator',
+                  name     => 'Eliza::Generator',
 		  config   => { presentation => 'templates/' },
                  },
                 ]
@@ -56,7 +48,7 @@ $config->setKey(
 $config->setKey(DEBUG => 0);
 
 my $h = OpenFrame::Server::HTTP->new(port => 8000);
-print "Point your browser to http://localhost:8000/ to play hangman!\n";
+print "Point your browser to http://localhost:8000/ to talk to Eliza!\n";
 $h->handle();
 
 __END__

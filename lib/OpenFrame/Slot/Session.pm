@@ -10,7 +10,7 @@ use Digest::MD5 qw(md5_hex);
 
 use Data::Dumper;
 
-our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.15 2001/11/12 12:37:45 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.16 2001/11/13 14:30:44 leon Exp $ }))[2];
 
 sub what {
   return ['OpenFrame::AbstractRequest'];
@@ -124,3 +124,56 @@ sub generate_key {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+OpenFrame::Slot::Session - handle cookie-based sessions
+
+=head1 SYNOPSIS
+
+  # as part of the SLOTS entry in OpenFrame::Config:
+  {
+  dispatch => 'Local',
+  name     => 'OpenFrame::Slot::Session',
+  config   => {
+    sessiondir => "../../t/sessiondir",
+    default_session => {
+      language => 'en',
+      country  => 'UK',
+      application => {},
+      },
+    },
+  },
+
+=head1 DESCRIPTION
+
+C<OpenFrame::Slot::Session> is an OpenFrame slot that can handle
+cookie-based session handling.
+
+Apart from adding it as a SLOT early on in the slot process, the
+handling of session is done fairly transparently.
+
+Sessions are currently stored on disk and are not expired. The
+directory where they are stored is passed as the configuration option
+"sessiondir", and a default session can be passed as "default_session".
+
+After this slot is run, slots may request C<OpenFrame::Session>
+objects. Applications using C<OpenFrame::Slot::Dispatch> automatically
+get the session passed to them.
+
+Any information stored in the session hash will be magically available
+upon the next request by the same user. This is handled behind the
+scenes by sending and receiving a cookie.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2001, Fotango Ltd.
+
+This module is free software; you can redistribute it or modify it
+under the same terms as Perl itself.

@@ -1,4 +1,4 @@
-package Hangman::Generator;
+package Eliza::Generator;
 
 use strict;
 use warnings::register;
@@ -58,11 +58,11 @@ __END__
 
 =head1 NAME
 
-Hangman::Generator - A templated output generator for hangman
+Eliza::Generator - A templated output generator for Eliza
 
 =head1 DESCRIPTION
 
-C<Hangman::Generator> is a templated output generator for hangman. The
+C<Eliza::Generator> is a templated output generator for Eliza. The
 session is passed to a Template Toolkit template, which generates
 output, and the code then generates a response.
 
@@ -72,7 +72,7 @@ seeing if it can read the template file.
 
 The template used is "templates/index.html" so investigate that to
 understand the clear seperation between logic and presentation present
-in this example hangman game.
+in this example Eliza application.
 
 =head1 AUTHOR
 

@@ -6,6 +6,10 @@ TODO
 FAQ.txt
 configatom
 configbuilder
+examples/eliza/eliza.pl
+examples/eliza/Eliza/Application.pm
+examples/eliza/Eliza/Generator.pm
+examples/eliza/templates/index.html
 examples/hangman/hangman.pl
 examples/hangman/words.txt
 examples/hangman/Hangman/Application.pm
@@ -25,6 +29,7 @@ examples/webserver/webserver.pl
 examples/webserver/htdocs/index.html
 examples/webserver/htdocs/perl.gif
 lib/OpenFrame.pm
+lib/OpenFrame/Exception.pm
 lib/OpenFrame/Constants.pm
 lib/OpenFrame/AbstractCookie.pm
 lib/OpenFrame/AbstractRequest.pm
@@ -47,7 +52,7 @@ lib/OpenFrame/Slot/Images.pm
 lib/OpenFrame/Slot/NoImages.pm
 lib/OpenFrame/Slot/Session.pm
 lib/OpenFrame/Slot/SessionSaver.pm
-lib/OpenFrame/Slots.pod
+lib/OpenFrame/Slot/Exception.pm
 t/abstractcookie.t
 t/abstractrequest.t
 t/abstractresponse.t

@@ -8,6 +8,7 @@ sub dispatch {
   my $app      = shift;
   my $session  = shift;
   my $request  = shift;
+  my $config   = shift;
 
   eval "use $app->{namespace};";
   if ($@) {
@@ -19,7 +20,7 @@ sub dispatch {
   my $appcode;
   if (exists $session->{application}->{ $app->{name} }) {
     my $ref  = $session->{application}->{ $app->{name} };
-    if (ref($ref)) {      
+    if (ref($ref)) {
       $appcode = bless $ref, $app->{namespace};
     } else {
       warnings::warn("[slot::dispatch] not a reference in session") if (warnings::enabled || $OpenFrame::DEBUG);
@@ -33,7 +34,7 @@ sub dispatch {
 
   if (Scalar::Util::blessed( $appcode )) {
     if ($appcode->can('enter')) {
-      $appcode->enter( $request, $session );
+      $appcode->enter($request, $session, $config);
       my %apphash = %{ $appcode };
       $session->{application}->{ $app->{name} } = \%apphash;
       return 1;

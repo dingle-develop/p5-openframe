@@ -17,14 +17,15 @@ use OpenFrame::Constants;
 use HTTP::Daemon;
 use HTTP::Status;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 sub new {
   my $class = shift;
-  my $config = shift;
+  my %config = @_;
 
   my $self = {};
-  $self->{_config} = $config || OpenFrame::Config->new();
+  $self->{_port} = $config{port} || 8000;
+  $self->{_config} = OpenFrame::Config->new();
 
   bless $self, $class;
 
@@ -34,14 +35,25 @@ sub new {
 sub handle {
   my $self = shift;
 
-  my $port = $self->{_config}->{server_http_port} || 8000;
+  my $port = $self->{_port};
+
   my $d = HTTP::Daemon->new(LocalPort => $port, Reuse => 1, ReuseAddr => 1) || die;
   while (my $c = $d->accept) {
     while (my $r = $c->get_request) {
+      my $args;
       my $uri = URI->new($r->url);
-      my $cgi = CGI->new($uri->query);
-      my $args = { map { ($_, $cgi->param($_)) } $cgi->param() };
-      $uri->query(undef);
+
+      if ($r->method eq 'GET') {
+        my $cgi = CGI->new($uri->query);
+        $args = { map { ($_, $cgi->param($_)) } $cgi->param() };
+        $uri->query(undef);
+      } elsif ($r->method eq 'POST') {
+        my $cgi = CGI->new($r->content);
+        $args = { map { ($_, $cgi->param($_)) } $cgi->param() }; 
+        $uri->query(undef);
+      } else {
+        warn "unsupported method: " . $r->method . "\n";
+      }
 
       my $cookietin  = OpenFrame::AbstractCookie->new();
 
@@ -105,7 +117,7 @@ OpenFrame::Server::HTTP - Provide standalone HTTP access to OpenFrame
 =head1 SYNOPSIS
 
   use OpenFrame::Server::HTTP;
-  my $h = OpenFrame::Server::HTTP->new($config);
+  my $h = OpenFrame::Server::HTTP->new(port => 8000);
   $h->handle();
 
 =head1 DESCRIPTION
@@ -113,12 +125,13 @@ OpenFrame::Server::HTTP - Provide standalone HTTP access to OpenFrame
 C<OpenFrame::Server::HTTP> provides a standalone webserver which gives
 web access to an OpenFrame application (without having to set up
 Apache). The port that the webserver listens on is set by the value of
-the server_http_port key in the configuration, although it defaults to
-port 8000.
+the port key in the configuration, although it defaults to port 8000.
 
 =head1 NOTES
 
-This module requires HTTP::Daemon to be installed.
+This module requires HTTP::Daemon to be installed, and supports HTTP
+1.1 (including keepalives) but only spawns one server - so can only
+be tested by one client at a time.
 
 =head1 AUTHOR
 

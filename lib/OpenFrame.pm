@@ -6,7 +6,7 @@ use warnings::register;
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.02';
+our $VERSION = '2.03';
 
 =head1 NAME
 
@@ -22,7 +22,7 @@ Anyway, this is a pretty raw release.  It's ready to use, but it is still lackin
 quite a lot of documentation.  Some of the SOAP stuff needs to be reexamined
 and that will happen over the next few weeks as we need it.  Patches welcome.
 
-Developers should read lib/OpenFrame/AppWrite.pod and lib/OpenFrame/Slots.pod,
+Developers should read lib/OpenFrame/AppWrite.pod and lib/OpenFrame/Slot.pm,
 installing-things type people should read lib/OpenFrame/Install.pod.
 
 Regards,

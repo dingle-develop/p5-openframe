@@ -6,8 +6,8 @@ OpenFrame::Installation - OpenFrame installation guide.
 
 =head1 DESCRIPTION
 
-C<OpenFrame> should be fairly simple to install for anybody who is familiar with
-C<Perl> and more specifically, C<mod_perl>.
+C<OpenFrame> should be fairly simple to install for anybody who is
+familiar with C<Perl> and more specifically, C<mod_perl>.
 
 =over 4
 
@@ -20,25 +20,27 @@ As with most perl modules, simply:
    make test
    make install
 
-If you want to put OpenFrame in a specific directory, then append C<PREFIX=&lt;path&gt;> to
-the C<perl Makefile.PL> command.
+If you want to put OpenFrame in a specific directory, then append
+C<PREFIX=E<lt>pathE<gt>> to the C<perl Makefile.PL> command.
 
 =item Configuration
 
-To configure OpenFrame for the first time, simply execute the configbuilder script.  This
-will place a file in your current directory called .openframe.conf.  Edit the values in this
-file as you see fit.  Note: for system wide config you probably want to put that file in
-/etc/openframe.conf
+To configure OpenFrame for the first time, simply execute the
+configbuilder script.  This will place a file in your current
+directory called .openframe.conf.  Edit the values in this file as you
+see fit.  Note: for system wide config you probably want to put that
+file in /etc/openframe.conf
 
 =item Web Server Plug in
 
-Simply install the handler for your server.  In the case of Apache it's C<OpenFrame::Server::Apache.>
-We map an entire server to the one handler.  You could have multiple copies of OpenFrame running,
-but it's not a tested configuration.
+Simply install the handler for your server.  In the case of Apache
+it's C<OpenFrame::Server::Apache.> We map an entire server to the one
+handler.  You could have multiple copies of OpenFrame running, but
+it's not a tested configuration.
 
 Our configuration looks similar to:
 
-<VirtualHost [SOME.IP.ADDRESS]>
+  <VirtualHost [SOME.IP.ADDRESS]>
         ServerName      [Some Server Name]
         Port            80
         DocumentRoot    [Some Directory]
@@ -53,10 +55,10 @@ Our configuration looks similar to:
                 </Perl>
                 PerlHandler     OpenFrame::Server::Apache
         </Location>
-</VirtualHost>
+  </VirtualHost>
 
-Of course you need to edit some of those values to get any real mileage from the software,
-but you should have the general idea.
+Of course you need to edit some of those values to get any real
+mileage from the software, but you should have the general idea.
 
 =back
 

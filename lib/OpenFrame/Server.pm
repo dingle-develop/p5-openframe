@@ -8,7 +8,7 @@ use OpenFrame::Config;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.5 2001/11/02 14:17:59 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.6 2001/11/13 14:06:35 leon Exp $ }))[2];
 
 
 sub action {
@@ -53,7 +53,7 @@ OpenFrame::Server - Class representing an OpenFrame installation
 
 The I<OpenFrame::Server> class represents an installation of OpenFrame.  It takes
 an I<OpenFrame::AbstractRequest> object and starts the slot execution process (see
-C<OpenFrame::Slots>.  Its method, I<action()> returns an AbstractRequest object.
+C<OpenFrame::Slot>.  Its method, I<action()> returns an AbstractRequest object.
 
 =head1 BUGS
 

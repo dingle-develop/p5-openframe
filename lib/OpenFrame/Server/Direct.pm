@@ -87,8 +87,8 @@ OpenFrame::Server::Direct - Provide direct access to OpenFrame
   my $response;
   ($response, $cookietin) = $direct->handle($url, $cookietin);
 
-  if ($response->getMessageCode == ofOK) {
-    print $response->getMessage() . "\n";
+  if ($response->code() == ofOK) {
+    print $response->message() . "\n";
   } else {
     print "Some sort of error. Drat.\n";
   }

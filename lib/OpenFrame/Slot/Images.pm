@@ -63,4 +63,42 @@ sub action {
 
 1;
 
+__END__
 
+=head1 NAME
+
+OpenFrame::Slot::Images - serve static image files
+
+=head1 SYNOPSIS
+
+  # as part of the SLOTS entry in OpenFrame::Config:
+  {
+  dispatch => 'Local',
+  name     => 'OpenFrame::Slot::Images',
+  config   => { directory => 'htdocs/' },
+  },
+
+=head1 DESCRIPTION
+
+C<OpenFrame::Slot::Images> is an OpenFrame slot that can handle static
+images. It takes the path from the C<OpenFrame::AbstractRequest> and
+looks for image files starting from the value of the "directory"
+configuration option. It returns an C<OpenFrame::AbstraceResponse>
+containing the image file.
+
+It defaults to "index.html" if the path is a directory.
+
+It will only serve the file if C<File::MMagic> reckons the file does
+not have MIME type "text/html", and will set the proper MIME type for
+the image.
+
+=head1 AUTHOR
+
+Leon Brocard <leon@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2001, Fotango Ltd.
+
+This module is free software; you can redistribute it or modify it
+under the same terms as Perl itself.

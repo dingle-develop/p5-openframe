@@ -18,7 +18,8 @@ sub default {
 
   # Start a new game if there isn't one already
   if (not $self->{game}) {
-    my $game = Games::WordGuess->new($config->{words});
+    my $words = $config->{words} || die "No wordlist given!";
+    my $game = Games::WordGuess->new($words);
     $game->{chances} = 6;  # only give them 6 chances
     $self->{game} = $game; # save the game in our session
     $self->{guessed} = {};
@@ -31,10 +32,12 @@ sub default {
 sub guess {
   my $self = shift;
   my $session = shift;
+  my $request = shift;
+  my $config = shift;
 
   # Retrieve the game and the guess
   my $game = $self->{game};
-  my $guess = $session->{system}->{parameters}->{guess};
+  my $guess = $request->arguments->{guess};
 
   if (not defined $game) {
     # We don't have a game, so set one up
@@ -98,3 +101,40 @@ sub add_body {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Hangman::Application - A module containing the hangman logic
+
+=head1 DESCRIPTION
+
+C<Hangman::Application> is part of the simple hangman web
+application. The module contains all the logic and presentation for
+Hangman.
+
+Note that the application has two main entry points: the default() and
+the guess() subroutines. The C<$epoint> hash at the beginning of the
+module sets up the call to guess() if a "guess" parameter is passed in
+the request. Otherwise, default() is called.
+
+Each entry point is given itself, the session, an abstract request,
+and per-application configuration. They then contain application logic
+- note that we store a Games::WordGuess object inside C<$self> and
+that this is magically persistent between calls.
+
+This code is small and dirty as the output is generated inline using
+the CGI module and the add_body() method. Note that the output is
+stored inside C<$self> to be passed on to C<Hangman::Generator>.
+
+=head1 AUTHOR
+
+Leon Brocard <leon@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2001, Fotango Ltd.
+
+This module is free software; you can redistribute it or modify it
+under the same terms as Perl itself.

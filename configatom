@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+
+our $VERSION = '1.00';
+
+use lib './lib';
+use OpenFrame::Config;
+use Data::Dumper;
+
+my $config = OpenFrame::Config->new();
+
+if (scalar(@ARGV) > 2) {
+  my $arg1 = shift;
+  $config->setKey( $arg1, [ @ARGV ] );
+  my $key = $config->getKey( $arg1 );
+  print Dumper( $key );
+} elsif (scalar(@ARGV) == 2) {
+    $config->setKey( $ARGV[0], $ARGV[1] );
+} elsif (scalar(@ARGV) == 1) {
+  if ($ARGV[0] eq '-h' || $ARGV[0] eq '--help') {
+    usage();
+    exit();
+  }
+  if ($config->getKey( $ARGV[0] )) {
+    if (ref($config->getKey( $ARGV[0] ))) {
+      print Dumper( $config->getKey( $ARGV[0] ));
+    } else {
+      print $config->getKey( $ARGV[0] ), "\n";
+    }
+  } else {
+    print("key $ARGV[0] does not exist or is zero-val\n");
+  }
+} else {
+  usage();
+  exit();
+}
+
+sub usage {
+  print "configatom version $VERSION\n";
+  print "Usage: configatom <key> [val]\n";
+}

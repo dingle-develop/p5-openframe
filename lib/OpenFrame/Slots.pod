@@ -1,0 +1,73 @@
+=head1 NAME
+
+OpenFrame::Slots - Information about OpenFrame Slots
+
+=head1 OVERVIEW
+
+OpenFrame Slot functionality is designed as a pipe where transmogrification
+takes place.  An I<OpenFrame::AbstractRequest> object is poured into the top, and
+when it comes out of the bottom it should be an I<OpenFrame::AbstractResponse>, that
+contains all the information that is needed by any server to deliver
+content to a browser.  In between the top and the bottom of the pipe functionality
+is executed in a serial fashion.  The moment that an AbstractResponse object
+is returned by any slot the pipe magically shortens itself.
+
+=head1 EXAMPLE
+
+  package OpenFrame::Slot::MyRequestNoter;
+
+  use strict;
+  use warnings::register;
+
+  use OpenFrame::Slot;
+  use base qw ( OpenFrame::Slot );
+
+  sub what {
+    return ['OpenFrame::AbstractRequest'];
+  }
+
+  sub action {
+    my $self = shift;
+    my $req  = shift;
+
+    warnings::warn("URL Requested is: " . $req->getURI()->as_string());
+  }
+
+  1;
+
+=head1 WHAT'S IN A SLOT
+
+Any slot should inherit from the I<OpenFrame::Slot> class.  This provides the 
+basic functionality that a slot needs to get going.  However, from any given
+slot there should be two methods that programmers need to concern themselves
+with, I<what()> and I<action()>.
+
+=head2 what()
+
+The I<what()> method returns an array reference containing the classes that 
+any given slot needs to function.  For instance, the packaged class 
+C<OpenFrame::Slot::Session> requires an OpenFrame::AbstractRequest object
+in order to perform its action, and therefore returns it inside an array
+when its I<what()> method is called.
+
+=head2 action()
+
+The I<action()> method takes the parameters that you specify in the I<what()>
+method and does something with them.  If it returns an object then that
+object gets kept for future use by other slots.  For example, the 
+I<OpenFrame::Slot::Session> class returns both an I<OpenFrame::Session> object
+and a I<OpenFrame::AbstractCookie> object, that are later used by other
+slots.
+
+=head1 NOTES
+
+The moment an object of the class I<OpenFrame::AbstractResponse> is returned
+the pipe of slots stops, and returns the object to the server.  This allows
+slots to be written that handle errors on fall through, much like a default
+case in a switch statement.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=cut

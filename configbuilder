@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+use lib './lib';
+
+use strict;
+use OpenFrame::Config;
+
+my $config = OpenFrame::Config->new($ARGV[0] || '/etc/openframe.conf');
+$config->setKey(
+		'SLOTS',
+	        [
+		 {
+		  dispatch => 'Local',
+		  name => 'OpenFrame::Slot::NoImages',
+		 },
+		 {
+		  dispatch => 'Local',
+		  name     => 'OpenFrame::Slot::Session',
+		 },
+		 {
+		  dispatch => 'Local',
+		  name     => 'OpenFrame::Slot::Dispatch',
+		 },
+		 {
+		  dispatch => 'Local',
+		  name     => 'OpenFrame::Slot::SessionSaver',
+		 },
+		 {
+		  dispatch => 'Local',
+		  name     => 'OpenFrame::Slot::ErrorText'
+		 },
+		]
+	       );
+$config->setKey(
+		'DEBUG',
+		1
+	       );
+$config->setKey(
+		'default_session',
+		{
+		 language => 'en',
+		 country  => 'UK',
+		 application => {},
+		}
+	       );
+$config->setKey(
+		'installed_applications',
+		[
+		 {
+		  name      => 'default',
+		  uri       => '/',
+		  dispatch  => 'Local',
+		  namespace => 'OpenFrame::Application',
+		 }
+		]
+	       );
+
+$config->setKey(
+		'sessiondir',
+		'/tmp/openframe2'
+	       );
+
+
+

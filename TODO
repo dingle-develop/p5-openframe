@@ -1,0 +1,21 @@
+More documentation
+
+More tests
+
+A proper testing framework
+
+OpenFrame::Server::CGI
+
+OpenFrame::Server::HTTPD (based on POE::Filter::HTTPD?)
+
+[done] Rewrite session to use an AbstractCookie.  Rewrite generator to
+require an abstract cookie.  Rewrite AbstractResponse to contain an
+AbstractCookie.  Rewrite OpenFrame::Server::Apache to deal with the
+AbstractCookie class.  Pheww.
+
+SLOT -> SOAP is not working yet - the AbstractRequest class is getting
+garbled on transmission.  Chances are lots more will get garbled and
+we need to look at whats going on.
+
+Write Java Application Class
+

@@ -1,0 +1,21 @@
+
+The OpenFrame kit for Perl
+==========================
+
+Copyright 2001 Fotango Ltd
+
+OpenFrame is an Application Framework for Perl and the Web.  It is designed to
+do enough to make your life easier, and provide enough flexibility to make
+extending it to do what *you* want it to pretty easily.
+
+Anyway, this is a pretty raw release.  Its ready to use, but it is still lacking
+quite a lot of documentation.  Some of the SOAP stuff needs to be reexamined
+and that will happen over the next few weeks as we need it.  Patches welcome.
+
+Developers should read lib/OpenFrame/AppWrite.pod and lib/OpenFrame/Slots.pod,
+installing-things type people should read lib/OpenFrame/Install.pod.
+
+Regards,
+James
+
+jduncan@fotango.com

@@ -1,25 +1,32 @@
-use Test::Simple tests => 7;
+use strict;
+use Test::Simple tests => 17;
+use OpenFrame::AbstractCookie;
 
-sub BEGIN {
-  {
-    no warnings qw ( uninitialized );
-    eval { 
-      use OpenFrame::AbstractCookie;
-    };
-    ok( !$@, "loaded" );
-  }
-}
+ok(1, "should load ok");
+my $cookiejar = OpenFrame::AbstractCookie->new();
+ok($cookiejar, "should get object back");
+my %cookies = $cookiejar->get_all;
+ok(scalar keys %cookies == 0, "should have no cookies");
 
-my $n = OpenFrame::AbstractCookie->new();
-ok( $n, "instantiation" );
-my $c = OpenFrame::AbstractCookie::CookieElement->new(
-						      Name  => 'test',
-						      Value => 'test',
-						     );
+ok($cookiejar->set(foo => "bar"), "should add first cookie ok");
+%cookies = $cookiejar->get_all;
+ok(scalar keys %cookies == 1, "should have one cookie");
+ok($cookiejar->set(bar => "quux"), "should add second cookie ok");
+%cookies = $cookiejar->get_all;
+ok(scalar keys %cookies == 2, "should have two cookies");
 
-ok( $c, "element instantiation" );
-ok( $n->addCookie( Cookie => $c ), "cookie insertion" );
-ok( $n->getCookie( 'test' ) eq $c, "get cookie" );
-ok( $n->delCookie( 'test' ), "delete cookie" );
-ok( ! defined($n->getCookie('test')), "fetch after deletion" );
+ok($cookiejar->get("foo") eq "bar", "should get first cookie ok");
+ok($cookies{foo} eq "bar", "should get first cookie ok in get_all");
+ok($cookiejar->get("bar") eq "quux", "should get second cookie ok");
+ok($cookies{bar} eq "quux", "should get second cookie ok in get_all");
+
+ok($cookiejar->set(bar => "foo"), "should replace second cookie ok");
+%cookies = $cookiejar->get_all;
+ok(scalar keys %cookies == 2, "should have two cookies");
+ok($cookiejar->get("bar") eq "foo", "should get second cookie ok");
+
+ok($cookiejar->delete("bar"), "should delete cookie ok");
+%cookies = $cookiejar->get_all;
+ok(scalar keys %cookies == 1, "should have one cookie");
+ok(!defined($cookiejar->get("bar")), "should not be able to fetch after deletion");
 

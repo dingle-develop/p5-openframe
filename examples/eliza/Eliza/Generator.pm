@@ -1,8 +1,6 @@
 package Eliza::Generator;
 
 use strict;
-use warnings::register;
-
 use Template;
 use OpenFrame::Config;
 use OpenFrame::AbstractResponse;
@@ -33,7 +31,7 @@ sub action {
 
 
   if (substr($request->uri()->path, -1) eq '/') {
-    warnings::warn("[slot::generator] no file, using index.html") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn("[slot::generator] no file, using index.html") if $OpenFrame::DEBUG;
     $request->uri( URI->new( $request->uri()->canonical() . 'index.html' ) );
   }
 

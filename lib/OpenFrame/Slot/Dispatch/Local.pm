@@ -32,8 +32,8 @@ sub dispatch {
   }
 
   if (Scalar::Util::blessed( $appcode )) {
-    if ($appcode->can('enter')) {
-      $appcode->enter($request, $session, $config);
+    if ($appcode->can('_enter')) {
+      $appcode->_enter($request, $session, $config);
       my %apphash = %{ $appcode };
       $session->{application}->{ $app->{name} } = \%apphash;
       return 1;

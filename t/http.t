@@ -8,15 +8,16 @@ use lib 'lib';
 use lib 't/lib';
 use Config;
 use LWP::UserAgent;
-use Test::Simple tests => 8;
+use Test::Simple tests => 9;
 
 # We start up the hangman2 connection on port 8000
 my $perl = $Config{'perlpath'};
 $perl = $^X if $^O eq 'VMS';
-chdir("examples/hangman2/");
+chdir("examples/hangman2/") || die $!;
 my $pid = open(DAEMON, "$perl ./hangman.pl |");
 die "Can't exec: $!" unless defined $pid;
-sleep 1; # wait for the server to come up
+sleep 3; # wait for the server to come up
+ok(1, "should get server up ok");
 
 my $greeting = <DAEMON>;
 ok($greeting, "Should get greeting back");

@@ -1,35 +1,34 @@
 package OpenFrame::Server;
 
 use strict;
-
-use OpenFrame::Slot;
 use OpenFrame::Config;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
+use OpenFrame::Slot;
 
-our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.7 2001/11/19 11:50:59 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.8 2001/12/03 14:20:00 leon Exp $ }))[2];
 
 
 sub action {
   my $class = shift;
   my $req   = shift;
 
-  my $return_via = caller();
-
   my $response;
 
   my $config   = OpenFrame::Config->new();
 
-  $OpenFrame::DEBUG = $config->getKey( 'DEBUG' );
+  $OpenFrame::DEBUG = $config->getKey('DEBUG');
 
-  my $SLOTS    = $config->getKey( 'SLOTS' );
-  if ($SLOTS && ref( $SLOTS ) eq 'ARRAY') {
-    $response = OpenFrame::Slot->action( $req, $SLOTS );
+  # Go through the slots
+  my $SLOTS    = $config->getKey('SLOTS');
+  if ($SLOTS && ref($SLOTS) eq 'ARRAY') {
+    $response = OpenFrame::Slot->action($req, $SLOTS);
   }
 
-  my $POST = $config->getKey( 'POSTSLOTS' );
-  if ($POST && ref( $POST ) eq 'ARRAY') {
-    OpenFrame::Slot->action( $req,  $POST );
+  # Go through the postslots
+  my $POST = $config->getKey('POSTSLOTS');
+  if ($POST && ref($POST) eq 'ARRAY') {
+    OpenFrame::Slot->action($req,  $POST);
   }
 
   return $response;

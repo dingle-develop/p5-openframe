@@ -5,7 +5,7 @@ use strict;
 use Data::Dumper;
 use OpenFrame::Config;
 
-our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.10 2001/11/19 11:50:59 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.11 2001/12/04 11:52:07 james Exp $ }))[2];
 our $epoints = {};
 
 sub new {
@@ -14,7 +14,7 @@ sub new {
   bless $self, $class;
 }
 
-sub enter {
+sub _enter {
   my $self    = shift;
   my $request = shift;
   my $session = shift;

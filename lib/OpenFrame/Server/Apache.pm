@@ -21,7 +21,7 @@ use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.15 2001/11/27 14:59:17 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.16 2001/12/03 18:50:27 leon Exp $ }))[2];
 
 sub handler {
   my $request = shift;
@@ -59,12 +59,7 @@ sub handler {
   my %apcookies  = Apache::Cookie->fetch();
 
   foreach my $key (keys %apcookies) {
-    $cookietin->addCookie(
-			  Cookie => OpenFrame::AbstractCookie::CookieElement->new(
-										  Name  => $apcookies{$key}->name(),
-										  Value => $apcookies{$key}->value(),
-										 ),
-			 );
+    $cookietin->set($apcookies{$key}->name(), $apcookies{$key}->value());
   }
 
   my $abstractRequest = OpenFrame::AbstractRequest->new(
@@ -88,13 +83,12 @@ sub handler {
 	## first prepare the cookie
 
 	my $abcookies = $response->cookies();
-	foreach my $biscuit ($abcookies->getCookies()) {
-	  my $nom    = $biscuit->getName();
-	  my $val    = $biscuit->getValue();
+	my %cookies = $abcookies->get_all;
+	foreach my $name (keys %cookies) {
 	  my $cookie = Apache::Cookie->new(
 					   Apache->request,
-					   -name  => $nom,
-					   -value => $val,
+					   -name  => $name,
+					   -value => $cookies{$name},
 					  );
 
 	  Apache->request()->header_out(

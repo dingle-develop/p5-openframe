@@ -1,122 +1,7 @@
 package OpenFrame::AbstractCookie;
 use strict;
 
-use Scalar::Util qw ( blessed );
-
-our $VERSION = '1.01';
-
-sub new {
-  my $class = shift;
-
-  ## this is the object
-  my $self  = {
-	       cookies => {},
-	      };
-
-  bless $self, $class;
-}
-
-
-sub addCookie {
-  my $self = shift;
-  my $args = { @_ };
-
-  my $cookie = {};
-
-  if (!($args->{Name} && $args->{Value})) {
-    if ($args->{Cookie} && blessed( $args->{Cookie} ) && $args->{Cookie}->isa( 'OpenFrame::AbstractCookie::CookieElement' )) {
-      $self->{cookies}->{$args->{Cookie}->getName()} = $args->{Cookie};
-      return 1;
-     } else {
-       warn("usage: addCookie( Cookie => \$cookie )");
-       return undef;
-     }
-  } else {
-    my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
-							       Name  => $args->{Name},
-							       Value => $args->{Value},
-							      );
-    if ($cookie) {
-      $self->{cookies}->{$cookie->getName()} = $cookie;
-    }
-    return 1;
-  }
-}
-
-
-##
-## gets a cookie from the collection of cookies
-##
-sub getCookie {
-  my $self = shift;
-  my $name = shift;
-
-  return $self->{cookies}->{$name};
-}
-
-sub getCookies {
-  my $self = shift;
-  return values %{$self->{cookies}};
-}
-
-##
-## deletes a cookie from the collection of cookies
-##
-sub delCookie {
-  my $self = shift;
-  my $name = shift;
-
-  delete $self->{cookies}->{$name};
-}
-
-
-package OpenFrame::AbstractCookie::CookieElement;
-
-use strict;
-
-sub new {
-  my $class = shift;
-  my $args  = { @_ };
-
-  my $self = {};
-
-  bless $self, $class;
-
-  foreach my $arg (keys %$args) {
-    my $method = 'set' . ucfirst($arg);
-    my $sub = $self->can( $method );
-    if ( $sub ) {
-      $sub->($self, $args->{$arg});
-    } else {
-      warn("usage __PACAKGE__->new( Name => 'CookieName', Value => 'CookieValue' )");
-      return undef;
-    }
-  }
-
-  return $self;
-}
-
-sub setName {
-  my $self = shift;
-  $self->{Name} = shift;
-}
-
-sub setValue {
-  my $self = shift;
-  $self->{Value} = shift;
-}
-
-sub getName {
-  return $_[0]->{Name};
-}
-
-sub getValue {
-  return $_[0]->{Value};
-}
-
-1;
-
-__END__
+our $VERSION = '1.02';
 
 =head1 NAME
 
@@ -125,14 +10,10 @@ OpenFrame::AbstractCookie - An abstract cookie class
 =head1 SYNOPSIS
 
   my $cookietin = OpenFrame::AbstractCookie->new();
-  my $c = OpenFrame::AbstractCookie::CookieElement->new(
-	      Name  => 'animal',
-	      Value => 'parrot',
-  );
-  $cookietin->addCookie(Cookie => $c);
-  my $c2 = $cookietin->getCookie("colour");
-  my $colour = $c2->getValue();
-  $cookietin->deleteCookie("colour");
+  $cookietin->set("animal" => "parrot");
+  my $colour = $cookietin->get("colour");
+  $cookietin->delete("colour");
+  my %cookies = $cookietin->get_all();
 
 =head1 DESCRIPTION
 
@@ -159,79 +40,86 @@ unique names) inside the cookie tin.
 
   my $cookietin = OpenFrame::AbstractCookie->new();
 
-=head2 addCookie()
+=cut
 
-The addCookie() method adds a
-C<OpenFrame::AbstractCookie::CookieElement> to the cookie tin.
+sub new {
+  my $class = shift;
 
-  my $c = OpenFrame::AbstractCookie::CookieElement->new(
-	      Name  => 'animal',
-	      Value => 'parrot',
-  );
-  $cookietin->addCookie(Cookie => $c);
+  my $self  = { cookies => {} };
+  bless $self, $class;
+}
 
-=head2 getCookie()
 
-The getCookie() method returns a cookie element from the cookie tin
-given its name.
+=head2 set()
 
-  my $c2 = $cookietin->getCookie("colour");
+The set() method adds an entry to the cookie tin:
 
-=head2 deleteCookie()
+  $cookietin->set("animal" => "parrot");
 
-The deleteCookie() method removes a cookie element from the cookie tin
-given its name.
+=cut
 
-  $cookietin->deleteCookie("colour");
+sub set {
+  my $self  = shift;
+  my $name  = shift;
+  my $value = shift;
 
-=head2 getCookies()
+  $self->{cookies}->{$name} = $value;
+}
 
-The getCookie() method returns a list of all the cookies in the cookie
-tin.
 
-  my @cookies = $cookietin->getCookies();
-  foreach my $cookie (@cookies) {
-    print $cookie->getName() . ' = ' . $cookie->getValue() . "\n"
-  }
+=head2 get()
 
-=head1 C<OpenFrame::AbstractCookie::CookieElement>
+The get() method returns a cookie value from the cookie tin
+given its name:
 
-The C<OpenFrame::AbstractCookie::CookieElement> objects represent
-individual cookies inside of the C<OpenFrame::AbstractCookie> object.
+  my $colour = $cookietin->get("colour");
 
-The following methods can be called on them:
+=cut
 
-=head2 new()
+sub get {
+  my $self = shift;
+  my $name = shift;
 
-The new() method creates a new cookie ready to be inserted into a
-C<OpenFrame::AbstractCookie> object using that object's addCookie()
-method:
+  return $self->{cookies}->{$name};
+}
 
-  my $c = OpenFrame::AbstractCookie::CookieElement->new(
-	      Name  => 'animal',
-	      Value => 'parrot',
-  );
 
-=head2 getName()
+=head2 delete()
 
-The getName() method returns the name of the cookie.
+The delete() method removes a cookie element from the cookie tin
+given its name:
 
-  my $name = $c->getName();
+  $cookietin->delete("colour");
 
-=head2 getValue()
+=cut
 
-The getValue() method returns the value of the cookie.
+sub delete {
+  my $self = shift;
+  my $name = shift;
 
-  my $value = $c->getValue();
+  delete $self->{cookies}->{$name};
+}
 
-=head2 setValue()
 
-The setValue() method sets the value of an existing cookie.
+=head2 get_all()
 
-  $c->setValue("green");
+The get_all() method returns a hash of all the cookies in the cookie
+tin:
+
+  my %cookies = $cookietin->get_all();
+
+=cut
+
+sub get_all {
+  my $self = shift;
+  return %{$self->{cookies}};
+}
+
+1;
 
 =head1 AUTHOR
 
-James Duncan <jduncan@fotango.com>
+James Duncan <jduncan@fotango.com>,
+Leon Brocard <leon@fotango.com>
 
 =cut

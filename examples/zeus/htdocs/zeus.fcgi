@@ -2,14 +2,14 @@
 #
 # The hangman images are by Andy Wardley
 #
-# This version of hangman uses templates and SOAP
+# This version of hangman uses templates
 
 use strict;
-use lib '../hangman2';
-use lib '../../lib';
-
+use lib '../../../lib';
+use lib '../../hangman2/';
 use OpenFrame::Config;
-use OpenFrame::Server::SOAP;
+use OpenFrame::Constants;
+use OpenFrame::Server::Zeus;
 
 my $config = OpenFrame::Config->new();
 $config->setKey(
@@ -18,7 +18,7 @@ $config->setKey(
                  {
                   dispatch => 'Local',
                   name => 'OpenFrame::Slot::Images',
-		  config   => { directory => '../hangman/' },
+		  config => { directory => "../../hangman/" },
                  },
                  {
                   dispatch => 'Local',
@@ -41,7 +41,7 @@ $config->setKey(
 							   uri       => '/',
 							   dispatch  => 'Local',
 							   namespace => 'Hangman::Application',
-							   config   => { words => "../hangman/words.txt" },
+							   config   => { words => "../../hangman/words.txt" },
 							  },
 							 ],
 			      },
@@ -49,36 +49,22 @@ $config->setKey(
                  {
                   dispatch => 'Local',
                   name     => 'Hangman::Generator',
-		  config   => { presentation => '../hangman2/templates/' },
+		  config   => { presentation => './' },
                  },
                 ]
                );
 $config->setKey(DEBUG => 0);
 
-my $h = OpenFrame::Server::SOAP->new(port => 8010);
-print "SOAP access to hangman is available at http://localhost:8010/ !\n";
-$h->handle();
+use CGI;
+my $q = CGI->new();
+my $url = "http://localhost" . $q->path_info . "?" . $q->query_string;
 
-__END__
+my $cookietin = OpenFrame::AbstractCookie->new();
+$cookietin->set("session", $q->cookie("session"));
 
-=head1 NAME
+my $zeus = OpenFrame::Server::Zeus->new();
+$zeus->handle();
 
-soapserver.pl - A simple SOAP hangman example for OpenFrame
 
-=head1 DESCRIPTION
 
-This Perl script contains a small and understandable SOAP application
-for OpenFrame that allows you to play Hangman (via SOAP). Run
-soapclient.pl to see it work.
-
-=head1 AUTHOR
-
-Leon Brocard <leon@fotango.com>
-
-=head1 COPYRIGHT
-
-Copyright (C) 2001, Fotango Ltd.
-
-This module is free software; you can redistribute it or modify it
-under the same terms as Perl itself.
 

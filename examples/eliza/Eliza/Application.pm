@@ -1,8 +1,6 @@
 package Eliza::Application;
 
 use strict;
-use warnings::register;
-
 use Chatbot::Eliza;
 use OpenFrame::Application;
 use base qw (OpenFrame::Application);

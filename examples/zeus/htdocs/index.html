@@ -1,0 +1,33 @@
+[% USE url('/') %]
+[% hangman = application.hangman %]
+[% game = hangman.game %]
+<html>
+<head><title>Hangman</title></head>
+<body>
+<h1>Hangman</h1>
+
+[% IF hangman.message %]
+<h2>[% hangman.message %]</h2>
+Score: [% hangman.finalscore || game.get_score || 0 %]<p>
+<a href="[% url() %]">Have another go!</a>
+[% ELSE %]
+
+<img src="/images/h[% 6 - game.get_chances %].gif"><br>
+<h2>Word: [% game.in_progress %]</h2>
+
+Chances: [% game.get_chances %]<br>
+Score: [% game.get_score %]
+
+<h2>Your guess?</h2>
+
+[% FOREACH letter = ['A'..'Z'] %]
+  [% IF hangman.guessed.$letter %]
+    [% letter %] 
+  [% ELSE %]
+    <a href="[% url(guess = letter) %]">[% letter %]</a>
+  [% END %]
+[% END %]
+
+[% END %]
+</body>
+</html>

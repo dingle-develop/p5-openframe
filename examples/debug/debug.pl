@@ -10,6 +10,17 @@ use lib '../../lib';
 
 use OpenFrame::Config;
 use OpenFrame::Server::HTTP;
+use Template;
+use Template::Stash;
+
+# Hack in a new listop until a new version of TT2 is out
+$Template::Stash::LIST_OPS->{hashref} =
+  sub {
+    my $list = shift;
+    my %hash = @$list;
+    return \%hash;
+};
+
 
 my $config = OpenFrame::Config->new();
 $config->setKey(

@@ -1,12 +1,10 @@
 package Hangman::Generator;
 
 use strict;
-use warnings::register;
-
-use Template;
 use OpenFrame::Config;
 use OpenFrame::AbstractResponse;
 use OpenFrame::Constants;
+use Template;
 
 sub what {
   return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
@@ -33,13 +31,16 @@ sub action {
 
 
   if (substr($request->uri()->path, -1) eq '/') {
-    warnings::warn("[slot::generator] no file, using index.html") if (warnings::enabled || $OpenFrame::DEBUG);
+    warn "[slot::generator] no file, using index.html" if ($OpenFrame::DEBUG);
     $request->uri( URI->new( $request->uri()->canonical() . 'index.html' ) );
   }
 
   my $filename = substr($request->uri()->path(), 1);
 
-  return unless -e $templatedir . $filename && -r _;
+  unless (-e $templatedir . $filename && -r _) {
+    warn "[slot::generator] couldn't find file $templatedir$filename" if $OpenFrame::DEBUG;
+    return;
+  }
 
   $tt->process($filename, $session, \$output) || ($output = $tt->error);
   delete $session->{template}; # delete spurious entry by TT

@@ -1,15 +1,13 @@
 package OpenFrame::Server::Direct;
 
 use strict;
-
 use CGI;
-use URI;
-use Scalar::Util qw (blessed);
-
 use OpenFrame::Server;
 use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
+use Scalar::Util qw(blessed);
+use URI;
 
 our $VERSION = '1.01';
 
@@ -30,12 +28,8 @@ sub handle {
   my $url = shift;
   my $cookietin = shift || OpenFrame::AbstractCookie->new();
 
+  # abstract the request
   my $uri = URI->new($url);
-
-  ##
-  ## abstract the request
-  ##
-  use CGI;
   my $cgi = CGI->new($uri->query);
   my $args = { map { ($_, $cgi->param($_)) } $cgi->param() };
   $uri->query(undef);
@@ -51,7 +45,6 @@ sub handle {
   return wantarray() ? ($response, $response->cookies()) : $response;
 
 }
-
 
 1;
 

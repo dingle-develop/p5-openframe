@@ -1,9 +1,7 @@
 package OpenFrame::AbstractRequest;
 
 use strict;
-use warnings::register;
-
-no warnings qw ( redefine );
+no warnings qw(redefine);
 
 use URI;
 use Carp;

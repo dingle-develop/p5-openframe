@@ -1,8 +1,6 @@
 package Hangman::Application;
 
 use strict;
-use warnings::register;
-
 use CGI qw(:standard :html3);
 use Games::WordGuess;
 use OpenFrame::Application;
@@ -41,7 +39,7 @@ sub guess {
 
   if (not defined $game) {
     # We don't have a game, so set one up
-    $self->default($session);
+    $self->default($session, $request, $config);
     return;
   }
 

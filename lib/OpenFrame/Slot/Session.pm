@@ -1,12 +1,13 @@
 package OpenFrame::Slot::Session;
 
 use strict;
+use Apache::Session;
 use Apache::SessionX;
 use Data::Denter;
 use OpenFrame::Config;
 use OpenFrame::AbstractCookie;
 
-our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.22 2001/11/21 14:19:16 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.24 2001/12/05 18:01:08 leon Exp $ }))[2];
 
 sub what {
   return ['OpenFrame::AbstractRequest'];
@@ -24,15 +25,11 @@ sub action {
 
   my $cookietin = $req->cookies();
 
-  if (!$cookietin) {
-    warn("[slot::session] did not fetch any cookies") if $OpenFrame::DEBUG;
-  }
-
   my $id;
   my $new = 0;
 
-  if ($cookietin->getCookie("session")) {
-    $id = $cookietin->getCookie("session")->getValue();
+  if ($cookietin->get("session")) {
+    $id = $cookietin->get("session");
   } else {
     $new = 1;
   }
@@ -55,11 +52,7 @@ sub action {
       foreach keys %{$config->{default_session}};
   }
 
-  my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
-       Name  => 'session',
-       Value => tied(%session)->getid,
-   );
-  $cookietin->addCookie(Cookie => $cookie);
+  $cookietin->set("session", tied(%session)->getid);
 
   $session->{transactions}++;
 

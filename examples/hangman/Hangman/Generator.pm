@@ -1,8 +1,6 @@
 package Hangman::Generator;
 
 use strict;
-use warnings::register;
-
 use OpenFrame::AbstractResponse;
 use OpenFrame::Config;
 use OpenFrame::Constants;

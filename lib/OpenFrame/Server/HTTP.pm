@@ -1,20 +1,18 @@
 package OpenFrame::Server::HTTP;
 
 use strict;
-
 use CGI;
 use CGI::Cookie;
-use URI;
-use Scalar::Util qw (blessed);
-
 use File::Temp qw(tempfile);
-use OpenFrame::Server;
+use HTTP::Daemon;
+use HTTP::Status;
 use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 use OpenFrame::Constants;
-use HTTP::Daemon;
-use HTTP::Status;
+use OpenFrame::Server;
+use Scalar::Util qw(blessed);
+use URI;
 
 our $VERSION = '1.10';
 
@@ -35,6 +33,7 @@ sub new {
 
   return $self;
 }
+
 
 sub handle {
   my $self = shift;
@@ -106,12 +105,7 @@ sub handle_one_connection {
   if ($r->header('Cookie')) {
     foreach my $ctext (split /; ?/, $r->header('Cookie')) {
       my($cname, $cvalue) = split /=/, $ctext;
-      $cookietin->addCookie(
-			    Cookie => OpenFrame::AbstractCookie::CookieElement->new(
-										    Name  => $cname,
-										    Value => $cvalue,
-										   ),
-			   );
+      $cookietin->set($cname, $cvalue);
     }
   }
 
@@ -127,9 +121,10 @@ sub handle_one_connection {
   my $newcookietin = $response->cookies();
   if ($response->code == ofOK) {
     my $h = HTTP::Headers->new();
-    foreach my $cookie ($newcookietin->getCookies) {
-      my $cookie = CGI::Cookie->new(-name    =>  $cookie->getName,
-				    -value   =>  $cookie->getValue,
+    my %cookies = $newcookietin->get_all;
+    foreach my $name (keys %cookies) {
+      my $cookie = CGI::Cookie->new(-name    =>  $name,
+				    -value   =>  $cookies{$name},
 				    -expires =>  '+1M');
       $h->header('Set-Cookie' => "$cookie");
     }

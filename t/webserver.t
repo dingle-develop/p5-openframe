@@ -49,19 +49,22 @@ It is an example of an OpenFrame application that does not do
 anything, except serve images and HTML pages.
 </body>
 </html>|, "should get correct message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookies");
+my %cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookies");
 
 ($response, $cookietin) = $direct->handle("http://localhost/error/", $cookietin);
 ok($response, "should get response back for /error/");
 ok($response->code == ofERROR, "message code should be an error");
-ok(scalar($cookietin->getCookies()) == 0, "should get 0 cookies");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookies");
 
 ($response, $cookietin) = $direct->handle("http://localhost/perl.gif", $cookietin);
 ok($response, "should get response back for /perl.gif");
 ok($response->code == ofOK, "message code should be ok");
 ok($response->mimetype() eq 'image/gif', "mimetype should be image/gif");
 ok($response->message(), "should have message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookies");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookies");
 
 #print $response->message() . "\n";
 

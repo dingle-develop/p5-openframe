@@ -21,6 +21,13 @@ Q. Can I use two or more templating mechanisms?
 
 A. You could do.
 
+Q. Under Apache/mod_perl is it possible to use multiple virtual hosts
+
+A. It is now, yes.  Inside a &lt;Perl&gt; section use OpenFrame::Config,
+   and then set the config file with:
+
+     OpenFrame::Config->sourceFile( "/path/to/config/file" );
+
 Q. Can we perform clickstream recording using OpenFrame?
 
 A. Yes.  Write a slot that records the contents of an OpenFrame::AbstractRequest to
@@ -60,12 +67,12 @@ A. OpenFrame is developed and used by Fotango (www.fotango.com), an online photo
 Q. What platforms can OpenFrame run on?
 
 A. To the best of our knowledge anywhere that Perl runs OpenFrame can run.  At
-   Fotango development we run OpenFrame on Linux.
+   Fotango development we run OpenFrame on Linux and Apache.
 
 Q. Can I write applications in Java?
 
 A. Yes. OpenFrame can dispatch applications via multiple mechanisms, including
-   SOAP.  There is not reason why you couldn't dispatch to a Java application
+   SOAP.  There is no reason why you couldn't dispatch to a Java application
    via SOAP. 
 
 Q. How much does it cost?

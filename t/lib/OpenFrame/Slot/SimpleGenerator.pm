@@ -1,8 +1,6 @@
 package OpenFrame::Slot::SimpleGenerator;
 
 use strict;
-use warnings::register;
-
 use Data::Dumper;
 use OpenFrame::Config;
 use OpenFrame::AbstractResponse;

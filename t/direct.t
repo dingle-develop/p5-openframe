@@ -76,10 +76,10 @@ ok($response->message->{application}->{current}->{name} eq 'myapp',
    "myapp application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'default',
    "default entrypoint should have been called");
-ok(scalar($cookietin->getCookies()) == 1, "should get 1 cookie");
-my $biscuit = ($cookietin->getCookies())[0];
-ok($biscuit->getName() eq 'session', "should get session cookie");
-my $id = $biscuit->getValue();
+my %cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+my $id = $cookies{session};
 ok($id, "should get a session id");
 
 ($response, $cookietin) = $direct->handle("http://localhost/error/", $cookietin);
@@ -92,10 +92,10 @@ ok($response->message->{application}->{current}->{name} eq 'default',
    "default application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'default',
    "default entrypoint should have been called");
-ok(scalar($cookietin->getCookies()) == 1, "should get 1 cookie");
-$biscuit = ($cookietin->getCookies())[0];
-ok($biscuit->getName() eq 'session', "should get session cookie");
-ok($biscuit->getValue() eq $id, "should get same session id");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+ok($cookies{session} = $id, "should get same session id");
 
 $response = $direct->handle("http://localhost/myapp/?param=5", $cookietin);
 ok($response, "should get response back for /myapp/?param=5");
@@ -106,10 +106,10 @@ ok($response->message->{application}->{current}->{name} eq 'myapp',
    "myapp application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'example',
    "example entrypoint should have been called");
-ok(scalar($cookietin->getCookies()) == 1, "should get 1 cookie");
-$biscuit = ($cookietin->getCookies())[0];
-ok($biscuit->getName() eq 'session', "should get session cookie");
-ok($biscuit->getValue() eq $id, "should get same session id");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+ok($cookies{session} eq $id, "should get same session id");
 
 $response = $direct->handle("http://localhost/error/", $cookietin);
 ok($response, "should get response back for /error/ again");
@@ -121,10 +121,10 @@ ok($response->message->{application}->{current}->{name} eq 'default',
    "default application should have been called");
 ok($response->message->{application}->{current}->{entrypoint} eq 'default',
    "default entrypoint should have been called");
-ok(scalar($cookietin->getCookies()) == 1, "should get 1 cookie");
-$biscuit = ($cookietin->getCookies())[0];
-ok($biscuit->getName() eq 'session', "should get session cookie");
-ok($biscuit->getValue() eq $id, "should get same session id");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+ok($cookies{session} eq $id, "should get same session id");
 
 #print $response->message() . "\n";
 

@@ -31,8 +31,9 @@ Time: [% entry.time %]<br>
  </table>
 <tr bgcolor="#cccccc"><td>Cookies<td>
  <table cellspacing=0 cellpadding=2 border=1>
- [% FOREACH cookie = request.cookies.getCookies %]
- <td>[% cookie.getName %]<td>[% cookie.getValue %]
+ [% cookies = request.cookies.get_all.hashref %]
+ [% FOREACH name = cookies.keys %]
+ <tr><td>[% name %]<td>[% cookies.$name %]
  [% END %]&nbsp;
  </table>
 </table>
@@ -45,8 +46,9 @@ Time: [% entry.time %]<br>
 <tr><td>Code<td>[% response.code %]
 <tr bgcolor="#cccccc"><td>Cookies<td>
  <table cellspacing=0 cellpadding=2 border=1>
- [% FOREACH cookie = response.cookies.getCookies %]
- <td>[% cookie.getName %]<td>[% cookie.getValue %]
+ [% cookies = request.cookies.get_all.hashref %]
+ [% FOREACH name = cookies.keys %]
+ <tr><td>[% name %]<td>[% cookies.$name %]
  [% END %]&nbsp;
  </table>
 </table>

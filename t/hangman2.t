@@ -74,12 +74,11 @@ ok(ref($game) eq 'Games::WordGuess', "game object should be present");
 ok($game->get_chances == 6, "game should have 6 chances");
 ok($game->get_score == 0, "game should have 0 score");
 
-ok(scalar($cookietin->getCookies()) == 1, "should get 1 cookie");
-my $biscuit = ($cookietin->getCookies())[0];
-ok($biscuit->getName() eq 'session', "should get session cookie");
-my $id = $biscuit->getValue();
+my %cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+my $id = $cookies{session};
 ok($id, "should get a session id");
-
 
 
 ($response, $cookietin) = $direct->handle("http://localhost/?guess=E", $cookietin);
@@ -97,10 +96,10 @@ ok($game->get_chances == 5 || $game->get_chances == 6,
    "game should have 5 or 6 chances");
 ok($game->get_score == 0, "game should have 0 score");
 
-ok(scalar($cookietin->getCookies()) == 1, "should get 1 cookie");
-$biscuit = ($cookietin->getCookies())[0];
-ok($biscuit->getName() eq 'session', "should get session cookie");
-ok($biscuit->getValue() eq $id, "should get current id");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 1, "should get 1 cookie");
+ok(exists $cookies{session}, "should get session cookie");
+ok($cookies{session} = $id, "should get same session id");
 
 #print $response->message() . "\n";
 

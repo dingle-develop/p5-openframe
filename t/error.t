@@ -26,7 +26,8 @@ ok($response->code == ofERROR, "message code should be error");
 ok($response->mimetype() eq 'text/plain',
    "mimetype should be text/plain");
 ok($response->message() eq "None of the OpenFrame slots returned a response object", "should get correct error message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookie");
+my %cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookie");
 
 $config->setKey(
                 SLOTS =>
@@ -44,7 +45,8 @@ ok($response->code == ofERROR, "message code should be error");
 ok($response->mimetype() eq 'text/plain',
    "mimetype should be text/plain");
 ok($response->message() eq "None of the OpenFrame slots returned a response object", "should get correct error message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookie");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookie");
 
 $config->setKey(
                 SLOTS =>
@@ -74,7 +76,8 @@ ok($response->message() eq
 			  </html>
 			 }
 , "should get correct error message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookie");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookie");
 
 $config->setKey(
                 SLOTS =>
@@ -103,7 +106,8 @@ ok($response->mimetype() eq 'text/plain',
    "mimetype should be text/plain");
 ok($response->message() eq "None of the OpenFrame slots returned a response object",
   "should get correct error message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookie");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookie");
 
 $config->setKey(
                 SLOTS =>
@@ -139,7 +143,8 @@ ok($response->mimetype() eq 'text/plain',
    "mimetype should be text/plain");
 ok($response->message() eq "None of the OpenFrame slots returned a response object",
   "should get correct error message");
-ok(scalar($cookietin->getCookies()) == 0, "should get no cookie");
+%cookies = $cookietin->get_all;
+ok(scalar keys %cookies == 0, "should get no cookie");
 
 #print $response->mimetype() . "<--\n";
 #print $response->message() . "\n";

@@ -90,11 +90,10 @@ sub new {
     $self = $CONFIG->{$file};
   } else {
     if (!$file) {
-      if ($OpenFrame::DEBUG) {
-	warn(sprintf("no configuration file found at %s", join(' ', @$CONFIGFILES)));
-      }
+      warn(sprintf("no configuration file found at %s", join(' ', @$CONFIGFILES)));
       $self = {};
     } else {
+      warn("[config] attempting to open config file $file") if $OpenFrame::DEBUG;
       my $cfh = FileHandle->new( "<$file" );
       if ($cfh) {
 	flock($cfh, LOCK_EX);
@@ -104,7 +103,7 @@ sub new {
 	flock($cfh, LOCK_UN);
 	$cfh->close();
       } else {
-	warn("could not open config file $file ($!)") if $OpenFrame::DEBUG;
+	warn("[config] could not open config file $file ($!)") if $OpenFrame::DEBUG;
 	$self = {};
       }
     }
@@ -141,6 +140,7 @@ sub writeConfig {
   if (exists $self->{_source}) {
     delete $self->{_source};
   }
+  warn("[config] attempting to write config file $file") if $OpenFrame::DEBUG;
   my $fh = FileHandle->new( ">$file" );
   if ( $fh ) {
     flock($fh, LOCK_EX);
@@ -150,7 +150,7 @@ sub writeConfig {
     $self->{_source} = $file;
     return 1;
   } else {
-    warn("could not write config to $file ($!)") if $OpenFrame::DEBUG;
+    warn("[config] could not write config to $file ($!)") if $OpenFrame::DEBUG;
     return undef;
   }
 }
@@ -244,11 +244,32 @@ saved in.
 
   my $filename = $config->sourceFile();
 
+If called as a class method rather than an instance method it returns
+or modifies the list of files that are looked at for the OpenFrame
+configuration.
+
+  OpenFrame::Config->sourceFile( "/etc/my.other.conf" );
+  my $configfiles = OpenFrame::Config->sourceFile();
+
 =cut
 
 sub sourceFile {
   my $self = shift;
-  return $self->{_source};
+  my $val  = shift;
+  if (!$val) {
+    if (!ref($self)) {
+      return $CONFIGFILES;
+    } else {
+      return $self->{_source};
+    }
+  } else {
+    if (!ref($self)) {
+      push @$CONFIGFILES, $val; 
+    } else {
+      $self->{_source} = $val;
+      return 1;
+    }
+  }
 }
 
 sub DESTROY {

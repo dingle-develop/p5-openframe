@@ -1,7 +1,6 @@
 package OpenFrame::MyApplication;
 
 use strict;
-use warnings::register;
 use lib '..';
 
 use OpenFrame::Application;

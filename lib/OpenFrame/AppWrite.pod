@@ -17,10 +17,8 @@ for OpenFrame.
   package OpenFrame::MyApplication;
 
   use strict;
-  use warnings;
-	
   use OpenFrame::Application;
-  use base qw ( OpenFrame::Application );
+  use base qw (OpenFrame::Application);
 
   1;
 

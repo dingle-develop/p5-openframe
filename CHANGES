@@ -1,5 +1,18 @@
 Revision history for Perl module OpenFrame: 
 
+2.06 Thu Dec  6 11:01:05 GMT 2001
+	- removed warning in OpenFrame::Config
+	- more docs: OpenFrame, OpenFrame::Install
+	- complete redesign of OpenFrame::AbstractCookie
+	- new Apache example, which shows OpenFrame being served
+	  by Apache and mod_perl
+	- new OpenFrame::Server::SOAP (and example), which allows OpenFrame
+	  systems to be accessed over SOAP rather than HTTP
+        - new slots to parse XML documents and perform XSL transforms
+          in OpenFrame::Slot::XML and OpenFrame::Slot::XSLT
+	- new OpenFrame::Server::Zeus (and example) to allow the Zeus web 
+	  server to serve OpenFrame applications
+
 2.05 Fri Nov 30 13:59:45 GMT 2001
 	- Slots can now run remotely via SOAP - see the soap example
 	- Applications can now run remotely via SOAP - see the soap_app example

@@ -1,0 +1,4 @@
+3.01
+      -- the Segment::HTTP::Request can now not automatically add
+         the HTTP::Response segment to the pipeline -- done by calling
+	 respond( 0 ) at instantiation time.

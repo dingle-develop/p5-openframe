@@ -13,6 +13,23 @@ use OpenFrame::Segment::HTTP::Response;
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
+sub init {
+  my $self = shift;
+  $self->respond( 1 );
+  $self->SUPER::init( @_ );
+}
+
+sub respond {
+  my $self = shift;
+  my $respond = shift;
+  if (defined( $respond )) {
+    $self->{respond} = $respond;
+    return $self;
+  } else {
+    return $self->{respond};
+  }
+}
+
 sub dispatch {
   my $self  = shift;
   my $store = shift->store();
@@ -22,7 +39,11 @@ sub dispatch {
 
   my ($ofr,$cookies) = $self->req2ofr( $httpr );
 
-  return ($ofr, $cookies, OpenFrame::Segment::HTTP::Response->new());
+  if ($self->respond) {
+    return ($ofr, $cookies, OpenFrame::Segment::HTTP::Response->new());
+  } else {
+    return ($ofr, $cookies);
+  }
 }
 
 ##

@@ -21,7 +21,7 @@ use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.16 2001/12/03 18:50:27 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.18 2002/01/09 11:37:51 leon Exp $ }))[2];
 
 sub handler {
   my $request = shift;
@@ -89,6 +89,8 @@ sub handler {
 					   Apache->request,
 					   -name  => $name,
 					   -value => $cookies{$name},
+					   -expires => '+1M',
+					   -path    => '/',
 					  );
 
 	  Apache->request()->header_out(

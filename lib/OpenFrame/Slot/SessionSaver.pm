@@ -7,16 +7,21 @@ use OpenFrame::Slot;
 use base qw ( OpenFrame::Slot );
 
 sub what {
-  return ['OpenFrame::Session'];
+  return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'Cache::FileCache'];
 }
 
 sub action {
   my $class = shift;
   my $config = shift;
   my $session = shift;
+  my $request = shift;
+  my $cache = shift;
+  my $dir = $config->{directory};
 
   warn("[slot::sessionsaver] saving $session") if $OpenFrame::DEBUG;
-  (tied %$session)->cleanup();
+  my $cookietin = $request->cookies();
+  my $id = $cookietin->get("session");
+  $cache->set($id, $session);
 }
 
 1;

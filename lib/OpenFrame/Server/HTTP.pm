@@ -123,13 +123,29 @@ sub handle_one_connection {
     my $h = HTTP::Headers->new();
     my %cookies = $newcookietin->get_all;
     foreach my $name (keys %cookies) {
-      my $cookie = CGI::Cookie->new(-name    =>  $name,
-				    -value   =>  $cookies{$name},
-				    -expires =>  '+1M');
+      my $cookie = CGI::Cookie->new(-name    => $name,
+				    -value   => $cookies{$name},
+				    -expires => '+1M',
+				    -path    => '/',
+				   );
       $h->header('Set-Cookie' => "$cookie");
     }
     $h->content_type($response->mimetype() || 'text/html');
     $http_response = HTTP::Response->new(RC_OK, undef, $h, $response->message);
+  } elsif ($response->code() eq ofREDIRECT) {
+    my $url = $response->message;
+    my $h = HTTP::Headers->new();
+    my %cookies = $newcookietin->get_all;
+    foreach my $name (keys %cookies) {
+      my $cookie = CGI::Cookie->new(-name    => $name,
+				    -value   => $cookies{$name},
+				    -expires => '+1M',
+				    -path    => '/',
+				   );
+      $h->header('Set-Cookie' => "$cookie");
+    }
+    $h->header('Location' => $url);
+    $http_response = HTTP::Response->new(RC_FOUND, undef, $h, "");
   } else {
     my $html = qq|<html><head><title>OpenFrame Error</title></head>
 <body><h1>OpenFrame Error</h1><p>| . $response->message() . qq|</body></html>|;
@@ -154,7 +170,7 @@ sub parse_request {
 
     if (!$content_type || $content_type eq "application/x-www-form-urlencoded") {
       my $cgi = CGI->new($r->content);
-      $args = { map { ($_, $cgi->param($_)) } $cgi->param() }; 
+      $args->{$_} = $cgi->param($_) foreach ($cgi->param());
       $r->uri->query(undef);
     } elsif ($content_type eq "multipart/form-data") {
       $args = parse_multipart_data($r);

@@ -9,7 +9,7 @@ use OpenFrame::Constants;
 use OpenFrame::Exception;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.24 2001/12/18 11:44:28 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.26 2002/01/24 14:57:19 leon Exp $ }))[2];
 sub what ();
 
 sub action {
@@ -55,16 +55,6 @@ sub action {
     if (scalar( @OpenFrame::Exception::stack )) {
       $varstore->store( @OpenFrame::Exception::stack );
     }
-
-    if ($varstore->lookup( 'OpenFrame::AbstractResponse')) {
-      my $response = $varstore->lookup( 'OpenFrame::AbstractResponse' );
-      unless (defined($response->code) && ($response->code() eq ofOK || $response->code() eq ofERROR)) {
-	return $response;
-      } else {
-	next;
-      }
-    }
-
   }
 
   if ($varstore->lookup( 'OpenFrame::AbstractResponse' )) {
@@ -90,12 +80,15 @@ sub dispatchLocally {
   $slotfile =~ s|::|/|g;
   $slotfile .= ".pm";
 
-  if (not exists $INC{$slotfile}) {
-    eval "use $slotclass";
-    if ($@) {
-      my $excp = OpenFrame::Exception::Perl->new( $@ );
-      $excp->throw();
-      return undef;
+  {
+    no strict 'refs';
+    if (not exists $INC{$slotfile} || keys %{*{$slotclass .'::'}}) {
+      eval "use $slotclass";
+      if ($@) {
+        my $excp = OpenFrame::Exception::Perl->new( $@ );
+        $excp->throw();
+        return undef;
+      }
     }
   }
 
@@ -175,6 +168,7 @@ sub new {
 
 sub store {
   my $self = shift;
+  warn("[slotstore] storing @_") if $OpenFrame::DEBUG;
 
   my $moreslots = [];
   foreach my $this (@_) {

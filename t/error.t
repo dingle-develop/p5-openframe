@@ -115,9 +115,6 @@ $config->setKey(
                  {
                   dispatch => 'Local',
                   name     => 'OpenFrame::Slot::Session',
-                  config   => {
-                               directory => "t/sessiondir",
-                               },
                  },
                 {
                   dispatch => 'Local',

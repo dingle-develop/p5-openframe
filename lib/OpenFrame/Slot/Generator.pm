@@ -7,7 +7,7 @@ use OpenFrame::Config;
 use OpenFrame::Constants;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.15 2001/12/13 14:58:47 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.17 2002/01/21 15:00:02 leon Exp $ }))[2];
 
 my $tt;
 
@@ -35,7 +35,7 @@ sub action {
 			 INCLUDE_PATH => $templatedir . '/' . $locale,
 			 POST_CHOMP   => 1,
 			 RELATIVE     => 1,
-			 COMPILE_EXT  => "tt2",
+			 COMPILE_EXT  => ".tt2",
 			 COMPILE_DIR  => $cachedir,
 			}
 		       );
@@ -104,3 +104,5 @@ Copyright (C) 2001, Fotango Ltd.
 
 This module is free software; you can redistribute it or modify it
 under the same terms as Perl itself.
+
+

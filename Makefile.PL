@@ -16,7 +16,7 @@ WriteMakefile(
 	      Games::GuessWord     => 0.01,
 	      Chatbot::Eliza       => 0.01,
 	      File::Temp           => 0.01,
-	      Apache::SessionX     => 0.01,
+	      Cache::Cache         => 0.01,
 	      LWP::UserAgent       => 0.01,
 	      Time::HiRes          => 0.01,
 	     },

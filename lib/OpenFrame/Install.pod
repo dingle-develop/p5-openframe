@@ -31,19 +31,6 @@ The CPAN shell will figure out all the dependencies and install the
 required modules for you before it installs C<OpenFrame>, which is
 terribly handy.
 
-The most notable dependency is C<Apache::SessionX>, which provides the
-back-end of the session handling in OpenFrame (but is badly named, as
-it does not require Apache). It is somewhat tricky to install as it
-asks important questions. You must choose a session storage, which is
-then used for all C<OpenFrame> sessions. We suggest picking the
-"FileFile" storage. First create a directory for the sessions, such as
-/tmp/sessions/ - also create /tmp/sessions/locks/. Then during the
-C<Apache::SessionX> installation process, say "n" to every storage
-other that "FileFile" and then set LockDirectory to
-"/tmp/sessionx/locks/" and Directory to "/tmp/sessionx/". The tests
-should succeed (make sure you have created the directories!). You may
-wish to clean up the files in the directories after installation.
-
 However, if you wish to install it by hand (or if you have downloaded
 the latest development version from CVS), simply do the following
 inside the C<OpenFrame> directory:

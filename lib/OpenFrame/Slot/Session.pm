@@ -1,13 +1,13 @@
 package OpenFrame::Slot::Session;
 
 use strict;
-use Apache::Session;
-use Apache::SessionX;
+use Cache::SizeAwareFileCache;
 use Data::Denter;
 use OpenFrame::Config;
 use OpenFrame::AbstractCookie;
+use Digest::MD5 qw(md5_hex);
 
-our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.24 2001/12/05 18:01:08 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.25 2002/01/30 12:31:13 leon Exp $ }))[2];
 
 sub what {
   return ['OpenFrame::AbstractRequest'];
@@ -17,43 +17,46 @@ sub action {
   my $class = shift;
   my $config = shift;
   my $req   = shift;
+  my $dir = $config->{directory};
 
-  if (!ref($req)) {
-    warn("[slot::session] no abstract request received") if $OpenFrame::DEBUG;
-    return undef;
-  }
+  my $cache = Cache::FileCache->new({
+    'cache_root' => $config->{directory},
+    'namespace' => 'openframe',
+    'default_expires_in' => 60*60,
+  });
 
   my $cookietin = $req->cookies();
 
   my $id;
+  my $session = {};
   my $new = 0;
 
   if ($cookietin->get("session")) {
+    # A cookie containing a session id has been sent to us, so read
+    # the existing session from the cache
     $id = $cookietin->get("session");
+    $session = $cache->get($id);
+    if (not defined $session) {
+      # A session id has been sent but the session itself has expired
+      $session = {};
+      $new = 1;
+    }
   } else {
+    # No cookie has been sent, so we create a new session id 
+    $id = substr(md5_hex(time() . md5_hex(time(). {}. rand(). $$)), 0, 16);
     $new = 1;
   }
-
-  my %session;
-  eval {
-    tie %session, 'Apache::SessionX', $id;
-  };
-  if ($@) {
-    tie %session, 'Apache::SessionX', $id, { create_unknown => 1};
-    warn("[slot::session] recreating session") if $OpenFrame::DEBUG;
-    $new = 1;
-  }
-
-  my $session = \%session;
-  bless $session, "OpenFrame::Session";
 
   if ($new) {
+    # Populate the session with the session defaults if it is new or
+    # if the session has expired
     $session->{$_} = $config->{default_session}->{$_}
       foreach keys %{$config->{default_session}};
   }
 
-  $cookietin->set("session", tied(%session)->getid);
+  bless $session, "OpenFrame::Session";
 
+  $cookietin->set("session", $id);
   $session->{transactions}++;
 
   warn("Session is " . Denter($session)) if $OpenFrame::DEBUG;
@@ -61,7 +64,7 @@ sub action {
   delete $session->{system}->{parameters};
   $session->{system}->{parameters} = $req->arguments();
 
-  return ($session, $cookietin, 'OpenFrame::Slot::SessionSaver');
+  return ($session, $cookietin, $cache, 'OpenFrame::Slot::SessionSaver');
 }
 
 1;

@@ -63,7 +63,7 @@ OpenFrame::AbstractRequest - An abstract request class
   my $r = OpenFrame::AbstractRequest->new(uri => $uri,
 	originator => 'http://www.example.com/',
 	descriptive => 'web',
-	argumentss => { colour => 'red' },
+	arguments => { colour => 'red' },
 	cookies => OpenFrame::AbstractCookie->new());
   print "URI: " . $r->uri();
   print "Originator: " . $r->originator();

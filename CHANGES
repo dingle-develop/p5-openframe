@@ -1,5 +1,24 @@
 Revision history for Perl module OpenFrame: 
 
+2.09 Wed Jan 30 15:02:54 GMT 2002
+	- fix to make sure we send cookies with a / path
+	- promoted OpenFrame::Slot::SimpleGenerator to a real slot
+          that we ship with OpenFrame as it is useful for testing
+          OpenFrame applications
+	- fixed "Odd number of elements in hash assignment" bug
+	  in OpenFrame::Server::HTTP
+	- OpenFrame::Server::HTTP can now cope with redirects
+          (and new redirect example)
+	- added information about the new OpenFrame mailing list
+          and IRC channel
+	- set TT2's COMPILE_EXT to ".tt2" instead of "tt2" in
+	  OpenFrame::Slot::Generator
+	- allow $epoints to be a subroutine reference to allow
+	  more flexibility (they are passed the request arguments)
+	- yet another session change: sessions are now implemented
+	  using Cache::Cache rather than Apache::Session. Cache::Cache
+	  is easier to install, simpler and faster
+
 2.08 Fri Jan  4 15:07:52 GMT 2002
         - updated docs in OpenFrame::AbstractResponse
 	- minor bugfix to OpenFrame::Server::HTTP where having a

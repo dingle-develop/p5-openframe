@@ -5,7 +5,7 @@ use strict;
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.08';
+our $VERSION = '2.09';
 
 =head1 NAME
 
@@ -107,6 +107,15 @@ The slots that build this functionality are simple.  Listed in order of executio
 
 The application dispatcher slot is (we think) quite clever, so we'd like to tell you more about it, but
 that exists outside the scope of this document.  For more information, see OpenFrame::AppWrite.
+
+=head1 MAILING LIST
+
+There is a mailing list for general OpenFrame discussion. You can sign
+up at: http://www.astray.com/mailman/listinfo/openframe
+
+=head1 IRC
+
+There is also an OpenFrame IRC channel: #openframe on irc.rhizomatic.net.
 
 =head1 PORTABILITY
 

@@ -1,3 +1,9 @@
+
+3.02	
+	- added OpenFrame::Argument::Blob to handle browser uploads
+	- more docs
+	- minor change to saofs.pl
+
 3.01
       -- the Segment::HTTP::Request can now not automatically add
          the HTTP::Response segment to the pipeline -- done by calling

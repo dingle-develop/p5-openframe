@@ -118,20 +118,24 @@ __END__
 
 =head1 NAME
 
-OpenFrame::Segment::ContentLoader - simple file based loader for web content under OpenFrame
+OpenFrame::Segment::ContentLoader - simple file based loader for web
+content under OpenFrame
 
 =head1 SYNOPSIS
 
   use OpenFrame::Segment::ContentLoader;
 
-  $pipeline->add_segment( OpenFrame::Segment::ContentLoader->new()->directory( "/path/to/pages" );
+  my $cl = OpenFrame::Segment::ContentLoader->new();
+  $cl->directory("/path/to/pages");
+  $pipeline->add_segment($cl);
 
 =head1 DESCRIPTION
 
-C<OpenFrame::Segment::ContentLoader> is a pipeline segment used by OpenFrame's example webserver.  It 
-creates C<OpenFrame::Response> objects.  The objects it creates will either contain the contents of the
-file requested, an error displaying a file not found message, or an error message displaying an access
-forbidden message.
+C<OpenFrame::Segment::ContentLoader> is a pipeline segment used by
+OpenFrame's example webserver. It creates C<OpenFrame::Response>
+objects. The objects it creates will either contain the contents of
+the file requested, an error displaying a file not found message, or
+an error message displaying an access forbidden message.
 
 =head1 SEE ALSO
 

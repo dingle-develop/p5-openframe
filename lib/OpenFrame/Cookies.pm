@@ -83,3 +83,74 @@ sub get_all {
 
 1;
 
+__END__
+
+=head1 NAME
+
+OpenFrame::Cookies - An abstract cookie class
+
+=head1 SYNOPSIS
+
+  use OpenFrame;
+  my $cookies = OpenFrame::Cookies->new();
+  $cookies->set("animal" => "parrot");
+  my $colour = $cookies->get("colour")->value;
+  $cookies->delete("colour");
+  my %cookies = $cookies->get_all();
+
+=head1 DESCRIPTION
+
+C<OpenFrame::Cookies> represents cookies inside OpenFrame. Cookies in
+OpenFrame represent some kind of storage option on the requesting
+side.
+
+Cookies are a general mechanism which server side connections can use
+to both store and retrieve information on the client side of the
+connection. The addition of a simple, persistent, client-side state
+significantly extends the capabilities of Web-based client/server
+applications. C<OpenFrame::Cookies> is an abstract cookie class
+for OpenFrame which can represent cookies no matter how they really
+come to exist outside OpenFrame (such as CGI or Apache cookie
+objects).
+
+=head1 METHODS
+
+=head2 new()
+
+The new() method creates a new C<OpenFrame::Cookies>
+object. These can hold multiple cookies (although they must have
+unique names) inside the cookie tin.
+
+  my $cookies = OpenFrame::Cookies->new();
+
+=head2 set()
+
+The set() method adds an entry:
+
+  $cookies->set("animal" => "parrot");
+
+=head2 get()
+
+The get() method returns a cookie (a C<OpenFrame::Cookie> object)
+given its name:
+
+  my $colour = $cookies->get("colour")->value;
+
+=head2 delete()
+
+The delete() method removes a cookie element given its name:
+
+  $cookies->delete("colour");
+
+=head2 get_all()
+
+The get_all() method returns a hash of all the cookies:
+
+  my %cookies = $cookies->get_all();
+
+=head1 AUTHOR
+
+James Duncan <jduncan@fotango.com>,
+Leon Brocard <leon@fotango.com>
+
+=cut

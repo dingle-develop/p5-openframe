@@ -19,29 +19,30 @@ die $! unless $d;
 
 print "server running at http://localhost:8080/\n";
 
-## create a new Pipeline object
-my $pipeline = Pipeline->new();
-
-##
-## create the segments
-##
-
-## the http request segment turns an HTTP request into something we
-## can deal with...
-my $hr = OpenFrame::Segment::HTTP::Request->new();
-
-## the content loader simply loads the file that we are 
-## looking for based on the URI
-my $cl = OpenFrame::Segment::ContentLoader->new()
-                                          ->directory("./webpages");
-
-## add the two segments to the pipeline
-$pipeline->add_segment( $hr, $cl );
-
 ## wait for connections
 while(my $c = $d->accept()) {
   ## get requests of the connection
   while(my $r = $c->get_request) {
+
+    ## create a new Pipeline object
+    my $pipeline = Pipeline->new();
+
+    ##
+    ## create the segments
+    ##
+
+    ## the http request segment turns an HTTP request into something we
+    ## can deal with...
+    my $hr = OpenFrame::Segment::HTTP::Request->new();
+
+    ## the content loader simply loads the file that we are 
+    ## looking for based on the URI
+    my $cl = OpenFrame::Segment::ContentLoader->new()
+                                          ->directory("./webpages");
+
+    ## add the two segments to the pipeline
+    $pipeline->add_segment( $hr, $cl );
+
     ## create a new store
     my $store = Pipeline::Store::Simple->new();
 

@@ -1,15 +1,16 @@
 package OpenFrame::Segment::HTTP::Request;
 
 use strict;
-use warnings::register;
 
 use CGI;
-
 use Pipeline::Segment;
 use OpenFrame::Object;
 use OpenFrame::Cookies;
 use OpenFrame::Request;
+use OpenFrame::Argument::Blob;
 use OpenFrame::Segment::HTTP::Response;
+
+use File::Temp qw ( tempfile );
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
@@ -104,6 +105,7 @@ sub req2args {
 		  } $cgi->param()
 	    };
 
+
     $r->uri->query(undef);
   } elsif ($method eq 'POST') {
     my $content_type = $r->content_type;
@@ -112,16 +114,90 @@ sub req2args {
       $args->{$_} = $cgi->param($_) foreach ($cgi->param());
       $r->uri->query(undef);
     } elsif ($content_type eq "multipart/form-data") {
-      $args = parse_multipart_data($r);
+      $args = $self->parse_multipart_data($r);
     } else {
-      warn "[server:http] invalid content type: $content_type";
+      $self->emit("invalid content type: $content_type");
     }
   } else {
-    warn "[server::http] unsupported method: $method";
+    $self->emit("unsupported method: $method");
+  }
+
+  return $args;
+}
+
+sub parse_multipart_data {
+  my $self = shift;
+  my $r = shift;
+  my $args = {};
+
+  my($boundary) = $r->headers->header("Content-Type") =~ /boundary=(\S+)$/;
+
+  foreach my $part (split(/-?-?$boundary-?-?/, $r->content)) {
+    $part =~ s|^\r\n||g;
+    next unless $part;
+    my %headers;
+    my @lines = split /\r\n/, $part;
+    while (@lines) {
+      my $line = shift @lines;
+      last unless $line;
+      $headers{type} = $1 if $line =~ /^content-type: (.+)$/i;
+      $headers{disposition} = $1 if $line =~ /^content-disposition: (.+)$/i;
+    }
+
+    my $name = $1 if $headers{disposition} =~ /name="(.+?)"/;
+
+    if ($headers{disposition} =~ /filename="(.+)?"/) {
+      my $filename = $1;
+
+
+      my $fh = tempfile(DIR => "/tmp/", UNLINK => 1);
+      print $fh join("\r\n", @lines);
+      $fh->seek(0, 0);
+      my $blob = OpenFrame::Argument::Blob->new()
+	                                  ->name( $name )
+                                          ->filehandle( $fh );
+
+      if ($filename) {
+	$blob->filename( $filename );
+      }
+
+      use Data::Dumper; $self->emit( Dumper( $blob ) );
+      $args->{$name} = $blob;
+    } else {
+      $args->{$name} = join("\n", @lines);
+    }
   }
 
   return $args;
 }
 
 1;
+
+=head1 NAME
+
+OpenFrame::Segment::HTTP::Request - creates an OpenFrame::Request object from an HTTP::Request
+
+=head1 SYNOPSIS
+
+  use OpenFrame::Segment::HTTP::Request;
+  my $response_creator = OpenFrame::Segment::HTTP::Request->new();
+  $pipeline->add_segment( $request );
+
+=head1 DESCRIPTION
+
+OpenFrame::Segment::HTTP::Request inherits from Pipeline::Segment and is used to turn an
+HTTP::Request object into an OpenFrame::Request.  Additionally it provides the C<respond()>
+method that acts as a get/set method to decide whether or not OpenFrame::Segment::HTTP::Request
+places an OpenFrame::Segment::HTTP::Response segment on the pipeline cleanup list.  By default
+C<respond()> is set to a true value.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=head1 SEE ALSO
+
+  OpenFrame::Segment::HTTP::Response, Pipeline::Segment
+
+=cut
 

@@ -3,11 +3,11 @@ package OpenFrame;
 use strict;
 use warnings::register;
 
-our $VERSION = '3.01';
+our $VERSION = '3.02';
 
 %OpenFrame::DEBUG = (
-		     ALL => 0,
-		    );
+  ALL => 0,
+);
 
 use Pipeline;
 use base qw ( Pipeline );
@@ -42,8 +42,9 @@ sub debug_level {
   }
 }
 
-
 1;
+
+__END__
 
 =head1 NAME
 
@@ -160,6 +161,3 @@ perl(1) Pipeline(3) OpenFrame::Config(3)
 James A. Duncan <jduncan@fotango.com>
 
 =cut
-
-
-1;

@@ -32,3 +32,23 @@ sub error {
 
 1;
 
+__END__
+
+=head1 NAME
+
+OpenFrame::Object - An internal class
+
+=head1 SYNOPSIS
+
+  # None
+
+=head1 DESCRIPTION
+
+This class is used internally by OpenFrame.
+
+=head1 AUTHOR
+
+James Duncan <jduncan@fotango.com>
+
+=cut
+

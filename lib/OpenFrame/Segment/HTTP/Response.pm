@@ -61,11 +61,16 @@ sub ofr2httpr {
     }
   }
 
+  my $status = $self->ofcode2status( $ofr );
+  if ($status eq RC_FOUND) {
+    $h->header('Location' => $ofr->message());
+  }
+
   my $mesg = HTTP::Response->new(
-				 $self->ofcode2status( $ofr ),
+				 $status,
 				 undef,
 				 $h,
-				 $ofr->message,
+				 $ofr->message(),
 				);
 
   $mesg->content_type( $ofr->mimetype || "text/html" );
@@ -86,6 +91,31 @@ sub ofcode2status {
 }
 
 1;
+
+=head1 NAME
+
+OpenFrame::Segment::HTTP::Response - creates an HTTP::Response object from an OpenFrame::Response
+
+=head1 SYNOPSIS
+
+  use OpenFrame::Segment::HTTP::Response;
+  my $response_creator = OpenFrame::Segment::HTTP::Response->new();
+  $pipeline->add_segment( $response );
+
+=head1 DESCRIPTION
+
+OpenFrame::Segment::HTTP::Response inherits from Pipeline::Segment and is used to turn an
+OpenFrame::Response object into an HTTP::Response.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=head1 SEE ALSO
+
+  OpenFrame::Segment::HTTP::Request, Pipeline::Segment
+
+=cut
 
 
 

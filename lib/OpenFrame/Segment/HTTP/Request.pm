@@ -14,7 +14,7 @@ use File::Temp qw ( tempfile );
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 sub init {
   my $self = shift;
@@ -60,7 +60,7 @@ sub req2ofr {
   my $r    = shift;
   my $uri  = $r->uri();
   my $args = $self->req2args( $r );
-  my $ctin = $self->req2ctin( $r );
+  my $ctin = $self->req2cookie_tin( $r );
 
   my $ofr  = OpenFrame::Request->new()
                                ->arguments( $args )
@@ -69,7 +69,7 @@ sub req2ofr {
   return ($ofr,$ctin);
 }
 
-sub req2ctin {
+sub req2cookie_tin {
   my $self = shift;
   my $r    = shift;
   my $ctin = OpenFrame::Cookies->new();
@@ -84,6 +84,25 @@ sub req2ctin {
   return $ctin;
 }
 
+sub params2hash {
+  my $self = shift;
+  my $data = shift;
+  my $cgi  = CGI->new($data);
+  return {
+	  map {
+	    my $return;
+	    my @results = $cgi->param($_);
+	    if (scalar(@results) > 1) {
+	      $return = [@results];
+	    } else {
+	      $return = $results[0];
+	    }
+	    ($_, $return)
+	  } $cgi->param()
+	};
+}
+
+
 ##
 ## shameless copied from acme's original
 ##
@@ -95,28 +114,12 @@ sub req2args {
   my $method = $r->method;
 
   if ($method eq 'GET' || $method eq 'HEAD') {
-    my $cgi = CGI->new($r->uri->equery);
-
-    $args = {
-	      map {
-		   my $return;
-		   my @results = $cgi->param($_);
-		   if (scalar(@results) > 1) {
- 		     $return = [@results];
-		   } else {
-		     $return = $results[0];
-   		   }
-		   ($_, $return)
-		  } $cgi->param()
-	    };
-
-
+    $args = $self->params2hash($r->uri->equery);
     $r->uri->query(undef);
   } elsif ($method eq 'POST') {
     my $content_type = $r->content_type;
     if (!$content_type || $content_type eq "application/x-www-form-urlencoded") {
-      my $cgi = CGI->new($r->content);
-      $args->{$_} = $cgi->param($_) foreach ($cgi->param());
+      $args = $self->params2hash($r->content);
       $r->uri->query(undef);
     } elsif ($content_type eq "multipart/form-data") {
       $args = $self->parse_multipart_data($r);

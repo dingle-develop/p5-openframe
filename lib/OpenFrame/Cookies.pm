@@ -3,7 +3,7 @@ package OpenFrame::Cookies;
 use strict;
 use warnings::register;
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 use OpenFrame::Cookie;
 use OpenFrame::Object;

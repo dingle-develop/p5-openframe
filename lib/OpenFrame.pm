@@ -3,7 +3,7 @@ package OpenFrame;
 use strict;
 use warnings::register;
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 %OpenFrame::DEBUG = (
   ALL => 0,

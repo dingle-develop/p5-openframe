@@ -27,7 +27,7 @@ WriteMakefile(
 			       'IO::Null'      => '0.01',
 			       'Pipeline'      => '2.00',
 			       'HTTP::Request' => '0.01',
-			       'File::MMagic'  => '0.01',
+			       'File::Type'    => '0.01',
 			       'CGI::Cookie'   => '0.01',
 			      },
 	     );

@@ -1,3 +1,5 @@
+3.05
+	- allow passing of a refernce into OpenFrame::Response->message
 
 3.04
 	- fix bug in OpenFrame::Segment::HTTP::Response where we

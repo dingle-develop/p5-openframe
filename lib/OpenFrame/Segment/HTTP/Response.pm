@@ -16,7 +16,7 @@ use OpenFrame::Response;
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 sub dispatch {
   my $self  = shift;

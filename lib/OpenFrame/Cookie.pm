@@ -6,7 +6,7 @@ use warnings::register;
 use CGI::Cookie;
 use base qw ( CGI::Cookie );
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 sub value {
   my $self = shift;

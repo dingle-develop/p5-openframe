@@ -3,7 +3,7 @@ package OpenFrame::Segment::ContentLoader;
 use strict;
 use warnings::register;
 
-use File::MMagic;
+use File::Type;
 use File::Spec;
 use FileHandle;
 use OpenFrame::Response;
@@ -12,7 +12,7 @@ use Pipeline::Segment;
 use OpenFrame::Object;
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 sub init {
   my $self = shift;
@@ -75,7 +75,7 @@ sub dispatch {
     return $response;
     
   } else {
-    my $mm  = File::MMagic->new();
+    my $mm  = File::Type->new();
     my $res = $mm->checktype_filename( $reconstituted );
     my $fh  = FileHandle->new( "<$reconstituted" );
     if ( $fh ) {

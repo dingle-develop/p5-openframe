@@ -8,7 +8,7 @@ use OpenFrame::Object;
 use Pipeline::Production;
 use base qw ( OpenFrame::Object Pipeline::Production Exporter );
 
-our $VERSION=3.04;
+our $VERSION=3.05;
 
 use constant ofOK       => 1;
 use constant ofREDIRECT => 2;
@@ -37,7 +37,7 @@ sub mimetype {
   my $self = shift;
   my $mime = shift;
   if (defined( $mime )) {
-    $self->{mimetype} = $mime;
+    $self->{mimetype} = lc $mime;
     return $self;
   } else {
     return $self->{mimetype};
@@ -56,7 +56,9 @@ sub message {
     $self->{ mesg } = $mesg ;
     return $self;
   } else {
-    return $self->{ mesg };
+    my $msg = $self->{ mesg };
+    return ref($msg) ? $$msg
+                      : $msg;
   }
 }
 
@@ -124,6 +126,7 @@ associated with this response.
 =head2 message()
 
 This method gets and sets the message string associated with this response.
+A scalar reference can be stored. It will always be returned as a scalar.
 
   my $message = $r->message();
   $r->message("<html><body>Hello world!</body></html>");
@@ -132,7 +135,7 @@ This method gets and sets the message string associated with this response.
 
 This method gets and sets the message code associated with this
 response. The following message codes are exported when you use
-C<OpenFrame::Constants>: ofOK, ofERROR, ofREDIRECT, ofDECLINED.
+C<OpenFrame::Constants>: ofOK, ofERROR, ofREDIRECT, ofDECLINE.
 
   my $code = $r->code();
   $r->code(ofOK);

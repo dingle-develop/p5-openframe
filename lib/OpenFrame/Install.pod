@@ -27,7 +27,8 @@ the C<perl Makefile.PL> command.
 
 To configure OpenFrame for the first time, simply execute the configbuilder script.  This
 will place a file in your current directory called .openframe.conf.  Edit the values in this
-file as you see fit.
+file as you see fit.  Note: for system wide config you probably want to put that file in
+/etc/openframe.conf
 
 =item Web Server Plug in
 

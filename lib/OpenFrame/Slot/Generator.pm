@@ -7,6 +7,8 @@ use Template;
 use OpenFrame::Config;
 use OpenFrame::AbstractResponse;
 
+our $VERSION = (split(/ /, q{$Id: Generator.pm,v 1.5 2001/11/02 14:17:13 james Exp $ }))[2];
+
 sub what {
   return ['OpenFrame::Session', 'OpenFrame::AbstractRequest', 'OpenFrame::AbstractCookie'];
 }

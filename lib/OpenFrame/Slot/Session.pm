@@ -9,6 +9,8 @@ use OpenFrame::AbstractCookie;
 
 use Data::Dumper;
 
+our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.9 2001/11/02 17:02:52 james Exp $ }))[2];
+
 sub what {
   return ['OpenFrame::AbstractRequest'];
 }
@@ -26,13 +28,13 @@ sub action {
   my $key     = '';
 
   my $config    = OpenFrame::Config->new();
-  my $cookietin = $req->getCookies();
+  my $cookietin = $req->getCookies() || OpenFrame::AbstractCookie->new();
 
   if (!$cookietin) {
     warnings::warn("[slot::session] did not fetch any cookies");
   }
 
-  if (!($cookietin->getCookie("session"))) {
+  if (!$cookietin->getCookie("session") || !$cookietin->getCookie("session")->getValue()) {
     $session = $config->getKey('default_session');
 
     $key  = generate_key();
@@ -45,11 +47,11 @@ sub action {
 							       Name  => 'session',
 							       Value => $key,
 							      );
-    $cookietin->addCookie( $cookie );
+    $cookietin->addCookie( Cookie => $cookie );
 
-    warnings::warn("cookie should be in the tin by now") if (warnings::enabled || $OpenFrame::DEBUG);
     bless $session, 'OpenFrame::Session';
   } else {
+
     my $sessiondir = $config->{sessiondir};
     my $id         = $cookietin->getCookie("session")->getValue();
 
@@ -64,8 +66,20 @@ sub action {
 	}
       }
       $fh->close();
+
       bless $session, 'OpenFrame::Session';
+    } else {
+      warnings::warn("could not open file $sessiondir/$id ($!)");
     }
+
+    my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
+							       Name  => 'session',
+							       Value => $id,
+							      );
+    $cookietin->addCookie( Cookie => $cookie );
+
+
+
   }
   $session->{transactions}++;
 
@@ -73,6 +87,7 @@ sub action {
 
   delete $session->{system}->{parameters};
   $session->{system}->{parameters} = $req->getArguments();
+
   return ($session,$cookietin);
 }
 
@@ -81,7 +96,7 @@ sub OpenFrame::Session::writeSession {
 
   if ($self->{nosave}) {
     warnings::warn("[session] not saving session -- no save is true")  if (warnings::enabled || $OpenFrame::DEBUG);
-    return 1;
+    return;
   }
 
   my $caller = caller();

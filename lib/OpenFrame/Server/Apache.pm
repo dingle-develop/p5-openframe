@@ -22,11 +22,11 @@ use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = '1.00';
+our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.7 2001/11/02 16:34:42 james Exp $ }))[2];
 
 sub handler {
   my $request = shift;
-  
+
   ##
   ## make sure we have a valid request
   ##
@@ -47,7 +47,7 @@ sub handler {
   } else {
     warnings::warn("server could not create URI object") if (warnings::enabled || $OpenFrame::DEBUG);
     return SERVER_ERROR;
-  } 
+  }
 
   ##
   ## abstract the request
@@ -57,12 +57,13 @@ sub handler {
   my $args = { map { ($_, $ar->param($_)) } $ar->param() };
 
   my $cookietin  = OpenFrame::AbstractCookie->new();
-  my $apcookies  = Apache::Cookie->fetch();
-  foreach my $key (keys %{$apcookies}) {
+  my %apcookies  = Apache::Cookie->fetch();
+
+  foreach my $key (keys %apcookies) {
     $cookietin->addCookie(
 			  Cookie => OpenFrame::AbstractCookie::CookieElement->new(
-										  Name  => $apcookies->{$key}->name(),
-										  Value => $apcookies->{$key}->value(),
+										  Name  => $apcookies{$key}->name(),
+										  Value => $apcookies{$key}->value(),
 										 ),
 			 );
   }
@@ -103,9 +104,8 @@ sub handler {
 					   -name  => $nom,
 					   -value => $val,
 					  );
-	  
+
 	  warnings::warn("[slot::session] rewrite cookie is $cookie") if (warnings::enabled || $OpenFrame::DEBUG);
-	  
 	  Apache->request()->header_out(
 					"Set-Cookie" => $cookie->as_string
 				       );
@@ -151,8 +151,9 @@ This is a mod_perl extension, see the INSTALL guide for information on how to in
 
 =head1 DESCRIPTION
 
-C<OpenFrame::Server::Apache> is an Apache extension.  It is responsible for creating an
-OpenFrame abstract request, and passing it back to the main server.  It does nothing else.
+I<OpenFrame::Server::Apache> is an Apache extension.  It is responsible for creating an
+I<OpenFrame::AbstractRequest> object and passing it back to the main server class.  It also
+delivers the I<OpenFrame::AbstractResponse> object to the client.
 
 =head1 DEPENDANCIES
 

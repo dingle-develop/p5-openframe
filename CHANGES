@@ -1,4 +1,8 @@
 Revision history for Perl module OpenFrame: 
+
+2.01 Fri Nov  2 17:00:00 GMT 2001
+        - fixed abstract cookies bug
+        - added OpenFrame::Server::Direct for testing and other delights
  
-2.0 Fri Nov  2 10:37:13 GMT 2001 
+2.0  Fri Nov  2 10:37:13 GMT 2001 
         - first released version 

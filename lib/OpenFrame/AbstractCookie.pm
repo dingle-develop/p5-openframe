@@ -36,6 +36,9 @@ sub addCookie {
   if (!($args->{Name} && $args->{Value})) {
     if ($args->{Cookie} && blessed( $args->{Cookie} ) && $args->{Cookie}->isa( 'OpenFrame::AbstractCookie::CookieElement' )) {
       push @{$self->{cookies}}, $args->{Cookie}
+     } else {
+       warnings::warn("usage: addCookie( Cookie => \$cookie )");
+       return undef;
      }
   } else {
     my $cookie = OpenFrame::AbstractCookie::CookieElement->new(

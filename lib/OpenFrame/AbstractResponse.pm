@@ -14,6 +14,9 @@ use constant ofDECLINED => 0x04;  ## respond with decline
 use constant ofAUTHERR  => 0x05;  ## some sort of authentication error
 use constant ofNOTFOUND => 0x06;  ## not found, multiple meanings for example: application not found
 
+our $VERSION = (split(/ /, q{$Id: AbstractResponse.pm,v 1.3 2001/11/02 14:17:11 james Exp $ }))[2];
+
+
 sub new : method {
   my $class = shift;
   my $self  = {};

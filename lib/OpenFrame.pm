@@ -6,7 +6,7 @@ use warnings::register;
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.00';
+our $VERSION = '2.01';
 
 =head1 NAME
 

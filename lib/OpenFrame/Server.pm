@@ -8,6 +8,9 @@ use OpenFrame::Config;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
+our $VERSION = (split(/ /, q{$Id: Server.pm,v 1.5 2001/11/02 14:17:59 james Exp $ }))[2];
+
+
 sub action {
   my $class = shift;
   my $req   = shift;
@@ -37,4 +40,33 @@ sub action {
 
 
 
+=head1 NAME
 
+OpenFrame::Server - Class representing an OpenFrame installation
+
+=head1 SYNOPSIS
+
+  use OpenFrame::Server;
+  OpenFrame::Server->action( $abstract_request )
+
+=head1 DESCRIPTION
+
+The I<OpenFrame::Server> class represents an installation of OpenFrame.  It takes
+an I<OpenFrame::AbstractRequest> object and starts the slot execution process (see
+C<OpenFrame::Slots>.  Its method, I<action()> returns an AbstractRequest object.
+
+=head1 BUGS
+
+Need to return a blank AbstractRequest if nothing happens of any consequence.  That
+in itself being consequential.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright 2001 Fotango Ltd
+This module is released under the same terms as Perl.
+
+=cut

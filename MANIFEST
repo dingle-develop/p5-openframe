@@ -15,6 +15,7 @@ lib/OpenFrame/Config.pm
 lib/OpenFrame/Install.pod
 lib/OpenFrame/Server.pm
 lib/OpenFrame/Server/Apache.pm
+lib/OpenFrame/Server/Direct.pm
 lib/OpenFrame/Slot.pm
 lib/OpenFrame/Slot/Dispatch.pm
 lib/OpenFrame/Slot/Dispatch/Local.pm
@@ -24,6 +25,10 @@ lib/OpenFrame/Slot/NoImages.pm
 lib/OpenFrame/Slot/Session.pm
 lib/OpenFrame/Slot/SessionSaver.pm
 lib/OpenFrame/Slots.pod
-t/config.t
-t/handler.t
 t/abstractcookie.t
+t/config.t
+t/direct.t
+t/handler.t
+t/lib/OpenFrame/MyApplication.pm
+t/lib/OpenFrame/Slot/SimpleGenerator.pm
+t/sessiondir/README

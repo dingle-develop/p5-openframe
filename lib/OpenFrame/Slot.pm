@@ -7,18 +7,17 @@ package OpenFrame::Slot;
 use strict;
 use warnings::register;
 
-use Data::Dumper;
-use Attribute::Signature;
-use Attribute::Abstract;
-
 use SOAP::Lite;
-
+use Data::Dumper;
+#use Attribute::Abstract;
+#use Attribute::Signature;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = '1.00';
-sub what : Abstract method ;
 
-sub action : method with(OpenFrame::AbstractRequest, ARRAY) {
+our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.7 2001/11/02 17:02:31 james Exp $ }))[2];
+sub what ();
+
+sub action : {
   my $class = shift;
   my $absrq = shift;
   my $slots = shift;

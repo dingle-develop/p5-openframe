@@ -1,7 +1,5 @@
 package OpenFrame::Application;
 
-our $VERSION = 2.00;
-
 ##
 ## OpenFrame::App - base class for all applications, also the default application
 ## 
@@ -12,7 +10,7 @@ use warnings::register;
 use Data::Dumper;
 use OpenFrame::Config;
 
-our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.2 2001/11/01 15:05:32 leon Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.3 2001/11/02 16:58:43 james Exp $ }))[2];
 our $epoints = {};
 
 sub new {

@@ -12,6 +12,8 @@ use Pipeline::Segment;
 use OpenFrame::Object;
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
+our $VERSION=3.04;
+
 sub init {
   my $self = shift;
   $self->{directory} = undef;

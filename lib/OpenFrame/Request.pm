@@ -6,7 +6,7 @@ use warnings::register;
 use OpenFrame::Object;
 use base qw ( OpenFrame::Object );
 
-our $VERSION="3.03";
+our $VERSION=3.04;
 
 sub uri {
   my $self = shift;

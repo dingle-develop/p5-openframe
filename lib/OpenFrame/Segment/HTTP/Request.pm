@@ -14,6 +14,8 @@ use File::Temp qw ( tempfile );
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
+our $VERSION=3.04;
+
 sub init {
   my $self = shift;
   $self->respond( 1 );
@@ -33,7 +35,10 @@ sub respond {
 
 sub dispatch {
   my $self  = shift;
-  my $store = shift->store();
+  my $pipe  = shift;
+  
+  my $store = $pipe->store();
+  
   my $httpr = $store->get('HTTP::Request');
 
   return undef unless $httpr;

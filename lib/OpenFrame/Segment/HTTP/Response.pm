@@ -16,7 +16,7 @@ use OpenFrame::Response;
 
 use base qw ( Pipeline::Segment OpenFrame::Object );
 
-our $VERSION="3.03";
+our $VERSION=3.04;
 
 sub dispatch {
   my $self  = shift;
@@ -55,10 +55,7 @@ sub ofr2httpr {
   if ( defined( $cookies ) ) {
     my %cookies = $cookies->get_all();
     $h = HTTP::Headers->new();
-    foreach my $name (keys %cookies) {
-      my $cookie = $cookies{ $name };
-      $h->header('Set-Cookie' => "$cookie");
-    }
+    $h->header('Set-Cookie' => [values(%cookies)]);
   }
 
   my $status = $self->ofcode2status( $ofr );

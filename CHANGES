@@ -1,5 +1,9 @@
 
-?
+3.04
+	- fix bug in OpenFrame::Segment::HTTP::Response where we
+          weren't sending back multiple cookies
+
+3.03
 	- pass parameters in init()
 	- removed $self->emit of blobs (slow)
 

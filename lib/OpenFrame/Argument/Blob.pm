@@ -7,6 +7,8 @@ use IO::Null;
 use OpenFrame::Object;
 use base qw ( OpenFrame::Object );
 
+our $VERSION=3.04;
+
 sub init {
   my $self = shift;
 

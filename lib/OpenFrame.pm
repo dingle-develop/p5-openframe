@@ -6,7 +6,7 @@ use warnings::register;
 ##
 ## we just want to track versions
 ##
-our $VERSION = '2.01';
+our $VERSION = '2.02';
 
 =head1 NAME
 
@@ -30,7 +30,7 @@ James
 
 =head1 AUTHOR
 
-jduncan@fotango.com
+James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 

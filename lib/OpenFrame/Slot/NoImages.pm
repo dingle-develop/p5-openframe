@@ -4,6 +4,8 @@ use strict;
 use warnings::register;
 
 use OpenFrame::Slot;
+use OpenFrame::Constants;
+use OpenFrame::AbstractResponse;
 use OpenFrame::AbstractResponse;
 
 use base qw ( OpenFrame::Slot );
@@ -14,8 +16,9 @@ sub what {
 
 sub action {
   my $class = shift;
+  my $config = shift;
   my $absrq = shift;
-  my $uri = $absrq->getURI();
+  my $uri = $absrq->uri();
 
 
   warnings::warn("[slot:noimages] checking to make sure we are processing images") if (warnings::enabled || $OpenFrame::DEBUG);
@@ -28,8 +31,8 @@ sub action {
   if ($uri->path() !~ /\.html$/) {
     warnings::warn("[slot:noimages] DECLINING " . $uri->path()) if (warnings::enabled || $OpenFrame::DEBUG);
     my $response = OpenFrame::AbstractResponse->new();
-    $response->setMessageCode( ofDECLINED );
-    $response->setMessage( "not a request for an HTML page" );
+    $response->code( ofDECLINED );
+    $response->message( "not a request for an HTML page" );
     return $response;
   } else {
     warnings::warn("[slot:noimages] accepting request for " . $uri->path()) if (warnings::enabled || $OpenFrame::DEBUG);

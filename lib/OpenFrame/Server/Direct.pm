@@ -13,7 +13,7 @@ use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 sub new {
   my $class = shift;
@@ -30,6 +30,7 @@ sub new {
 sub handle {
   my $self = shift;
   my $url = shift;
+  my $cookietin = shift || OpenFrame::AbstractCookie->new();
 
   my $uri = URI->new( $url );
   unless ($uri) {
@@ -46,12 +47,10 @@ sub handle {
   my $args = { map { ($_, $cgi->param($_)) } $cgi->param() };
   $uri->query(undef);
 
-  my $cookietin  = OpenFrame::AbstractCookie->new();
-
   my $abstractRequest = OpenFrame::AbstractRequest->new(
 							uri         => $uri,
 							descriptive => 'web',
-							args        => $args,
+							arguments   => $args,
 							cookies     => $cookietin,
 						       );
 
@@ -67,7 +66,7 @@ sub handle {
   } else {
 
     my $response = OpenFrame::Server->action($abstractRequest, $self->{_config});
-    return $response;
+    return wantarray() ? ($response, $response->cookies()) : $response;
 
   }
 }
@@ -83,8 +82,10 @@ OpenFrame::Server::Direct - Provide direct access to OpenFrame
 =head1 SYNOPSIS
 
   my $url = "http://localhost/myapp/?param=5";
+  my $cookietin = OpenFrame::AbstractCookie->new();
   my $direct = OpenFrame::Server::Direct->new($config);
-  my $response = $direct->handle($url);
+  my $response;
+  ($response, $cookietin) = $direct->handle($url, $cookietin);
 
   if ($response->getMessageCode == ofOK) {
     print $response->getMessage() . "\n";
@@ -97,8 +98,9 @@ OpenFrame::Server::Direct - Provide direct access to OpenFrame
 C<OpenFrame::Server::Direct> provides direct access to an OpenFrame
 application (without having to set up Apache). It takes a URL as input
 and returns the C<OpenFrame::AbstractResponse> object resulting from
-processing that URL. It does not cope with cookies at the moment but
-is very useful for testing.
+processing that URL. Note that you have to create a cookietin at the
+beginning, and keep on getting it back and passing it in in order for
+cookies to work.
 
 =head1 AUTHOR
 

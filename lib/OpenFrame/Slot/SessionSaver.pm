@@ -1,3 +1,4 @@
+
 package OpenFrame::Slot::SessionSaver;
 
 use strict;
@@ -12,13 +13,13 @@ sub what {
 }
 
 sub action {
-  warnings::warn("[slot::sessionsaver] in session saver") if (warnings::enabled || $OpenFrame::DEBUG);
-  my $class   = shift;
+  my $class = shift;
+  my $config = shift;
   my $session = shift;
   
-  warnings::warn("[slot::sessionsaver] Session is " .  Dumper( $session )) if (warnings::enabled || $OpenFrame::DEBUG);
+  warnings::warn("[slot::sessionsaver] saving $session $session->{id}") if (warnings::enabled || $OpenFrame::DEBUG);
 
-  $session->writeSession();
+  $session->writeSession( $config );
 }
 
 1;

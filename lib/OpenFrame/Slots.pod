@@ -9,8 +9,10 @@ takes place.  An I<OpenFrame::AbstractRequest> object is poured into the top, an
 when it comes out of the bottom it should be an I<OpenFrame::AbstractResponse>, that
 contains all the information that is needed by any server to deliver
 content to a browser.  In between the top and the bottom of the pipe functionality
-is executed in a serial fashion.  The moment that an AbstractResponse object
-is returned by any slot the pipe magically shortens itself.
+is executed in a serial fashion.  Futhermore, it is possible to alter the slot pipeline
+at runtime, by returning a class name (string) from a slot.  The class name given will
+be placed at the end of the slot pipeline, and will inherit the configuration from the
+slot that created placed it there.  
 
 =head1 EXAMPLE
 
@@ -28,9 +30,10 @@ is returned by any slot the pipe magically shortens itself.
 
   sub action {
     my $self = shift;
+    my $conf = shift;
     my $req  = shift;
 
-    warnings::warn("URL Requested is: " . $req->getURI()->as_string());
+    warnings::warn("URL Requested is: " . $req->uri()->as_string());
   }
 
   1;
@@ -53,18 +56,17 @@ when its I<what()> method is called.
 =head2 action()
 
 The I<action()> method takes the parameters that you specify in the I<what()>
-method and does something with them.  If it returns an object then that
-object gets kept for future use by other slots.  For example, the 
-I<OpenFrame::Slot::Session> class returns both an I<OpenFrame::Session> object
-and a I<OpenFrame::AbstractCookie> object, that are later used by other
-slots.
+method as well as a the config that the slot is installed with and does something 
+with them.  If it returns an object then that object gets kept for future use by 
+other slots.  For example, the I<OpenFrame::Slot::Session> class returns both an 
+I<OpenFrame::Session> object and a I<OpenFrame::AbstractCookie> object, that are later used by other
+slots.  If the I<action()> method returns a string, that string is interpreted
+as being another slot to go on the end of the slot pipeline.  The action 
+method can return values as a single scalar, or as a list. In the case of a 
+list of Slots to be executed they go onto the pipeline in the same order as
+the I<action()> method returns them.
 
 =head1 NOTES
-
-The moment an object of the class I<OpenFrame::AbstractResponse> is returned
-the pipe of slots stops, and returns the object to the server.  This allows
-slots to be written that handle errors on fall through, much like a default
-case in a switch statement.
 
 =head1 AUTHOR
 

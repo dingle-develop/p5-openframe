@@ -1,59 +1,90 @@
 package OpenFrame::AbstractResponse;
 
 use strict;
-use warnings::register;
+use Class::MethodMaker
+           new_with_init => 'new',
+           new_hash_init => 'hash_init',
+           get_set       => [ qw/message mimetype code cookies/ ];
 
 use Exporter;
-use base qw ( Exporter );
-our @EXPORT = qw ( ofOK ofERROR ofREDIRECT ofDECLINED ofAUTHERR ofNOTFOUND );
+use OpenFrame::AbstractCookie;
+use URI;
 
-use constant ofOK       => 0x01;  ## response ok
-use constant ofERROR    => 0x02;  ## respond with error
-use constant ofREDIRECT => 0x03;  ## respond with pointer to new location
-use constant ofDECLINED => 0x04;  ## respond with decline
-use constant ofAUTHERR  => 0x05;  ## some sort of authentication error
-use constant ofNOTFOUND => 0x06;  ## not found, multiple meanings for example: application not found
+our $VERSION = 1.00;
 
-our $VERSION = (split(/ /, q{$Id: AbstractResponse.pm,v 1.3 2001/11/02 14:17:11 james Exp $ }))[2];
-
-
-sub new : method {
-  my $class = shift;
-  my $self  = {};
-  bless $self, $class;
+sub init {
+  my($self, %params) = @_;
+  $params{cookies} ||= OpenFrame::AbstractCookie->new();
+  hash_init($self, %params);
 }
 
-sub mimeType {
+__END__
 
-}
+=head1 NAME
 
-sub setCookie : method {
-  my $self = shift;
-  $self->{_cookie} = shift;
-}
+OpenFrame::AbstractResponse - An abstract response class
 
-sub getCookie : method {
-  return $_[0]->{_cookie};
-}
+=head1 SYNOPSIS
 
-sub setMessage : method {
-  my $self = shift;
-  $self->{_message} = shift;
-}
+  use OpenFrame::AbstractResponse;
+  use OpenFrame::AbstractCookie;
+  my $r = OpenFrame::AbstractResponse->new();
+  $r->setMessage("<html><body>Hello world!</body></html>");
+  $r->setMimeType('text/html');
+  $r->setMessageCode(ofOK);
+  $r->setCookie(OpenFrame::AbstractCookie->new());
 
-sub getMessage : method {
-  my $self = shift;
-  return $self->{_message};
-}
+=head1 DESCRIPTION
 
-sub getMessageCode : method {
-  my $self = shift;
-  return $self->{_messageCode};
-}
+C<OpenFrame::AbstractResponse> represents responses inside
+OpenFrame. Responses represent some kind of response following a
+request for information.
 
-sub setMessageCode : method {
-  my $self = shift;
-  $self->{_messageCode} = shift;
-}
+This module abstracts the way clients can respond with data from
+OpenFrame.
+
+=head1 METHODS
+
+=head2 new()
+
+This method creates a new C<OpenFrame::AbstractResponse> object. It
+takes no parameters.
+
+=head2 cookie()
+
+This method gets and sets the C<OpenFrame::AbstractCookie> that is
+associated with this response.
+
+  my $cookietin = $r->getCookie();
+  $r->setCookie(OpenFrame::AbstractCookie->new());
+
+=head2 message()
+
+This method gets and sets the message string associated with this response.
+
+  my $message = $r->getMessage();
+  $r->setMessage("<html><body>Hello world!</body></html>");
+
+=head2 code()
+
+This method gets and sets the message code associated with this
+response. The following message codes are exported when you use
+C<OpenFrame::Constants>: ofOK, ofERROR, ofREDIRECT, ofDECLINED.
+
+  my $code = $r->getMessageCode();
+  $r->setMessageCode(ofOK);
+
+=head2 mimetype()
+
+This method gets and sets the MIME type associated with this response.
+
+  my $type = $r->getMimeType();
+  $r->setMimeType('text/html');
+
+=head1 AUTHOR
+
+James Duncan <jduncan@fotango.com>
+
+=cut
 
 1;

@@ -20,23 +20,26 @@ sub what {
 
 sub action {
   my $class   = shift;
+  my $config  = shift;
   my $session = shift;
   my $request = shift;
 
-  my $config  = OpenFrame::Config->new();
-  my $applist = $config->getKey( 'installed_applications' );
+  my $applist = $config->{installed_applications};
 
   if (!ref($applist)) {
     warnings::warn("[slot::dispatch] installed_applications not a list") if (warnings::enabled || $OpenFrame::DEBUG);
     return undef;
   }
 
-  warnings::warn("[slot::dispatch] path to match is ".$request->getURI()->path()) if (warnings::enabled || $OpenFrame::DEBUG);
+  warnings::warn("[slot::dispatch] path to match is ".$request->uri()->path()) if (warnings::enabled || $OpenFrame::DEBUG);
 
   foreach my $app (@$applist) {
     warnings::warn("[slot::dispatch]\ttesting against $app->{name} ($app->{uri})") if (warnings::enabled || $OpenFrame::DEBUG);
-    if ($request->getURI()->path() =~ /$app->{uri}/) {
+    if ($request->uri()->path() =~ /$app->{uri}/) {
       warnings::warn("[slot::dispatch]\tmatched. app is $app->{name}") if (warnings::enabled || $OpenFrame::DEBUG);
+      $session->{application}->{current}->{name} = $app->{name};
+      $session->{application}->{current}->{namespace} = $app->{namespace};
+      $session->{application}->{current}->{dispatch} = $app->{dispatch};
 
       my $dispatch = $app->{dispatch};
       my $fqpn     = $class . "::" . $dispatch;
@@ -48,7 +51,7 @@ sub action {
       }
 
       if ($loaded) {
-	unless ( $fqpn->dispatch( $app, $session, $request ) ) {
+	unless ( $fqpn->dispatch( $app, $session, $request, $app->{config} ) ) {
 	  warnings::warn("[slot::dispatch] dispatch type $dispatch returned error") if (warnings::enabled || $OpenFrame::DEBUG);
 	  return undef;
 	} else {
@@ -59,7 +62,7 @@ sub action {
 	return undef;
       }
     } else {
-      warnings::warn("[slot::dispatch] $app->{uri} did not match " . $request->getURI()->path()) if (warnings::enabled || $OpenFrame::DEBUG);
+      warnings::warn("[slot::dispatch] $app->{uri} did not match " . $request->uri()->path()) if (warnings::enabled || $OpenFrame::DEBUG);
     }
   }
   

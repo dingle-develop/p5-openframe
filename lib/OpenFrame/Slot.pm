@@ -9,15 +9,13 @@ use warnings::register;
 
 use SOAP::Lite;
 use Data::Dumper;
-#use Attribute::Abstract;
-#use Attribute::Signature;
+use OpenFrame::Constants;
 use OpenFrame::AbstractResponse;
 
-
-our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.7 2001/11/02 17:02:31 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Slot.pm,v 1.13 2001/11/12 13:57:04 james Exp $ }))[2];
 sub what ();
 
-sub action : {
+sub action {
   my $class = shift;
   my $absrq = shift;
   my $slots = shift;
@@ -38,27 +36,42 @@ sub action : {
     ##
     if ($slot->{dispatch} eq 'Local') {
       warnings::warn("[slot] $slot->{name} being dispatched locally") if (warnings::enabled || $OpenFrame::DEBUG);
-      $varstore->store( $class->dispatchLocally( $slot, $varstore ) );
+
+      my $result = $varstore->store( $class->dispatchLocally( $slot, $varstore ) );
+      if (scalar @$result) {
+	push @$slots, map { { name => $_, dispatch => $slot->{dispatch}, config => $slot->{config} } } @$result;
+      }
+
     } elsif ($slot->{dispatch} eq 'SOAP') {
       warnings::warn("[slot] $slot->{name} being dispatched via soap") if (warnings::enabled || $OpenFrame::DEBUG);
-      $varstore->store( $class->dispatchViaSOAP( $slot, $varstore ) );
-    } else {
+
+      my $result = $varstore->store( $class->dispatchViaSOAP( $slot, $varstore ) );
+      if (scalar @$result) {
+	push @$slots, map { { name => $_, dispatch => $slot->{dispatch}, config => {%{$slot->{config}}} } } @$result;
+      }
+
+   } else {
       warnings::warn("[slot] unknown slot dispatch mechanism") if (warnings::enabled || $OpenFrame::DEBUG);
       next;
     }
 
-    ## return if we see an AbstractResponse object
-    if ($varstore->lookup( 'OpenFrame::AbstractResponse' )) {
-      return $varstore->lookup('OpenFrame::AbstractResponse');
-    } else {
-      next;
+
+    if ($varstore->lookup( 'OpenFrame::AbstractResponse')) {
+      my $response = $varstore->lookup( 'OpenFrame::AbstractResponse' );
+      unless ($response->code() eq ofOK || $response->code() eq ofERROR) {
+	return $response;
+      } else {
+	next;
+      }
     }
+
   }
 
-  my $response = OpenFrame::AbstractResponse->new();
-  $response->setMessageCode( ofERROR );
-
-  return $response;
+  if ($varstore->lookup( 'OpenFrame::AbstractResponse' )) {
+    return $varstore->lookup('OpenFrame::AbstractResponse');
+  } else {
+    return OpenFrame::AbstractResponse->new( code => ofERROR );
+  }
 }
 
 sub dispatchLocally {
@@ -75,7 +88,7 @@ sub dispatchLocally {
   }
 
 
-  return $slotclass->action( map { $varstore->lookup( $_ ) } @{$slotclass->what} );
+  return $slotclass->action( $slot->{config}, map { $varstore->lookup( $_ ) } @{$slotclass->what} );
 }
 
 sub dispatchViaSOAP {
@@ -99,7 +112,7 @@ sub dispatchViaSOAP {
 
   my @args = map { $varstore->lookup( $_ ) } @$args;
 
-  my $result = $soapslot->action( @args )->result();
+  my $result = $soapslot->action( $slot->{config}, @args )->result();
 
   if ($soapslot->fault()) {
     warnings::warn("error in soap dispatch " . $soapslot->faultstring()) if (warnings::enabled() && $OpenFrame::DEBUG);
@@ -111,6 +124,10 @@ sub dispatchViaSOAP {
 
 package OpenFrame::SlotStore;
 
+use strict;
+use warnings::register;
+use Scalar::Util qw ( blessed );
+
 sub new {
   my $class = shift;
   my $self  = {};
@@ -121,12 +138,16 @@ sub new {
 sub store {
   my $self = shift;
 
+  my $moreslots = [];
   foreach my $this (@_) {
-    if (defined($this)) {
+    if (defined($this) && blessed($this)) {
       $self->{STORE}->{ref($this)} = $this;
+    } elsif (defined($this) && $this !~ /^\d+$/) {
+      push @$moreslots, $this;
     }
   }
 
+  return $moreslots;
 }
 
 sub lookup {

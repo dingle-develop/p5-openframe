@@ -2,7 +2,7 @@ package OpenFrame::Application;
 
 ##
 ## OpenFrame::App - base class for all applications, also the default application
-## 
+##
 
 use strict;
 use warnings::register;
@@ -10,7 +10,7 @@ use warnings::register;
 use Data::Dumper;
 use OpenFrame::Config;
 
-our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.3 2001/11/02 16:58:43 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Application.pm,v 1.6 2001/11/12 13:57:04 james Exp $ }))[2];
 our $epoints = {};
 
 sub new {
@@ -27,7 +27,7 @@ sub enter {
   {
     no strict 'refs';
 
-    my $epnts = $ {ref($self) . "::epoints"};    
+    my $epnts = $ {ref($self) . "::epoints"};
     my $enter;
     my %entry_choose;
     foreach my $entry ( keys %{ $epnts } ) {
@@ -35,7 +35,7 @@ sub enter {
       my $params = $epnts->{$entry};
       my $num_to_match = scalar( @{$params} );
       foreach my $param (@{ $params }) {	
-	if (exists $request->getArguments()->{ $param }) {
+	if (exists $request->arguments()->{ $param }) {
 	  $num_m++;
 	}
       }
@@ -43,6 +43,7 @@ sub enter {
       if ($num_m == $num_to_match) {
 	$num_m = 0;
 	warnings::warn("[application] entering $entry") if (warnings::enabled || $OpenFrame::DEBUG);
+      $session->{application}->{current}->{entrypoint} = $entry;
 	if ($self->can($entry)) {
 	  $self->$entry( $session, $request );
 	  return;
@@ -50,6 +51,7 @@ sub enter {
       }
     }
     warnings::warn("[application] using default entry point") if (warnings::enabled || $OpenFrame::DEBUG);
+    $session->{application}->{current}->{entrypoint} = 'default';
     $self->default( $session );
     return;
   }

@@ -11,53 +11,36 @@ $config->setKey(
 	        [
 		 {
 		  dispatch => 'Local',
-		  name => 'OpenFrame::Slot::NoImages',
-		 },
-		 {
-		  dispatch => 'Local',
 		  name     => 'OpenFrame::Slot::Session',
+		  config   => {
+			       'default_session' => {
+						     language => 'en',
+						     country  => 'UK',
+						     application => {},
+						    },
+			       'sessiondir' => '/tmp/openframe2',
+			      }
 		 },
 		 {
 		  dispatch => 'Local',
 		  name     => 'OpenFrame::Slot::Dispatch',
+		  config   => {
+			       'installed_applications' => [
+							    {
+							     name      => 'default',
+							     uri       => '/',
+							     dispatch  => 'Local',
+							     namespace => 'OpenFrame::Application',
+							    }
+							   ]
+			      },
 		 },
-		 {
-		  dispatch => 'Local',
-		  name     => 'OpenFrame::Slot::SessionSaver',
-		 },
-		 {
-		  dispatch => 'Local',
-		  name     => 'OpenFrame::Slot::ErrorText'
-		 },
-		]
-	       );
-$config->setKey(
-		'DEBUG',
-		1
-	       );
-$config->setKey(
-		'default_session',
-		{
-		 language => 'en',
-		 country  => 'UK',
-		 application => {},
-		}
-	       );
-$config->setKey(
-		'installed_applications',
-		[
-		 {
-		  name      => 'default',
-		  uri       => '/',
-		  dispatch  => 'Local',
-		  namespace => 'OpenFrame::Application',
-		 }
 		]
 	       );
 
 $config->setKey(
-		'sessiondir',
-		'/tmp/openframe2'
+		'DEBUG',
+		1
 	       );
 
 

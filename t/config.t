@@ -1,10 +1,9 @@
 use strict;
-use Test::Simple tests => 26;
+use Test::Simple tests => 25;
 use OpenFrame::Config;
 
 my $c = OpenFrame::Config->new();
 ok($c, "simple instantiation");
-ok($c->sourceFile, "sourceFile");
 ok(not($c->isKey('foo')), "false isKey");
 ok(not($c->getKey('foo')), "false getKey");
 

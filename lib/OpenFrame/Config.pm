@@ -30,7 +30,30 @@ OpenFrame::Config - Simple OpenFrame configuration
 This module is a simple configuration interview for OpenFrame. All
 OpenFrame configuration will use this module.
 
-[Insert more docs here]
+There are two main methods of configuring OpenFrame: use Perl to
+create the configuration file using this module or edit an existing
+configuration file by hand.
+
+Editing an existing file by hand is fairly painless due to the fact
+that configuration files are output using Data::Denter, which is a
+Perl data serializer that is optimized for human
+readability/editability, safe deserialization, and (eventually) speed.
+
+The rest of this document will assume that you are intending to create
+the configuration file using Perl.
+
+There are two special locations that C<OpenFrame::Config> will look to
+read a configuration file if you do not supply the constructor with
+any arguments. The first location is a file named ".openframe.conf" in
+the current directory, which is intended to be a local application
+configuration file. If that fails, the module look at the second
+location: "/etc/openframe.conf", which is intended to be a system-wide
+configuration file. If both fail then the configuration is empty by
+default.
+
+When the Config object's writeConfig() is called (or the object goes
+out of scope), the object attempts to make its data persistent by
+writing to the two special locations above.
 
 =head1 METHODS
 
@@ -180,7 +203,7 @@ sub getKey {
 
   my $is = Scalar::Util::reftype($self->{$_[0]});
 
-  warnings::warn("[config] value is a $is") if (warnings::enabled || $OpenFrame::DEBUG);
+  warnings::warn("[config] value $_[0] is a $is") if (warnings::enabled || $OpenFrame::DEBUG);
 
   if (!$is) {
     return $self->{$_[0]}

@@ -18,11 +18,12 @@ use Apache::Request;
 use Apache::Constants qw ( :response );
 
 use OpenFrame::Server;
+use OpenFrame::Constants;
 use OpenFrame::AbstractCookie;
 use OpenFrame::AbstractRequest;
 use OpenFrame::AbstractResponse;
 
-our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.7 2001/11/02 16:34:42 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Apache.pm,v 1.11 2001/11/12 11:11:06 james Exp $ }))[2];
 
 sub handler {
   my $request = shift;
@@ -72,7 +73,7 @@ sub handler {
 							uri         => $uri,
 							originator  => ref( $request ),
 							descriptive => 'web',
-							args        => $args,
+							arguments   => $args,
 							cookies     => $cookietin,
 						       );
 
@@ -89,13 +90,10 @@ sub handler {
     my $response = OpenFrame::Server->action( $abstractRequest );
 
     if (blessed( $response ) && $response->isa( 'OpenFrame::AbstractResponse' )) {
-      if ($response->getMessageCode() eq ofOK) {
-
-
-
+      if ($response->code() eq ofOK) {
 	## first prepare the cookie
 
-	my $abcookies = $response->getCookie();
+	my $abcookies = $response->cookies();
 	foreach my $biscuit ($abcookies->getCookies()) {
 	  my $nom    = $biscuit->getName();
 	  my $val    = $biscuit->getValue();
@@ -105,7 +103,6 @@ sub handler {
 					   -value => $val,
 					  );
 
-	  warnings::warn("[slot::session] rewrite cookie is $cookie") if (warnings::enabled || $OpenFrame::DEBUG);
 	  Apache->request()->header_out(
 					"Set-Cookie" => $cookie->as_string
 				       );
@@ -114,19 +111,22 @@ sub handler {
 
 	warnings::warn("[apache] ok") if (warnings::enabled || $OpenFrame::DEBUG);
 	$request->no_cache(1);
-	$request->send_http_header( $response->mimeType() || 'text/html' );
-	$request->print( $response->getMessage() );
+	$request->send_http_header( $response->mimetype() || 'text/html' );
+	$request->print( $response->message() );
 
 	return OK;
-      } elsif ($response->getMessageCode() eq ofDECLINED) {
+      } elsif ($response->code() eq ofDECLINED) {
 	warnings::warn("[apache] declined") if (warnings::enabled || $OpenFrame::DEBUG);
 	return DECLINED;
-      } elsif ($response->getMessageCode() eq ofREDIRECT) {
+      } elsif ($response->code() eq ofREDIRECT) {
 	warnings::warn("[apache] redirect") if (warnings::enabled || $OpenFrame::DEBUG);
+	Apache->request()->header_out(
+				      "Location" => $response->message()
+				     );
 	return REDIRECT;
-      } elsif ($response->getMessageCode() eq ofERROR) {
+      } elsif ($response->code() eq ofERROR) {
 	warnings::warn("[apache] server error") if (warnings::enabled || $OpenFrame::DEBUG);
-	warnings::warn($response->getMessage());
+	warnings::warn($response->message());
 	return SERVER_ERROR;
       } else {
 	warnings::warn("[apache] unrecognized response");

@@ -1,5 +1,26 @@
 Revision history for Perl module OpenFrame: 
 
+2.02
+        - added OpenFrame::Server::HTTP for use without Apache
+	- added OpenFrame::Slot::Images and OpenFrame::Slot::HTML
+	  to serve static images and HTML files
+	- lots of minor fixes
+	- added more documentation
+	- added hangman example (with and without templates, and test)
+	- added webserver example (and test)
+	- moved from Java naming (getValue, setValue) to Perlish naming
+	  (value(), value($value))
+	- removed attribute usage
+	- config file has changed significantly, slots carry their own
+          configuration now, which means that the config file is much
+          cleaner
+	- applications dispatched by Slot::Dispatch also get their own
+          configuration, which is passed to the application
+        - slots can return another slot to push onto the slot list by
+          returning a class name rather than an object
+        - the slot pipe magically shortens *only* if the response contains
+          an ofREDIRECT of an ofDECLINE message code
+
 2.01 Fri Nov  2 17:00:00 GMT 2001
         - fixed abstract cookies bug
         - added OpenFrame::Server::Direct for testing and other delights

@@ -6,10 +6,11 @@ use warnings::register;
 use FileHandle;
 use OpenFrame::Config;
 use OpenFrame::AbstractCookie;
+use Digest::MD5 qw(md5_hex);
 
 use Data::Dumper;
 
-our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.9 2001/11/02 17:02:52 james Exp $ }))[2];
+our $VERSION = (split(/ /, q{$Id: Session.pm,v 1.15 2001/11/12 12:37:45 james Exp $ }))[2];
 
 sub what {
   return ['OpenFrame::AbstractRequest'];
@@ -17,6 +18,7 @@ sub what {
 
 sub action {
   my $class = shift;
+  my $config = shift;
   my $req   = shift;
 
   if (!ref($req)) {
@@ -27,15 +29,14 @@ sub action {
   my $session = {};
   my $key     = '';
 
-  my $config    = OpenFrame::Config->new();
-  my $cookietin = $req->getCookies() || OpenFrame::AbstractCookie->new();
+  my $cookietin = $req->cookies();
 
   if (!$cookietin) {
     warnings::warn("[slot::session] did not fetch any cookies");
   }
 
   if (!$cookietin->getCookie("session") || !$cookietin->getCookie("session")->getValue()) {
-    $session = $config->getKey('default_session');
+    $session = $config->{default_session};
 
     $key  = generate_key();
     warnings::warn("[slot::session] key is $key") if (warnings::enabled || $OpenFrame::DEBUG);
@@ -69,7 +70,12 @@ sub action {
 
       bless $session, 'OpenFrame::Session';
     } else {
-      warnings::warn("could not open file $sessiondir/$id ($!)");
+      warnings::warn("[slot::session] reviving expired session $id") if (warnings::enabled || $OpenFrame::DEBUG);
+
+      $session = $config->{default_session};
+      $session->{id} = $id;
+
+      bless $session, 'OpenFrame::Session';
     }
 
     my $cookie = OpenFrame::AbstractCookie::CookieElement->new(
@@ -86,22 +92,21 @@ sub action {
   warnings::warn("Session is " . Dumper( $session )) if (warnings::enabled || $OpenFrame::DEBUG);
 
   delete $session->{system}->{parameters};
-  $session->{system}->{parameters} = $req->getArguments();
+  $session->{system}->{parameters} = $req->arguments();
 
-  return ($session,$cookietin);
+  return ($session,$cookietin,'OpenFrame::Slot::SessionSaver');
 }
 
 sub OpenFrame::Session::writeSession {
-  my $self = shift;
+  my $self   = shift;
+  my $config = shift;
 
-  if ($self->{nosave}) {
-    warnings::warn("[session] not saving session -- no save is true")  if (warnings::enabled || $OpenFrame::DEBUG);
+  if ((!defined($config) && !ref($config)) || $self->{nosave}) {
+    warnings::warn("[session] not saving session") if (warnings::enabled || $OpenFrame::DEBUG);
     return;
   }
 
   my $caller = caller();
-  warnings::warn("[session] writing session file from $caller") if (warnings::enabled || $OpenFrame::DEBUG);
-  my $config = OpenFrame::Config->new();
   my $fh = FileHandle->new( ">$config->{sessiondir}/$self->{id}");
   if ($fh) {
     $fh->print(Dumper($self));
@@ -113,17 +118,9 @@ sub OpenFrame::Session::writeSession {
 }
 
 sub generate_key {
-  my $fh = FileHandle->new("</dev/random");
-  if (!$fh) {
-    warnings::warn("[slot::session] could not generate session key") if (warnings::enabled || $OpenFrame::DEBUG);
-    return undef;
-  } else {
-    my $buf;
-    $fh->read($buf, 8);
-    my $rc = unpack("h8", $buf);
-    $fh->close();
-    return $rc;
-  }
+  # See page 5 of ftp://ftp.rsasecurity.com/pub/cryptobytes/crypto1n1.pdf
+  # for why we are hashing twice
+  return substr(md5_hex(time() . md5_hex(time(). {}. rand(). $$)), 0, 16);
 }
 
 1;

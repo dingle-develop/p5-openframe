@@ -2,11 +2,26 @@ More documentation
 
 More tests
 
-A proper testing framework
+Moving from a slot list to a slot tree
 
-OpenFrame::Server::CGI
+A new form of application dispatch which using a state parameter
 
-OpenFrame::Server::HTTPD (based on POE::Filter::HTTPD?)
+The ability to set off a subrequest
+
+Clear up the distinction between data and objects
+
+[done] Per-slot config options
+
+[done] Slots being able to return slots which are pushed onto the bottom of
+the slot list
+
+[done] Remove attributes
+
+[done] A proper testing framework
+
+[done] OpenFrame::Server::CGI - changed to OpenFrame::Server::Direct	
+
+[done] OpenFrame::Server::HTTPD
 
 [done] Rewrite session to use an AbstractCookie.  Rewrite generator to
 require an abstract cookie.  Rewrite AbstractResponse to contain an

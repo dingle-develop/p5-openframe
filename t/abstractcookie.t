@@ -21,5 +21,5 @@ ok( $c, "element instantiation" );
 ok( $n->addCookie( Cookie => $c ), "cookie insertion" );
 ok( $n->getCookie( 'test' ) eq $c, "get cookie" );
 ok( $n->delCookie( 'test' ), "delete cookie" );
-ok( !($n->getCookie( 'test' ) eq $c), "fetch after deletion" );
+ok( ! defined($n->getCookie('test')), "fetch after deletion" );
 

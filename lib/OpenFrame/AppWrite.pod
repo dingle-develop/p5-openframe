@@ -70,6 +70,11 @@ want to store the application run-time in the session (more on this
 later).  The namespace is the module name of the application, and the
 uri is where you want this application to execute.
 
+The application dispatch mechanism also creates an entry inside the session
+hash at application.current with the keys name, namespace, and method.
+These correspond to the various pieces of the application that have been
+dispatched.
+
 =head1 A MORE COMPLEX EXAMPLE
 
 To add functionality to the application, we'll add an entry point.

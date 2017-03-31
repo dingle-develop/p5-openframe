@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 
-use Test::More no_plan => 1;
+use Test::More 'no_plan';
 use lib './lib';
 use OpenFrame::Response;
 use Pipeline::Segment::Tester;

@@ -43,10 +43,11 @@ sub set {
     ## right, we have a key value pair that we need to turn
     ## into an OpenFrame::Cookie object
 
-    my $cookie = OpenFrame::Cookie->new();
-    $cookie->name( $key );
-    $cookie->value( [ $val ] );
-
+    my $cookie = OpenFrame::Cookie->new(
+        -name => $key,
+        -value => [ $val ]
+    ); 
+    
     ## call this method again with the cookie as the parameter
     $self->set( $cookie );
 

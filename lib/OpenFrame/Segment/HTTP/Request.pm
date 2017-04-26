@@ -91,7 +91,7 @@ sub params2hash {
   return {
 	  map {
 	    my $return;
-	    my @results = $cgi->param($_);
+	    my @results = $cgi->multi_param($_);
 	    if (scalar(@results) > 1) {
 	      $return = [@results];
 	    } else {
